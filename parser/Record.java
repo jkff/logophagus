@@ -7,4 +7,7 @@ public class Record {
 		super();
 		this.rawValue = rawValue;
 	}
+	public String toString(){
+		return rawValue;
+	}
 }
