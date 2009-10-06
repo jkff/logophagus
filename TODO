@@ -1,0 +1,3 @@
+ - Migrate ScrollableInputStream to RandomAccessFile (get rid of "too many open files" error)
+ - Write a primitive swing-based GUI
+ 
