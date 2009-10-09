@@ -1,4 +1,4 @@
-package org.lf.parser;
+package java.org.lf.parser;
 
 public class Record {
 	private String rawValue;
@@ -7,7 +7,8 @@ public class Record {
 		super();
 		this.rawValue = rawValue;
 	}
-	public String toString(){
+
+	public String toString() {
 		return rawValue;
 	}
 }

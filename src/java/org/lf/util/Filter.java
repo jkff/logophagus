@@ -1,4 +1,4 @@
-package org.lf.util;
+package java.org.lf.util;
 
 /**
  * User: jkff

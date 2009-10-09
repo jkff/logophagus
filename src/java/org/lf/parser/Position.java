@@ -1,4 +1,4 @@
-package org.lf.parser;
+package java.org.lf.parser;
 
 public interface Position {
 
