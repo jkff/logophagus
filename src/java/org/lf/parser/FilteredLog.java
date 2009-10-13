@@ -5,48 +5,66 @@ import org.lf.util.Filter;
 import java.io.IOException;
 
 /**
- * User: jkff
- * Date: Oct 6, 2009
- * Time: 10:33:15 AM
+ * User: jkff Date: Oct 6, 2009 Time: 10:33:15 AM
  */
 public class FilteredLog implements Log {
-    private final Filter<Record> filter;
-    private final Log underlyingLog;
+	private final Filter<Record> filter;
 
-    public FilteredLog(Filter<Record> filter, Log underlyingLog) {
-        this.filter = filter;
-        this.underlyingLog = underlyingLog;
-    }
+	private final Log underlyingLog;
 
-    public Position next(Position pos) throws IOException {
-        return seekForward(underlyingLog.next(pos));
-    }
+	public FilteredLog(Filter<Record> filter, Log underlyingLog) {
+		this.filter = filter;
+		this.underlyingLog = underlyingLog;
+	}
 
-    public Position prev(Position pos) throws IOException {
-        return seekBackward(underlyingLog.prev(pos));
-    }
+	public Position next(Position pos) throws  IOException {
+		return seekForward(pos);
+	}
 
-    private Position seekForward(Position pos) throws IOException {
-        while(!filter.accepts(readRecord(pos)))
-            pos = underlyingLog.next(pos);
-        return pos;
-    }
+	public Position prev(Position pos) throws IOException {
+		return seekBackward(pos);
+	}
 
-    private Position seekBackward(Position pos) throws IOException {
-        while(!filter.accepts(readRecord(pos)))
-            pos = underlyingLog.prev(pos);
-        return pos;
-    }
+	private Position seekForward(Position pos) throws IOException {
+		Position temp = pos;
+		while (true){
+			if (!pos.equals(underlyingLog.next(pos))){
+				pos = underlyingLog.next(pos);
+				if (!pos.equals(underlyingLog.next(pos))){
+					if (filter.accepts(readRecord(pos))){
+						return pos;
+					}
+				}
+			} else {
+				return temp;
+			}
+			
+		}
+	}
+	private Position seekBackward(Position pos) throws IOException {
+		Position temp = pos;
+		while (true){
+			if (!pos.equals(underlyingLog.prev(pos))){
+				pos = underlyingLog.prev(pos);
+				if (filter.accepts(readRecord(pos))){
+					return pos;
+				}
+			} else {
+				return temp;
+			}
+			
+		}
+	}
 
-    public Position getStart() throws IOException {
-        return seekForward(underlyingLog.getStart());
-    }
+	public Position getStart() throws IOException {
+		return seekForward(underlyingLog.getStart());
+	}
 
-    public Position getEnd() throws IOException {
-        return seekBackward(underlyingLog.getEnd());
-    }
+	public Position getEnd() throws IOException {
+		return seekBackward(underlyingLog.getEnd());
+	}
 
-    public Record readRecord(Position pos) throws IOException {
-        return underlyingLog.readRecord(pos);
-    }
+	public Record readRecord(Position pos) throws IOException {
+		return underlyingLog.readRecord(pos);
+	}
 }

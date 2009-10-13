@@ -60,46 +60,39 @@
   <component name="FileColors" enabled="false" enabledForTabs="false" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="RandomAccessFile.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar:$TEMPLATE$/$TEMPLATE$/dist/lang/jdk1.6.0_14/src.zip!/java/io/RandomAccessFile.java">
+      <file leaf-file-name="FileBackedLog.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/FileBackedLog.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="245" column="17" selection-start="11300" selection-end="11300" vertical-scroll-proportion="0.0">
+            <state line="68" column="0" selection-start="1717" selection-end="1717" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FileChannel.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar:$TEMPLATE$/$TEMPLATE$/dist/lang/jdk1.6.0_14/src.zip!/java/nio/channels/FileChannel.java">
+      <file leaf-file-name="RandomAccessFileIO.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/io/RandomAccessFileIO.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="268" column="32" selection-start="12119" selection-end="12119" vertical-scroll-proportion="0.0">
+            <state line="12" column="18" selection-start="245" selection-end="245" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Parser.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/Parser.java">
+      <file leaf-file-name="MappedFile.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/io/MappedFile.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="17" selection-start="70" selection-end="70" vertical-scroll-proportion="0.0">
-              <folding />
+            <state line="47" column="12" selection-start="1334" selection-end="1334" vertical-scroll-proportion="0.6806283">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="LineParser.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/LineParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="56" selection-start="22" selection-end="22" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Record.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Record.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/Record.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="0" selection-start="215" selection-end="215" vertical-scroll-proportion="0.24074075">
+            <state line="2" column="13" selection-start="37" selection-end="37" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -108,7 +101,25 @@
       <file leaf-file-name="FilteredLog.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/FilteredLog.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="24" selection-start="865" selection-end="865" vertical-scroll-proportion="0.0">
+            <state line="20" column="28" selection-start="465" selection-end="465" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GUILogTest.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/test/org/lf/GUILogTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="61" column="51" selection-start="1649" selection-end="1649" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Log.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/Log.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="13" column="18" selection-start="301" selection-end="301" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -117,7 +128,7 @@
       <file leaf-file-name="Test.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/test/org/lf/Test.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="63" selection-start="620" selection-end="620" vertical-scroll-proportion="0.0">
+            <state line="25" column="30" selection-start="654" selection-end="654" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -126,7 +137,7 @@
       <file leaf-file-name="Filter.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/util/Filter.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="0" selection-start="26" selection-end="26" vertical-scroll-proportion="0.0">
+            <state line="4" column="0" selection-start="40" selection-end="40" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -154,16 +165,18 @@
         <option value="$PROJECT_DIR$/src/java/org/lf/parser/Log.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/parser/Parser.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/parser/Position.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/parser/Record.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/parser/PhysicalInputSource.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/parser/FileBackedLog.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/parser/LineParser.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/parser/ScrollableInputStream.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/parser/SubstringFilteredLog.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/util/Filter.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/parser/FilteredLog.java" />
         <option value="$PROJECT_DIR$/src/test/org/lf/Test.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/parser/LineParser.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/parser/Record.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/parser/Top10.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/parser/FilteredLog.java" />
+        <option value="$PROJECT_DIR$/src/test/org/lf/GUILogTest.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/parser/FileBackedLog.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/io/RandomAccessFileIO.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/io/MappedFile.java" />
       </list>
     </option>
   </component>
@@ -202,8 +215,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -265,6 +276,10 @@
               <option name="myItemId" value="lf" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="util" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -292,33 +307,66 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="logophagus" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="logophagus" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lf" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="io" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
+      <pane id="Favorites" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="Modules" />
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="OverrideImplement.combined" value="true" />
-    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
-    <property name="recentsLimit" value="5" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="OverrideImplement.combined" value="true" />
     <property name="MemberChooser.sorted" value="false" />
+    <property name="recentsLimit" value="5" />
     <property name="MemberChooser.showClasses" value="true" />
-    <property name="project.structure.side.proportion" value="0.2" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="dynamic.classpath" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="org.lf.io" />
+    </key>
   </component>
   <component name="RegexUtilComponent" text="1900-01-01 2007/08/13 1900.01.01 1900 01 01 1900-01.01 1900 13 01 1900 02 31" flags="0" regex="(19|20)\d\d([- /.])(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])" mode="0" />
-  <component name="RunManager" selected="Application.Top10">
-    <configuration default="false" name="Top10" type="Application" factoryName="Application" temporary="true" enabled="false" merge="false" runner="emma">
+  <component name="RunManager" selected="Application.GUILogTest">
+    <configuration default="false" name="GUILogTest" type="Application" factoryName="Application" temporary="true" enabled="false" merge="false" runner="emma">
       <pattern>
-        <option name="PATTERN" value="org.lf.parser.*" />
+        <option name="PATTERN" value="test.org.lf.*" />
         <option name="ENABLED" value="true" />
       </pattern>
-      <option name="MAIN_CLASS_NAME" value="org.lf.parser.Top10" />
+      <option name="MAIN_CLASS_NAME" value="test.org.lf.GUILogTest" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -329,7 +377,11 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="logophagus" />
       <envs />
+      <RunnerSettings RunnerId="Profile ">
+        <option name="myExternalizedOptions" />
+      </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Profile " />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -426,8 +478,8 @@
       <method />
     </configuration>
     <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="Application.Top10" />
-      <item index="1" class="java.lang.String" itemvalue="Application.Test" />
+      <item index="0" class="java.lang.String" itemvalue="Application.Test" />
+      <item index="1" class="java.lang.String" itemvalue="Application.GUILogTest" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -452,27 +504,25 @@
     <supportedVersion>125</supportedVersion>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-5" y="25" width="1690" height="1004" extended-state="6" />
+    <frame x="-5" y="25" width="1410" height="1004" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
-      <window_info id="Regex Tester" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2757353" sideWeight="0.0" order="0" side_tool="false" />
-      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32982457" sideWeight="0.5" order="1" side_tool="false" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30317274" sideWeight="0.5" order="2" side_tool="false" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32902467" sideWeight="0.5" order="7" side_tool="false" />
+      <window_info id="Regex Tester" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33579883" sideWeight="0.722807" order="0" side_tool="false" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26900584" sideWeight="0.5" order="2" side_tool="false" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32902467" sideWeight="0.5" order="7" side_tool="false" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" />
-      <window_info id="Analyze Dataflow to here" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32902467" sideWeight="0.5" order="7" side_tool="false" />
-      <window_info id="Analyze Dataflow from here" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" />
     </layout>
@@ -509,16 +559,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/Log.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="0" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/Position.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="0" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="jar:$TEMPLATE$/$TEMPLATE$/dist/lang/jdk1.6.0_14/src.zip!/java/io/FileInputStream.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="66" column="37" selection-start="2343" selection-end="2343" vertical-scroll-proportion="0.0" />
@@ -527,11 +567,6 @@
     <entry file="jar:$TEMPLATE$/$TEMPLATE$/dist/lang/jdk1.6.0_14/src.zip!/java/io/SequenceInputStream.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="28" column="6" selection-start="746" selection-end="746" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/FileBackedLog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="102" column="38" selection-start="2528" selection-end="2528" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="jar:$TEMPLATE$/$TEMPLATE$/dist/lang/jdk1.6.0_14/src.zip!/java/io/RandomAccessFile.java">
@@ -551,22 +586,30 @@
     </entry>
     <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/LineParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="56" selection-start="22" selection-end="22" vertical-scroll-proportion="0.0" />
+        <state line="47" column="9" selection-start="1038" selection-end="1038" vertical-scroll-proportion="0.0">
+          <folding>
+            <marker date="1255432076000" expanded="false" signature="1383:1389" placeholder="{...}" />
+          </folding>
+        </state>
       </provider>
     </entry>
-    <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/FilteredLog.java">
+    <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/Record.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="24" selection-start="865" selection-end="865" vertical-scroll-proportion="0.0" />
+        <state line="2" column="13" selection-start="37" selection-end="37" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/test/org/lf/Test.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="63" selection-start="620" selection-end="620" vertical-scroll-proportion="0.0" />
+        <state line="25" column="30" selection-start="654" selection-end="654" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/util/Filter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="0" selection-start="26" selection-end="26" vertical-scroll-proportion="0.0" />
+        <state line="4" column="0" selection-start="40" selection-end="40" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/ScrollableInputStream.java">
@@ -574,10 +617,47 @@
         <state line="5" column="22" selection-start="103" selection-end="103" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/Record.java">
+    <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/FilteredLog.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="0" selection-start="215" selection-end="215" vertical-scroll-proportion="0.24074075">
+        <state line="20" column="28" selection-start="465" selection-end="465" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/test/org/lf/GUILogTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="51" selection-start="1649" selection-end="1649" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/Log.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="18" selection-start="301" selection-end="301" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/io/RandomAccessFileIO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="18" selection-start="245" selection-end="245" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/parser/FileBackedLog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="68" column="0" selection-start="1717" selection-end="1717" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/java/org/lf/io/MappedFile.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="12" selection-start="1334" selection-end="1334" vertical-scroll-proportion="0.6806283">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
