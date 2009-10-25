@@ -93,7 +93,7 @@ public class GUILogTest extends JPanel implements ActionListener,
 
 				setProgress(progress1);
 				Position tmp = cur;
-				for (int i = 0; i < 200; ++i) {
+				for (int i = 0; i < 100; ++i) {
 					if (!tmp.equals(directionForward ? log.next(tmp) : log
 							.prev(tmp))) {
 						tmp = (directionForward ? log.next(tmp) : log.prev(tmp));
