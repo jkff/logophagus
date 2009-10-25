@@ -33,7 +33,7 @@ public class FileBackedLog implements Log {
 		return new PhysicalPosition(maxSize);
 	}
 
-	public Record readRecord(Position pos) throws Exception {
+	synchronized public Record readRecord(Position pos) throws Exception {
 		PhysicalPosition pp = (PhysicalPosition) pos;
 		is.shiftTo(pp.offsetBytes);
 		try {
@@ -45,7 +45,7 @@ public class FileBackedLog implements Log {
 		}
 	}
 
-	public Position next(Position pos) throws Exception {
+	synchronized public Position next(Position pos) throws Exception {
 		PhysicalPosition pp = (PhysicalPosition) pos;
 		is.shiftTo(pp.offsetBytes);
 		long offset = parser.findNextRecord(is);
@@ -55,7 +55,7 @@ public class FileBackedLog implements Log {
 		return new PhysicalPosition(pp.offsetBytes + offset);
 	}
 
-	public Position prev(Position pos) throws Exception {
+	synchronized public Position prev(Position pos) throws Exception {
 		PhysicalPosition pp = (PhysicalPosition) pos;
 		is.shiftTo(pp.offsetBytes);
 		long offset = parser.findPrevRecord(is);
