@@ -2,7 +2,6 @@ package org.lf.parser;
 
 import org.lf.util.Filter;
 
-import java.io.IOException;
 
 /**
  * User: jkff Date: Oct 6, 2009 Time: 10:33:15 AM
@@ -17,15 +16,15 @@ public class FilteredLog implements Log {
 		this.underlyingLog = underlyingLog;
 	}
 
-	public Position next(Position pos) throws  IOException {
+	public Position next(Position pos) throws  Exception {
 		return seekForward(pos);
 	}
 
-	public Position prev(Position pos) throws IOException {
+	public Position prev(Position pos) throws Exception {
 		return seekBackward(pos);
 	}
 
-	private Position seekForward(Position pos) throws IOException {
+	private Position seekForward(Position pos) throws Exception {
 		Position temp = pos;
 		while (true){
 			if (!pos.equals(underlyingLog.next(pos))){
@@ -41,7 +40,7 @@ public class FilteredLog implements Log {
 			
 		}
 	}
-	private Position seekBackward(Position pos) throws IOException {
+	private Position seekBackward(Position pos) throws Exception {
 		Position temp = pos;
 		while (true){
 			if (!pos.equals(underlyingLog.prev(pos))){
@@ -56,15 +55,15 @@ public class FilteredLog implements Log {
 		}
 	}
 
-	public Position getStart() throws IOException {
+	public Position getStart() throws Exception {
 		return seekForward(underlyingLog.getStart());
 	}
 
-	public Position getEnd() throws IOException {
+	public Position getEnd() throws Exception {
 		return seekBackward(underlyingLog.getEnd());
 	}
 
-	public Record readRecord(Position pos) throws IOException {
+	public Record readRecord(Position pos) throws Exception {
 		return underlyingLog.readRecord(pos);
 	}
 }

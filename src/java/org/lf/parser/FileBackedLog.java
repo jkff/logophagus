@@ -2,7 +2,6 @@ package org.lf.parser;
 
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
-
 import java.io.IOException;
 
 public class FileBackedLog implements Log {
@@ -14,13 +13,15 @@ public class FileBackedLog implements Log {
 		}
 	}
 
-    private RandomAccessFileIO file;
+	private RandomAccessFileIO file;
 
 	private Parser parser;
-
+	private ScrollableInputStream is;
+	
 	public FileBackedLog(String fileName, Parser in) throws Exception {
 		parser = in;
-        this.file = new MappedFile(fileName);
+		this.file = new MappedFile(fileName);
+		is = file.getInputStreamFrom(0L);
 	}
 
 	public Position getStart() {
@@ -32,35 +33,32 @@ public class FileBackedLog implements Log {
 		return new PhysicalPosition(maxSize);
 	}
 
-	public Record readRecord(Position pos) throws IOException {
+	public Record readRecord(Position pos) throws Exception {
 		PhysicalPosition pp = (PhysicalPosition) pos;
-        ScrollableInputStream is = file.getInputStreamFrom(pp.offsetBytes);
+		is.shiftTo(pp.offsetBytes);
 		try {
-			Record r = parser.readRecord(is); 
-			is.close();
+			Record r = parser.readRecord(is);
 			return r;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			is.close();
-			throw e ;
+			throw e;
 		}
 	}
 
-	public Position next(Position pos) throws IOException {
+	public Position next(Position pos) throws Exception {
 		PhysicalPosition pp = (PhysicalPosition) pos;
-        ScrollableInputStream is = file.getInputStreamFrom(pp.offsetBytes);
+		is.shiftTo(pp.offsetBytes);
 		long offset = parser.findNextRecord(is);
-		is.close();
 		if (offset == -1) {
 			return pos;
 		}
 		return new PhysicalPosition(pp.offsetBytes + offset);
 	}
 
-	public Position prev(Position pos) throws IOException {
+	public Position prev(Position pos) throws Exception {
 		PhysicalPosition pp = (PhysicalPosition) pos;
-        ScrollableInputStream is = file.getInputStreamFrom(pp.offsetBytes);
+		is.shiftTo(pp.offsetBytes);
 		long offset = parser.findPrevRecord(is);
-		is.close();
 		if (offset == -1) {
 			return pos;
 		}

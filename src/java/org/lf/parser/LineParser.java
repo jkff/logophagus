@@ -12,7 +12,7 @@ public class LineParser implements Parser {
 	 * return -1 if eof
 	 * 
 	 */
-	public long findNextRecord(ScrollableInputStream is) throws IOException {
+	public long findNextRecord(ScrollableInputStream is) throws Exception {
 		int i;
 		int realData=0;
 		long offset = 0;
@@ -29,7 +29,7 @@ public class LineParser implements Parser {
 		return offset;
 	}
 
-	public long findPrevRecord(ScrollableInputStream is) throws IOException {
+	public long findPrevRecord(ScrollableInputStream is) throws Exception {
 		long scrolled = is.scrollBack(2);
 		if (scrolled != 2) {
 			is.scrollForward(scrolled);
@@ -52,7 +52,7 @@ public class LineParser implements Parser {
 		return offset;
 	}
 
-	public Record readRecord(ScrollableInputStream is) throws IOException {
+	public Record readRecord(ScrollableInputStream is) throws Exception {
 		long offset = findNextRecord(is);
 		if (offset == -1)
 			throw new IOException("Can't read after eof");
