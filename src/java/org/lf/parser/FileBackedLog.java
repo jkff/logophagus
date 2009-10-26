@@ -37,9 +37,15 @@ public class FileBackedLog implements Log {
 		PhysicalPosition pp = (PhysicalPosition) pos;
 		is.shiftTo(pp.offsetBytes);
 		try {
-			Record r = parser.readRecord(is);
-			return r;
+            return parser.readRecord(is);
 		} catch (Exception e) {
+            // "try..finally" was invented precisely for this kind of code
+            // Also, why are you closing 'is' regardless of what kind of exception
+            // was thrown from parser? What if that was an exception that
+            // has nothing to do with IO?
+            // See Log for further explanations of why "throws Exception" is bad.
+            // (honestly, I don't understand why 'is' should be closed at all,
+            // even if the exception is an IO exception. Please explain)
 			is.close();
 			throw e;
 		}

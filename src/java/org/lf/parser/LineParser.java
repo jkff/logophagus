@@ -1,6 +1,7 @@
 package org.lf.parser;
 
 import java.io.IOException;
+import java.util.Arrays;
 //import java.nio.charset.Charset;
 
 public class LineParser implements Parser {
@@ -10,8 +11,13 @@ public class LineParser implements Parser {
 
 	/*
 	 * return -1 if eof
-	 * 
 	 */
+    // Hey, you're mixing two ways of reporting an error here:
+    //  - EOF is reported with a returned "-1"
+    //  - All other errors (for example, an IO error other than EOF)
+    //    are reported with a thrown exception.
+    // What is the motivation for making the client deal with two ways
+    // that an error can reported?
 	public long findNextRecord(ScrollableInputStream is) throws Exception {
 		int i;
 		int realData=0;
@@ -19,6 +25,12 @@ public class LineParser implements Parser {
 		while ((i = is.read()) != (int) '\n') {
 			if (i == -1)
 				break;
+            // Why two different spaces here, instead of
+            // Character.isWhitespace or something like that?
+            // (there is also Character.getType() - yes, unicode
+            // is messy and hard to get right :) )
+            // Generally, why are you bothering with spaces at all?
+            // Shouldn't you only care about line breaks?
 			if ((char)i != ' ' || (char)i != '	')
 				++realData;
 			offset++;
@@ -29,6 +41,7 @@ public class LineParser implements Parser {
 		return offset;
 	}
 
+    // Same here
 	public long findPrevRecord(ScrollableInputStream is) throws Exception {
 		long scrolled = is.scrollBack(2);
 		if (scrolled != 2) {
@@ -54,6 +67,9 @@ public class LineParser implements Parser {
 
 	public Record readRecord(ScrollableInputStream is) throws Exception {
 		long offset = findNextRecord(is);
+        // Hehe. The "-1" now turns into an IO exception.
+        // This code would not be necessary if the exception was thrown
+        // in findNextRecord. 
 		if (offset == -1)
 			throw new IOException("Can't read after eof");
 		byte[] buf = new byte[(int) offset];

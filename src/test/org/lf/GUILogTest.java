@@ -12,6 +12,13 @@ import java.util.LinkedList;
 public class GUILogTest extends JPanel implements ActionListener,
 		PropertyChangeListener {
 
+    // Was this generated with a GUI design tool or by hand?
+    // It is not clear at all to me why the variables have numbers
+    // at the end of their names.
+    // If it's two concurrent things of the same structure, then
+    // extract a class for one thing and create two instances of it.
+    // Code duplication is bad.
+
 	private JButton startButton1;
 
 	private JButton endButton1;
@@ -36,6 +43,7 @@ public class GUILogTest extends JPanel implements ActionListener,
 
 	private JTextArea taskOutput2;
 
+    // "Task" means nothing; the class should be renamed, and of course the variables too.
 	private Task task1;
 
 	private Task task2;
@@ -44,6 +52,10 @@ public class GUILogTest extends JPanel implements ActionListener,
 
 	private static Log log2;
 
+    // IDEA issues a warning here:
+    // Contents of collection result1 are only updated but never queried.
+    // That means that you only put data into these lists but never read anything
+    // from them. Something is wrong.
 	private static LinkedList<Record> result1;
 
 	private static LinkedList<Record> result2;
@@ -65,6 +77,10 @@ public class GUILogTest extends JPanel implements ActionListener,
 
 		/*
 		 * Main task. Executed in background thread.
+		 *
+		 * "Main task" also does not mean anything unless one knows
+		 * what is considered to be "main" in this program.
+		 * What does this task do? 
 		 */
 		@Override
 		public Void doInBackground() {
@@ -83,6 +99,14 @@ public class GUILogTest extends JPanel implements ActionListener,
 					cur = log.getEnd();
 				}
 
+                // See, because of the duplication all your code is crippled
+                // with duplicated conditions like this.
+                // Once you notice something like that, it's a sign that you
+                // are doing something horribly wrong.
+                // In this case, one should stop and think for a sufficiently
+                // long time instead of bravely fighting with the language
+                // and with the principles of OOP until the program starts
+                // seeming to work right :)
 				if (this.window == 1) {
 					result1.clear();
 				} else {
@@ -226,6 +250,7 @@ public class GUILogTest extends JPanel implements ActionListener,
 		// we create new instances as needed.
 		String command = evt.getActionCommand();
 
+        // OMG. Seriously, remove the duplication.
 		if (command.endsWith("1")) {
 			nextButton1.setEnabled(false);
 			prevButton1.setEnabled(false);

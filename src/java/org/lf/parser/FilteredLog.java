@@ -27,6 +27,7 @@ public class FilteredLog implements Log {
 	private Position seekForward(Position pos) throws Exception {
 		Position temp = pos;
 		while (true){
+            // What does this mean?? Why a double check?
 			if (!pos.equals(underlyingLog.next(pos))){
 				pos = underlyingLog.next(pos);
 				if (!pos.equals(underlyingLog.next(pos))){
@@ -43,6 +44,8 @@ public class FilteredLog implements Log {
 	private Position seekBackward(Position pos) throws Exception {
 		Position temp = pos;
 		while (true){
+            // And why no double check here, then? How is a forward seek
+            // different from a backward seek?
 			if (!pos.equals(underlyingLog.prev(pos))){
 				pos = underlyingLog.prev(pos);
 				if (filter.accepts(readRecord(pos))){
