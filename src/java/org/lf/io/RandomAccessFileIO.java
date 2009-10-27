@@ -9,5 +9,5 @@ import org.lf.parser.ScrollableInputStream;
  */
 public interface RandomAccessFileIO {
 	ScrollableInputStream getInputStreamFrom(long offset) throws IOException;
-	long length();
+	long length() throws IOException;
 }

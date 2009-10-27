@@ -10,6 +10,7 @@ import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -20,20 +21,19 @@ public class MappedFile implements RandomAccessFileIO {
 
 	private class Buffer {
 		int refCount;
-		MappedByteBuffer mBuf;
+		byte[] buf;
 		long segmentPosition;
 
-		private Buffer(MappedByteBuffer buf, long segmentPosition) {
+        private Buffer(byte[] buf, long segmentPosition) {
 			this.refCount = 1;
-			this.mBuf = buf;
+			this.buf = buf;
 			this.segmentPosition = segmentPosition;
 		}
     }
 
 	private class BufferPool {
-		// File is devided on parts of same size = bufSize (last part size may
-		// differ from others,
-		// so buffers are not overlap
+		// File is divided into parts of equal size = bufSize (last part size may
+		// differ from others, so buffers do not overlap
 		private long bufSize;
 		private RandomAccessFile raf;
 		private long fileSize;
@@ -58,55 +58,66 @@ public class MappedFile implements RandomAccessFileIO {
 			if (fileSize - segmentPosition < bufSize) {
 				curBufSize = fileSize - segmentPosition; 
 			}
+//            System.out.println("Get buffer for " + segmentPosition);
 			if (base2buf.containsKey(segmentPosition)) {
+//                System.out.println("Buffer hit at " + segmentPosition);
 				Buffer b = base2buf.get(segmentPosition);
 				b.refCount++;
 				return b;
 			} // or create a new buffer with refCount = 1 || wait and check
 			// whether it was made
-			else {
-				if (base2buf.size() >= maxBuffers) {
-                    // This is incorrect: read JCIP and google about how to use
-                    // wait/notify to see why. The reason is: so called "spurious wakeups".
-					wait();
-                    // Because of spurious wakeups, a call to wait() may finish even if
-                    // noone called notify or notifyAll.
+//            System.out.println("Buffer miss at " + segmentPosition);
+            if (base2buf.size() >= maxBuffers) {
+//                System.out.println("Not enough buffers");
+                while(true) {
+                    garbageCollectBuffers();
+                    if(base2buf.size() >= maxBuffers)
+                        wait();
+                    else
+                        return getBuffer(position);
+                }
+            }
 
-                    // Hm. On a second thought, the code actually may turn out to be correct,
-                    // because the recursive call will also wait if there are not enough buffers,
-                    // but it is misleading, so proper style of wait/notify usage should be used. 
+            FileChannel rafChannel = raf.getChannel();
+            // surprisingly, rafChannel can be closed
+            while (!rafChannel.isOpen()) {
+                rafChannel.close();
+                raf.close();
+                raf = new RandomAccessFile(fileName,"r");
+                rafChannel = raf.getChannel();
+            }
 
-					return getBuffer(position);
-				} else {
-                    FileChannel rafChannel = raf.getChannel();
-					// surprisingly, rafChannel can be closed
-					while (!rafChannel.isOpen()) {
-						rafChannel.close();
-						raf.close();
-						raf = new RandomAccessFile(fileName,"r");		
-						rafChannel = raf.getChannel();
-					}
-						
-					Buffer b = new Buffer(rafChannel.map(FileChannel.MapMode.READ_ONLY, segmentPosition, curBufSize), segmentPosition);
-					base2buf.put(segmentPosition, b);
-					rafChannel.close();
-					
-                    notifyAll();
-					return b;
-				}
-			}
+            MappedByteBuffer mbb = rafChannel.map(FileChannel.MapMode.READ_ONLY, segmentPosition, curBufSize);
+            byte[] buf = new byte[(int)curBufSize];
+            mbb.get(buf);
+            Buffer b = new Buffer(buf, segmentPosition);
+            base2buf.put(segmentPosition, b);
+            rafChannel.close();
 
-		}
+            notifyAll();
+            return b;
+
+        }
+
+        private synchronized void garbageCollectBuffers() {
+//            System.out.println("Garbage collecting buffers");
+            for (Iterator<Long> it = base2buf.keySet().iterator(); it.hasNext();) {
+                Long offset = it.next();
+                Buffer b = base2buf.get(offset);
+                if(b.refCount == 0) {
+                    it.remove();
+                }
+            }
+//            System.out.println("Garbage collected " + n + " buffers");
+        }
 
 		synchronized void releaseBuffer(Buffer buf) {
-			if (buf.refCount==1) {
-				buf.refCount=0;
-				base2buf.remove(buf.segmentPosition);
-				if (base2buf.size() < maxBuffers)
-					notifyAll();
-			} else {
-				buf.refCount--;
-			}
+//            System.out.println("Releasing buffer at " + buf.segmentPosition);
+            buf.refCount--;
+            if(buf.refCount == 0) {
+//                System.out.println("Buffer at " + buf.segmentPosition + " has become garbage");
+                notifyAll();
+            }
 		}
 
 		// Tells that buffer 'buf' is no longer needed,
@@ -114,7 +125,7 @@ public class MappedFile implements RandomAccessFileIO {
 		// Does nothing if 'newOffset' lies in 'buf',
 		// otherwise frees 'buf' and allocates a new buffer.
 		public Buffer move(Buffer buf, long newOffset) throws IOException,InterruptedException {
-			if (buf.segmentPosition <= newOffset && newOffset <= buf.segmentPosition + buf.mBuf.capacity()) {
+			if (buf.segmentPosition <= newOffset && newOffset <= buf.segmentPosition + buf.buf.length) {
 				return buf;
 			} else {
 				releaseBuffer(buf);
@@ -122,12 +133,12 @@ public class MappedFile implements RandomAccessFileIO {
 			}
 		}
 
-		BufferPool(long bufSize) throws FileNotFoundException {
+		BufferPool(long bufSize, int maxBuffers) throws FileNotFoundException {
 			this.bufSize = bufSize;
+            System.out.println("Creating bufferPool");
 			this.fileSize = new File(fileName).length();
 			this.raf = new RandomAccessFile(fileName, "r");
-			//equal to number of threads on current file 
-			this.maxBuffers = 2;
+			this.maxBuffers = maxBuffers;
 			this.base2buf = new HashMap<Long, Buffer>();
 		}
 	}
@@ -138,14 +149,14 @@ public class MappedFile implements RandomAccessFileIO {
 
 	public MappedFile(String fileName) throws FileNotFoundException {
 		this.fileName = fileName;
-		this.bufferPool = new BufferPool(10000);
+		this.bufferPool = new BufferPool(1048576, 100);
 	}
 
 	public ScrollableInputStream getInputStreamFrom(final long offset) throws IOException {
 		return new ScrollableInputStream() {
 			private Buffer buf;
 
-			private long offsetInBuffer;
+			private int offsetInBuffer;
 
 			private boolean isOpen;
 
@@ -155,20 +166,20 @@ public class MappedFile implements RandomAccessFileIO {
 				}catch (InterruptedException e){
 					throw new IOException("InterruptedException in bufferPool.getBuffer()");
 				}
-					this.offsetInBuffer = offset - this.buf.segmentPosition;
+                this.offsetInBuffer = (int)(offset - this.buf.segmentPosition);
 				
 				this.isOpen = true;
 			}
-//absolute scroll
+            //absolute scroll
 			public void scrollTo(long newOffset) throws IOException {
 				try {
 					this.buf = bufferPool.move(this.buf, newOffset);
-					this.offsetInBuffer = newOffset - this.buf.segmentPosition;
+					this.offsetInBuffer = (int)(newOffset - this.buf.segmentPosition);
 				} catch (InterruptedException e){
 					throw new IOException("InterruptedException in bufferPool.move()");
 				}
 			}
-//relative scroll				
+            //relative scroll
 			@Override
 			public long scrollBack(long offset) throws IOException {
 				ensureOpen();
@@ -178,10 +189,10 @@ public class MappedFile implements RandomAccessFileIO {
 					if (curFilePos < offset) {
 						scrolled = curFilePos;
 						this.buf = bufferPool.move(buf, 0L);
-						this.offsetInBuffer = 0L;
+						this.offsetInBuffer = 0;
 					} else {
 						this.buf = bufferPool.move(buf, curFilePos - offset);
-						this.offsetInBuffer = curFilePos - offset - this.buf.segmentPosition;
+						this.offsetInBuffer = (int)(curFilePos - offset - this.buf.segmentPosition);
 						scrolled = offset;
 					}
 				} catch (InterruptedException e){
@@ -190,21 +201,21 @@ public class MappedFile implements RandomAccessFileIO {
 				return scrolled;
 				
 			}
-//relative scroll
+            //relative scroll
 			@Override
 			public long scrollForward(long offset) throws IOException{
 				ensureOpen();
-				long maxOffset = new File(fileName).length();
+				long maxOffset = bufferPool.fileSize;
 				long curFilePos = this.offsetInBuffer + this.buf.segmentPosition;
 				long scrolled;
 				try {
 					if (curFilePos + offset > maxOffset) {
 						scrolled = maxOffset - curFilePos;
 						this.buf = bufferPool.move(buf, maxOffset);
-						this.offsetInBuffer = this.buf.mBuf.capacity();
+						this.offsetInBuffer = this.buf.buf.length;
 					} else {
 						this.buf = bufferPool.move(buf, curFilePos + offset);
-						this.offsetInBuffer = curFilePos + offset - this.buf.segmentPosition;
+						this.offsetInBuffer = (int)(curFilePos + offset - this.buf.segmentPosition);
 						scrolled = offset;
 					}
 				} catch(InterruptedException e) {
@@ -212,52 +223,52 @@ public class MappedFile implements RandomAccessFileIO {
 				}
 				return scrolled;
 			}
-//relative read
+            //relative read
 			@Override
 			public int read() throws IOException{
 				ensureOpen();
-				byte[] res = new byte[1];
-				if (read(res) == 0 )
-					return -1;
-				return (int)res[0];
+                if(isAtEOF()) return -1;
+                return this.buf.buf[this.offsetInBuffer++];
 			}
-//relative read
+            
+            //relative read
 			@Override
 			public int read(byte[] b) throws IOException {				
 				int needToRead = b.length;
-				int readed=0;
+				int bytesRead;
 				do {
-					long avaliableInCurBuffer = this.buf.mBuf.capacity()- this.offsetInBuffer;
-					if (avaliableInCurBuffer > needToRead) {
-						for (; needToRead > 0; --needToRead){
-							b[readed] = this.buf.mBuf.get((int)this.offsetInBuffer);
-							this.offsetInBuffer++;
-							readed++;
-						}
-					} else {
-						for (; avaliableInCurBuffer > 0; --avaliableInCurBuffer){
-							b[readed] = this.buf.mBuf.get((int)this.offsetInBuffer);
-							this.offsetInBuffer++;
-							needToRead--;
-							readed++;
-						}
-						if (this.buf.segmentPosition + this.offsetInBuffer == new File(fileName).length())
-							return 0;
-					
-						try {	
-							this.buf = bufferPool.move(this.buf,this.buf.segmentPosition + this.offsetInBuffer + 1);
-						}catch (InterruptedException e){
-							throw new IOException("InterruptedException from bufferPool.move()");
-						}
-						this.offsetInBuffer=0;	
-					}
-
-				} while (needToRead > 0);
+                    // Rewrite with System.arraycopy()
+					int availableInCurBuffer = this.buf.buf.length - this.offsetInBuffer;
+                    bytesRead = Math.min(needToRead, availableInCurBuffer);
+                    System.arraycopy(this.buf.buf, this.offsetInBuffer, b, 0, bytesRead);
+                    this.offsetInBuffer += bytesRead;
+                    needToRead -= bytesRead;
+                    if (availableInCurBuffer < needToRead) {
+                        if (!shiftBuffer()) return 0;
+                    }
+                } while (needToRead > 0);
 				
-				return  readed;
+				return  bytesRead;
 			}
 
-			@Override
+            private boolean shiftBuffer() throws IOException {
+                if (isAtEOF())
+                    return false;
+
+                try {
+                    this.buf = bufferPool.move(this.buf, this.buf.segmentPosition + this.offsetInBuffer + 1);
+                }catch (InterruptedException e){
+                    throw new IOException("InterruptedException from bufferPool.move()");
+                }
+                this.offsetInBuffer=0;
+                return true;
+            }
+
+            private boolean isAtEOF() {
+                return this.buf.segmentPosition + this.offsetInBuffer == bufferPool.fileSize;
+            }
+
+            @Override
 			public int read(byte[] b, int off, int len) {
 				throw new UnsupportedOperationException("Who cares?");
 
@@ -290,7 +301,7 @@ public class MappedFile implements RandomAccessFileIO {
 				if (!isOpen)
 					throw new IllegalStateException("Stream closed");
 			}
-		};
+        };
 	}
 
 	public long length() {

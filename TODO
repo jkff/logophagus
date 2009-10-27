@@ -1,0 +1,11 @@
+GUI should be like this:
+Menu (File -> Open,exit is enough)
+Window is split into 2 parts: views tree, current view.
+Views tree has initially a root node corresponding to the raw log.
+Right-click on a node in the views tree pops up a list of views that may be derived from the node (plugins supply this information about their capabilities).
+The first plugin is a "Filter by substring" plugin.
+
+Yourkit profiler
+AppPerfect
+JProbe
+...

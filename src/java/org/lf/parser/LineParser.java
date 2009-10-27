@@ -11,12 +11,6 @@ public class LineParser implements Parser {
 	/*
 	 * return -1 if eof
 	 */
-    // Hey, you're mixing two ways of reporting an error here:
-    //  - EOF is reported with a returned "-1"
-    //  - All other errors (for example, an IO error other than EOF)
-    //    are reported with a thrown exception.
-    // What is the motivation for making the client deal with two ways
-    // that an error can reported?
 	public long findNextRecord(ScrollableInputStream is) throws IOException {
 		int i;
 		int realData=0;
@@ -25,12 +19,6 @@ public class LineParser implements Parser {
 			if (i == -1)
 				break;
 				//break ;
-            // Why two different spaces here, instead of
-            // Character.isWhitespace or something like that?
-            // (there is also Character.getType() - yes, unicode
-            // is messy and hard to get right :) )
-            // Generally, why are you bothering with spaces at all?
-            // Shouldn't you only care about line breaks?
 			
 			//if record ends with eof and not with '\n'
 			//we must check what exactly we read()
@@ -49,7 +37,6 @@ public class LineParser implements Parser {
 		return offset;
 	}
 
-    // Same here
 	public long findPrevRecord(ScrollableInputStream is) throws IOException {
 		long scrolled = is.scrollBack(2);
 		if (scrolled != 2) {

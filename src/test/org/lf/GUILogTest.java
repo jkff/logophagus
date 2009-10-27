@@ -1,4 +1,4 @@
-package test.org.lf;
+package org.lf;
 
 import org.lf.parser.*;
 import org.lf.util.Filter;
@@ -16,7 +16,7 @@ public class GUILogTest  {
 	
 	GUILogTest(){
 		try {
-			Log base = new FileBackedLog("testd3", new LineParser());
+			Log base = new FileBackedLog("test-data/bigtest", new LineParser());
 
 			log1 = new FilteredLog(new Filter<Record>() {
 				public boolean accepts(Record record) {

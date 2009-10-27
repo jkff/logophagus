@@ -27,28 +27,16 @@ public class FilteredLog implements Log {
 	}
 
 	private Position seekForward(Position pos) throws IOException {
-		Position temp = pos;
-		while (true){
-            //readRecord(pos) finds next record just after pos and read bytes between them
-			//if it's impossible to find next record then readRecors falls
-			//thats why we need double check
-			if (!pos.equals(underlyingLog.next(pos))){
-				pos = underlyingLog.next(pos);
-				if (!pos.equals(underlyingLog.next(pos))){
-					if (filter.accepts(readRecord(pos))){
-						return pos;
-					}
-				}
-			} else {
-				return temp;
-			}
-			
-		}
+		while (true) {
+            pos = underlyingLog.next(pos);
+            if(pos.equals(underlyingLog.getEnd()) || filter.accepts(readRecord(pos)))
+                return pos;
+        }
 	}
 	private Position seekBackward(Position pos) throws IOException {
+        // Decrease code analogously
 		Position temp = pos;
 		while (true){
-            //no double check(look at previous comment)
 			if (!pos.equals(underlyingLog.prev(pos))){
 				pos = underlyingLog.prev(pos);
 				if (filter.accepts(readRecord(pos))){

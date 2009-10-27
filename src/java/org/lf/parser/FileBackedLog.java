@@ -37,14 +37,6 @@ public class FileBackedLog implements Log {
 		PhysicalPosition pp = (PhysicalPosition) pos;
 		is.scrollTo(pp.offsetBytes);
 		return parser.readRecord(is);
-		    // "try..finally" was invented precisely for this kind of code
-            // Also, why are you closing 'is' regardless of what kind of exception
-            // was thrown from parser? What if that was an exception that
-            // has nothing to do with IO?
-            // See Log for further explanations of why "throws Exception" is bad.
-            // (honestly, I don't understand why 'is' should be closed at all,
-            // even if the exception is an IO exception. Please explain)
-		
 	}
 
 	synchronized public Position next(Position pos) throws IOException {

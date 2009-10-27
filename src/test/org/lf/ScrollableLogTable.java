@@ -1,4 +1,4 @@
-package test.org.lf;
+package org.lf;
 
 import org.lf.parser.*;
 
@@ -20,7 +20,6 @@ public class ScrollableLogTable extends JPanel implements ActionListener, Proper
 	private JProgressBar progressBar;
 	private JTable table;
 	
-	private LogReader logReader;
 	private Log log;
 	private ArrayList<Record> result;
 	private Position curPos;
@@ -44,59 +43,59 @@ public class ScrollableLogTable extends JPanel implements ActionListener, Proper
 	}
 	
 //Reads log records on its own thread
-	class LogReader extends SwingWorker<Void, Void> {
+	class NavigateTask extends SwingWorker<Void, Void> {
 		private String command;
-		public LogReader(String command) {
+		public NavigateTask(String command) {
 			this.command = command;
+            addPropertyChangeListener(ScrollableLogTable.this);
 		}
-		
-//		 Reading log records in background Worker thread.
+
+    //		 Reading log records in background Worker thread.
 		@Override
 		public Void doInBackground() {
-			boolean directionForward = true;
 			try {
 				if ("next".equals(command)) {
-					directionForward = true;
+                    navigate(true, curPos);
 				} else if ("prev".equals(command)) {
-					directionForward = false;
+                    navigate(false, curPos);
 				} else if ("start".equals(command)) {
-					curPos = log.getStart();
+                    navigate(true, log.getStart());
 				} else if ("end".equals(command)) {
-					curPos = log.getEnd();
+                    navigate(false, log.getEnd());
 				}
-
-				result.clear();
-				
-				int progress = 0;
-				setProgress(progress);
-				
-				Position tmp = curPos;
-				for (int i = 0; i < 100; ++i) {
-					if (!tmp.equals(directionForward ? log.next(tmp) : log
-							.prev(tmp))) {
-						tmp = (directionForward ? log.next(tmp) : log.prev(tmp));
-						setProgress(++progress);
-						if (directionForward) {
-							result.add(result.size(),log.readRecord(tmp));
-						} else {
-							result.add(0,log.readRecord(tmp));
-						}
-					} else {
-						directionForward = !directionForward;
-						tmp = curPos;
-						--i;
-					}
-
-				}
-				curPos = tmp;
-				
 			} catch (IOException e) {
 				System.out.print(e.getMessage());
 			}
 			return null;
 		}
 
-//		  Executed in event dispatching thread when doInBackground() ends
+    public void navigate(boolean directionForward, Position fromWhere) throws IOException {
+        result.clear();
+
+        int progress = 0;
+        setProgress(progress);
+
+        for (int i = 0; i < 100; ++i) {
+            if (!fromWhere.equals(directionForward ? log.next(fromWhere) : log
+                    .prev(fromWhere))) {
+                fromWhere = (directionForward ? log.next(fromWhere) : log.prev(fromWhere));
+                setProgress(++progress);
+                if (directionForward) {
+                    result.add(result.size(),log.readRecord(fromWhere));
+                } else {
+                    result.add(0,log.readRecord(fromWhere));
+                }
+            } else {
+                directionForward = !directionForward;
+                fromWhere = curPos;
+                --i;
+            }
+
+        }
+        curPos = fromWhere;
+    }
+
+    //		  Executed in event dispatching thread when doInBackground() ends
 		@Override
 		public void done() {
 			startButton.setEnabled(true);
@@ -144,8 +143,27 @@ public class ScrollableLogTable extends JPanel implements ActionListener, Proper
 		allButtons.add(nextButton);
 		allButtons.add(endButton);
 		
-		table= new JTable(new LogTableModel());
-		
+		table = new JTable(new LogTableModel());
+//        table.getaddKeyListener(new KeyAdapter() {
+//            @Override
+//            public void keyPressed(KeyEvent e) {
+//                switch(e.getKeyCode()) {
+//                case Event.PGDN:
+//                    new NavigateTask("next").execute();
+//                    break;
+//                case Event.PGUP:
+//                    new NavigateTask("prev").execute();
+//                    break;
+//                case Event.HOME:
+//                    new NavigateTask("start").execute();
+//                    break;
+//                case Event.END:
+//                    new NavigateTask("end").execute();
+//                    break;
+//                }
+//            }
+//        });
+//
 		this.add(allButtons,BorderLayout.PAGE_START);
 		this.add(progressBar,BorderLayout.PAGE_END);
 		this.add(new JScrollPane(table), BorderLayout.CENTER);
@@ -164,19 +182,17 @@ public class ScrollableLogTable extends JPanel implements ActionListener, Proper
 		endButton.setEnabled(false);
 //		SwingWorker is only designed to be executed once. 
 //		Executing a SwingWorker more than once will not result in invoking the doInBackground method twice.
-//		So we need to create new LogReader
-		logReader = new LogReader(evt.getActionCommand());
-		logReader.addPropertyChangeListener(this);
-		logReader.execute();
+//		So we need to create new NavigateTask
+		new NavigateTask(evt.getActionCommand()).execute();
 	}
 
 	
 	
-	// Invoked when LogReader's progress property changes
+	// Invoked when NavigateTask's progress property changes
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals("progress")) {
 				table.updateUI();
-				progressBar.setValue(logReader.getProgress());
+				progressBar.setValue((Integer)evt.getNewValue());
 		}
 	}
 }
