@@ -5,6 +5,8 @@ import org.lf.util.Filter;
 
 import java.awt.*;
 import javax.swing.*;
+
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
@@ -14,7 +16,7 @@ public class GUILogTest  {
 	
 	GUILogTest(){
 		try {
-			Log base = new FileBackedLog("test3", new LineParser());
+			Log base = new FileBackedLog("testd3", new LineParser());
 
 			log1 = new FilteredLog(new Filter<Record>() {
 				public boolean accepts(Record record) {
@@ -28,21 +30,25 @@ public class GUILogTest  {
 				}
 			}, base);
 			
+			JFrame jfrm = new JFrame("Log table");
+			jfrm.setLayout(new GridLayout(1,2));
+			jfrm.setMinimumSize(new Dimension(700,300));
+			jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			
-		} catch (IOException e) {
+			ScrollableLogTable logGUI1 = new ScrollableLogTable(log1);
+			ScrollableLogTable logGUI2 = new ScrollableLogTable(log2);
+			jfrm.add(logGUI1);
+			jfrm.add(logGUI2);
+			jfrm.setVisible(true);
+		
+		}catch (FileNotFoundException e){
+			e.printStackTrace();
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		JFrame jfrm = new JFrame("Log table");
-		jfrm.setLayout(new GridLayout(1,2));
-		jfrm.setMinimumSize(new Dimension(700,300));
-		jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		ScrollableLogTable logGUI1 = new ScrollableLogTable(log1);
-		ScrollableLogTable logGUI2 = new ScrollableLogTable(log2);
-		jfrm.add(logGUI1);
-		jfrm.add(logGUI2);
-		jfrm.setVisible(true);
+
 		
 	}
 	public static void main(String[] args) {
