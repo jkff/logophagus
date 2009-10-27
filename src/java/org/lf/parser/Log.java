@@ -1,5 +1,7 @@
 package org.lf.parser;
 
+import java.io.IOException;
+
 
 
 public interface Log {
@@ -32,13 +34,13 @@ public interface Log {
     //     showMessageBox("Syntactic error in log at line " + e.getLineNumber());
     // } ...
 
-	public Position getStart() throws Exception;
+	public Position getStart() throws IOException;
 
-	public Position getEnd() throws Exception;
+	public Position getEnd() throws IOException;
 
-	public Position next(Position pos) throws Exception;
+	public Position next(Position pos) throws IOException;
 
-	public Position prev(Position pos) throws Exception;
+	public Position prev(Position pos) throws IOException;
 
-	public Record readRecord(Position pos) throws Exception;
+	public Record readRecord(Position pos) throws IOException;
 }

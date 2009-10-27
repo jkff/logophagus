@@ -1,5 +1,7 @@
 package org.lf.parser;
 
+import java.io.IOException;
+
 import org.lf.util.Filter;
 
 
@@ -16,18 +18,20 @@ public class FilteredLog implements Log {
 		this.underlyingLog = underlyingLog;
 	}
 
-	public Position next(Position pos) throws  Exception {
+	public Position next(Position pos) throws  IOException {
 		return seekForward(pos);
 	}
 
-	public Position prev(Position pos) throws Exception {
+	public Position prev(Position pos) throws IOException {
 		return seekBackward(pos);
 	}
 
-	private Position seekForward(Position pos) throws Exception {
+	private Position seekForward(Position pos) throws IOException {
 		Position temp = pos;
 		while (true){
-            // What does this mean?? Why a double check?
+            //readRecord(pos) finds next record just after pos and read bytes between them
+			//if it's impossible to find next record then readRecors falls
+			//thats why we need double check
 			if (!pos.equals(underlyingLog.next(pos))){
 				pos = underlyingLog.next(pos);
 				if (!pos.equals(underlyingLog.next(pos))){
@@ -41,11 +45,10 @@ public class FilteredLog implements Log {
 			
 		}
 	}
-	private Position seekBackward(Position pos) throws Exception {
+	private Position seekBackward(Position pos) throws IOException {
 		Position temp = pos;
 		while (true){
-            // And why no double check here, then? How is a forward seek
-            // different from a backward seek?
+            //no double check(look at previous comment)
 			if (!pos.equals(underlyingLog.prev(pos))){
 				pos = underlyingLog.prev(pos);
 				if (filter.accepts(readRecord(pos))){
@@ -58,15 +61,15 @@ public class FilteredLog implements Log {
 		}
 	}
 
-	public Position getStart() throws Exception {
+	public Position getStart() throws IOException {
 		return seekForward(underlyingLog.getStart());
 	}
 
-	public Position getEnd() throws Exception {
+	public Position getEnd() throws IOException {
 		return seekBackward(underlyingLog.getEnd());
 	}
 
-	public Record readRecord(Position pos) throws Exception {
+	public Record readRecord(Position pos) throws IOException {
 		return underlyingLog.readRecord(pos);
 	}
 }
