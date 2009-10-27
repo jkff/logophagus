@@ -1,3 +1,6 @@
+Fix bug in FileBackedLog
+Make PgUp/PgDn work
+
 GUI should be like this:
 Menu (File -> Open,exit is enough)
 Window is split into 2 parts: views tree, current view.
