@@ -16,7 +16,7 @@ public class GUILogTest  {
 	
 	GUILogTest(){
 		try {
-			Log base = new FileBackedLog("test-data/test3", new LineParser());
+			Log base = new FileBackedLog("test3", new LineParser());
 
 			log1 = new FilteredLog(new Filter<Record>() {
 				public boolean accepts(Record record) {

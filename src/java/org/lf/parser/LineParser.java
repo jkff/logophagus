@@ -21,13 +21,13 @@ public class LineParser implements Parser {
 				//break ;
 			
 			//if record ends with eof and not with '\n'
-			//we must check what exactly we read()
+			//we must check what exactly we read
 			//log can be like that one:
 			//....
 			//data data data...'\n'
 			//"				  "'\eof'
 			
-			if (!Character.isWhitespace((char)i))
+			if (!Character.isWhitespace(i))
 				++realData;
 			offset++;
 		}

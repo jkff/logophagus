@@ -20,7 +20,7 @@ import java.util.Map;
 public class MappedFile implements RandomAccessFileIO {
 
 	private class Buffer {
-		int refCount;
+		private int refCount;
 		byte[] buf;
 		long segmentPosition;
 
@@ -69,7 +69,8 @@ public class MappedFile implements RandomAccessFileIO {
 //            System.out.println("Buffer miss at " + segmentPosition);
             if (base2buf.size() >= maxBuffers) {
 //                System.out.println("Not enough buffers");
-                while(true) {
+            //need reconstruct
+            	while(true) {
                     garbageCollectBuffers();
                     if(base2buf.size() >= maxBuffers)
                         wait();
@@ -93,7 +94,7 @@ public class MappedFile implements RandomAccessFileIO {
             Buffer b = new Buffer(buf, segmentPosition);
             base2buf.put(segmentPosition, b);
             rafChannel.close();
-
+            
             notifyAll();
             return b;
 
@@ -125,7 +126,7 @@ public class MappedFile implements RandomAccessFileIO {
 		// Does nothing if 'newOffset' lies in 'buf',
 		// otherwise frees 'buf' and allocates a new buffer.
 		public Buffer move(Buffer buf, long newOffset) throws IOException,InterruptedException {
-			if (buf.segmentPosition <= newOffset && newOffset <= buf.segmentPosition + buf.buf.length) {
+			if (buf.segmentPosition <= newOffset && newOffset < buf.segmentPosition + buf.buf.length) {
 				return buf;
 			} else {
 				releaseBuffer(buf);
@@ -135,7 +136,7 @@ public class MappedFile implements RandomAccessFileIO {
 
 		BufferPool(long bufSize, int maxBuffers) throws FileNotFoundException {
 			this.bufSize = bufSize;
-            System.out.println("Creating bufferPool");
+//            System.out.println("Creating bufferPool");
 			this.fileSize = new File(fileName).length();
 			this.raf = new RandomAccessFile(fileName, "r");
 			this.maxBuffers = maxBuffers;
@@ -149,7 +150,7 @@ public class MappedFile implements RandomAccessFileIO {
 
 	public MappedFile(String fileName) throws FileNotFoundException {
 		this.fileName = fileName;
-		this.bufferPool = new BufferPool(1048576, 100);
+		this.bufferPool = new BufferPool(1000000, 1);
 	}
 
 	public ScrollableInputStream getInputStreamFrom(final long offset) throws IOException {
@@ -174,10 +175,11 @@ public class MappedFile implements RandomAccessFileIO {
 			public void scrollTo(long newOffset) throws IOException {
 				try {
 					this.buf = bufferPool.move(this.buf, newOffset);
-					this.offsetInBuffer = (int)(newOffset - this.buf.segmentPosition);
 				} catch (InterruptedException e){
 					throw new IOException("InterruptedException in bufferPool.move()");
 				}
+				this.offsetInBuffer = (int)(newOffset - this.buf.segmentPosition);
+
 			}
             //relative scroll
 			@Override
@@ -186,12 +188,12 @@ public class MappedFile implements RandomAccessFileIO {
 				long scrolled=0;
 				long curFilePos = this.offsetInBuffer + this.buf.segmentPosition;
 				try {
-					if (curFilePos < offset) {
+					if (curFilePos <= offset) {
 						scrolled = curFilePos;
-						this.buf = bufferPool.move(buf, 0L);
+						this.buf = bufferPool.move(this.buf, 0L);
 						this.offsetInBuffer = 0;
 					} else {
-						this.buf = bufferPool.move(buf, curFilePos - offset);
+						this.buf = bufferPool.move(this.buf, curFilePos - offset);
 						this.offsetInBuffer = (int)(curFilePos - offset - this.buf.segmentPosition);
 						scrolled = offset;
 					}
@@ -201,18 +203,19 @@ public class MappedFile implements RandomAccessFileIO {
 				return scrolled;
 				
 			}
+			
             //relative scroll
 			@Override
 			public long scrollForward(long offset) throws IOException{
 				ensureOpen();
-				long maxOffset = bufferPool.fileSize;
+				long maxOffset = bufferPool.fileSize-1;
 				long curFilePos = this.offsetInBuffer + this.buf.segmentPosition;
 				long scrolled;
 				try {
 					if (curFilePos + offset > maxOffset) {
 						scrolled = maxOffset - curFilePos;
 						this.buf = bufferPool.move(buf, maxOffset);
-						this.offsetInBuffer = this.buf.buf.length;
+						this.offsetInBuffer = this.buf.buf.length-1;
 					} else {
 						this.buf = bufferPool.move(buf, curFilePos + offset);
 						this.offsetInBuffer = (int)(curFilePos + offset - this.buf.segmentPosition);
@@ -227,36 +230,45 @@ public class MappedFile implements RandomAccessFileIO {
 			@Override
 			public int read() throws IOException{
 				ensureOpen();
-                if(isAtEOF()) return -1;
-                return this.buf.buf[this.offsetInBuffer++];
+                if (this.offsetInBuffer == this.buf.buf.length-1) {
+                	int temp = this.buf.buf[this.offsetInBuffer];
+                	if (!shiftNextBuffer()){
+                		return -1;
+                	}
+                	return temp;
+                }
+            	return this.buf.buf[this.offsetInBuffer++];                
 			}
             
             //relative read
 			@Override
 			public int read(byte[] b) throws IOException {				
 				int needToRead = b.length;
-				int bytesRead;
+				int bytesRead=0;
 				do {
-                    // Rewrite with System.arraycopy()
-					int availableInCurBuffer = this.buf.buf.length - this.offsetInBuffer;
-                    bytesRead = Math.min(needToRead, availableInCurBuffer);
-                    System.arraycopy(this.buf.buf, this.offsetInBuffer, b, 0, bytesRead);
-                    this.offsetInBuffer += bytesRead;
-                    needToRead -= bytesRead;
+                 	int availableInCurBuffer = this.buf.buf.length - this.offsetInBuffer;
+                    int delta = Math.min(needToRead, availableInCurBuffer);
+                 	System.arraycopy(this.buf.buf, this.offsetInBuffer, b, bytesRead , delta);
+                    bytesRead += delta;
+                    this.offsetInBuffer += delta;
+                    needToRead -= delta;
                     if (availableInCurBuffer < needToRead) {
-                        if (!shiftBuffer()) return 0;
+                        if (!shiftNextBuffer()) { 
+                        	this.offsetInBuffer = this.buf.buf.length-1;
+                        	return 0;
+                        }
                     }
                 } while (needToRead > 0);
 				
 				return  bytesRead;
+
 			}
 
-            private boolean shiftBuffer() throws IOException {
+            private boolean shiftNextBuffer() throws IOException {
                 if (isAtEOF())
                     return false;
-
                 try {
-                    this.buf = bufferPool.move(this.buf, this.buf.segmentPosition + this.offsetInBuffer + 1);
+                    this.buf = bufferPool.move(this.buf, this.buf.segmentPosition + this.buf.buf.length );
                 }catch (InterruptedException e){
                     throw new IOException("InterruptedException from bufferPool.move()");
                 }
@@ -265,7 +277,7 @@ public class MappedFile implements RandomAccessFileIO {
             }
 
             private boolean isAtEOF() {
-                return this.buf.segmentPosition + this.offsetInBuffer == bufferPool.fileSize;
+                return this.buf.segmentPosition + this.offsetInBuffer == bufferPool.fileSize-1;
             }
 
             @Override

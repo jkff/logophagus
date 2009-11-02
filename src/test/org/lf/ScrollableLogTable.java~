@@ -1,4 +1,4 @@
-package org.lf;
+package test.org.lf;
 
 import org.lf.parser.*;
 

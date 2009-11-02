@@ -31,21 +31,17 @@ public class FilteredLog implements Log {
             pos = underlyingLog.next(pos);
             if(pos.equals(underlyingLog.getEnd()) || filter.accepts(readRecord(pos)))
                 return pos;
-        }
+        }	
 	}
+	
 	private Position seekBackward(Position pos) throws IOException {
-        // Decrease code analogously
 		Position temp = pos;
 		while (true){
-			if (!pos.equals(underlyingLog.prev(pos))){
-				pos = underlyingLog.prev(pos);
-				if (filter.accepts(readRecord(pos))){
-					return pos;
-				}
-			} else {
-				return temp;
-			}
-			
+			if (pos.equals(underlyingLog.prev(pos)))
+				return temp;		
+			pos = underlyingLog.prev(pos);
+			if (filter.accepts(readRecord(pos)))
+				return pos;
 		}
 	}
 
