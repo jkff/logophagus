@@ -14,4 +14,7 @@ public interface Log {
 	public Position prev(Position pos) throws IOException;
 
 	public Record readRecord(Position pos) throws IOException;
+	
+    public String toString();
+	
 }

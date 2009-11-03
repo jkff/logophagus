@@ -5,6 +5,12 @@ import org.lf.io.RandomAccessFileIO;
 import java.io.IOException;
 
 public class FileBackedLog implements Log {
+	@Override
+	public String toString() {
+		String fileName = file.getFileName(); 
+		return fileName.substring(fileName.lastIndexOf("/") + 1, fileName.length());
+	}
+
 	private static class PhysicalPosition implements Position {
 		long offsetBytes;
 
@@ -58,4 +64,6 @@ public class FileBackedLog implements Log {
 		}
 		return new PhysicalPosition(pp.offsetBytes - offset);
 	}
+
+	
 }

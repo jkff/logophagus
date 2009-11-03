@@ -1,4 +1,4 @@
-package org.lf;
+package test.org.lf;
 
 import org.lf.parser.*;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChangeListener {
+public class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChangeListener, LogPlugin {
 	private JButton startButton;
 	private JButton endButton;
 	private JButton prevButton;
@@ -24,6 +24,10 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 	private Log log;
 	private ArrayList<Record> result;
 	private Position curPos;
+	
+	public String toSting() {
+		return log.toString();
+	}
 
 	private class LogTableModel extends AbstractTableModel {
 		public int getColumnCount() {
@@ -193,6 +197,7 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 				progressBar.setValue((Integer)evt.getNewValue());
 		}
 	}
+
 
 }
 

@@ -56,4 +56,8 @@ public class FilteredLog implements Log {
 	public Record readRecord(Position pos) throws IOException {
 		return underlyingLog.readRecord(pos);
 	}
+
+	public String toString(){
+		return underlyingLog.toString() + " } filter : " + filter.toString();
+	}
 }

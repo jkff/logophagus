@@ -1,4 +1,4 @@
-package org.lf;
+package test.org.lf;
 
 import org.lf.parser.*;
 import org.lf.util.Filter;
@@ -15,39 +15,36 @@ public class GUILogTest  {
 	private Log log2;
 	
 	GUILogTest(){
-		try {
-			Log base = new FileBackedLog("test-data/test3", new LineParser());
-
-			log1 = new FilteredLog(new Filter<Record>() {
-				public boolean accepts(Record record) {
-					return record.toString().contains("12");
-				}
-			}, base);
-			
+//		try {
+//			Log base = new FileBackedLog("test3", new LineParser());
+//
+//			log1 = new FilteredLog(new Filter<Record>() {
+//				public boolean accepts(Record record) {
+//					return record.toString().contains("12");
+//				}
+//			}, base);
+//			
 //			log2 = new FilteredLog(new Filter<Record>() {
 //				public boolean accepts(Record record) {
 //					return record.toString().contains("124");
 //				}
 //			}, base);
 //			
-			log2 = base;
+//			log2 = base;
 			JFrame jfrm = new JFrame("Log table");
-			jfrm.setLayout(new GridLayout(1,2));
+			jfrm.setLayout(new GridLayout(1,0));
 			jfrm.setMinimumSize(new Dimension(700,300));
 			jfrm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			
-			ScrollableLogTable logGUI1 = new ScrollableLogTable(log1);
-			ScrollableLogTable logGUI2 = new ScrollableLogTable(log2);
-			jfrm.add(logGUI1);
-			jfrm.add(logGUI2);
+			jfrm.add(new GUILogTreeView());
 			jfrm.setVisible(true);
 		
-		}catch (FileNotFoundException e){
-			e.printStackTrace();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+//		}catch (FileNotFoundException e){
+//			e.printStackTrace();
+//		}
+//		catch (IOException e) {
+//			e.printStackTrace();
+//		}
 
 
 		

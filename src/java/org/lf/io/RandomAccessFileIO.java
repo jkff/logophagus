@@ -8,6 +8,7 @@ import org.lf.parser.ScrollableInputStream;
  * User: jkff Date: Oct 13, 2009 Time: 3:22:34 PM
  */
 public interface RandomAccessFileIO {
+	String getFileName();
 	ScrollableInputStream getInputStreamFrom(long offset) throws IOException;
 	long length() throws IOException;
 }

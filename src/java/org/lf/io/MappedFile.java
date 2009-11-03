@@ -136,7 +136,6 @@ public class MappedFile implements RandomAccessFileIO {
 
 		BufferPool(long bufSize, int maxBuffers) throws FileNotFoundException {
 			this.bufSize = bufSize;
-//            System.out.println("Creating bufferPool");
 			this.fileSize = new File(fileName).length();
 			this.raf = new RandomAccessFile(fileName, "r");
 			this.maxBuffers = maxBuffers;
@@ -150,7 +149,7 @@ public class MappedFile implements RandomAccessFileIO {
 
 	public MappedFile(String fileName) throws FileNotFoundException {
 		this.fileName = fileName;
-		this.bufferPool = new BufferPool(1000000, 1);
+		this.bufferPool = new BufferPool(100000, 100);
 	}
 
 	public ScrollableInputStream getInputStreamFrom(final long offset) throws IOException {
@@ -318,5 +317,9 @@ public class MappedFile implements RandomAccessFileIO {
 
 	public long length() {
 		return this.bufferPool.fileSize;
+	}
+
+	public String getFileName() {
+		return fileName;
 	}
 }
