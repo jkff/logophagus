@@ -22,6 +22,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -41,12 +42,12 @@ import org.lf.parser.Record;
 import org.lf.util.Filter;
 
 public class GUILogTreeView extends JFrame implements TreeSelectionListener {
-	JTree jTree;
+	private JTree jTree;
 	DefaultMutableTreeNode rootNode;
 	DefaultTreeModel treeModel;
 	JPanel pluginPanel;
 	
-	public GUILogTreeView() {
+	private GUILogTreeView() {
 		super("Log table");		
 		setMinimumSize(new Dimension(700,300));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,7 +66,7 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 		
 		
 		jTree.addMouseListener(new MouseAdapter() {
-		     public void mousePressed(MouseEvent e) {
+		     public void mousePressed(final MouseEvent e) {
 		         final TreePath selPath = jTree.getPathForLocation(e.getX(), e.getY());
 		         if(e.getClickCount() == 2) {
 		        	 if (selPath==null){
@@ -73,6 +74,36 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 		        	 } else {
 		        		 new FilterSetUp((NodePlugin)selPath.getLastPathComponent());
 		        	 }
+		         } else if(e.getButton()==MouseEvent.BUTTON3){
+		        	 
+		        	 JMenuItem itemAdd = new JMenuItem("Add");
+
+		        	 itemAdd.addActionListener(new ActionListener() {
+		        		 public void actionPerformed(ActionEvent arg0) {
+		        			 final TreePath selPath = jTree.getPathForLocation(e.getX(), e.getY());
+		        			 if (selPath==null){
+		        				 openFile();
+		        			 } else {
+		        				 new FilterSetUp((NodePlugin)selPath.getLastPathComponent());
+		        			 }
+		        		 }
+		        	 });
+		        	 
+		        	 JMenuItem itemDelete = new JMenuItem("Delete");
+		        	 itemDelete.addActionListener(new ActionListener() {
+		        		 public void actionPerformed(ActionEvent arg0) {
+		        			 final TreePath selPath = jTree.getPathForLocation(e.getX(), e.getY());
+		        			 pluginPanel.removeAll();
+		        			 pluginPanel.updateUI();
+		        			 treeModel.removeNodeFromParent((NodePlugin)selPath.getLastPathComponent());
+		        		 }
+		        	 });
+		        	 JPopupMenu popMenu = new JPopupMenu();
+		        	 popMenu.add(itemAdd);
+		        	 if (selPath != null) {
+		        		 popMenu.add(itemDelete);
+		        	 }
+		        	 popMenu.show(jTree, e.getX(), e.getY());
 		         }
 		     }
 		 });
@@ -86,7 +117,7 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setRightComponent(pluginPanel);
 		splitPane.setLeftComponent(treePanel);
-		splitPane.setDividerLocation(200); 
+		splitPane.setDividerLocation(250); 
 
 		splitPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 
@@ -172,7 +203,7 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
         }
     };
     
-	private void openFile(){
+	void openFile(){
 	    JFileChooser fileOpen = new JFileChooser();
         fileOpen.showOpenDialog(GUILogTreeView.this);
 		File f = fileOpen.getSelectedFile();
@@ -192,7 +223,7 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 	
 	
 
-    public DefaultMutableTreeNode addNode(DefaultMutableTreeNode parent, DefaultMutableTreeNode child) {
+    private DefaultMutableTreeNode addNode(DefaultMutableTreeNode parent, DefaultMutableTreeNode child) {
         if (parent == null) 
             parent = rootNode;
 	
