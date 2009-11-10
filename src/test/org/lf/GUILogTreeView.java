@@ -234,9 +234,11 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 
 	public void valueChanged(TreeSelectionEvent arg0) {
 		pluginPanel.removeAll();
-        NodePlugin node = (NodePlugin)jTree.getLastSelectedPathComponent();
-        pluginPanel.add((JPanel)node.getPlugin());
-        pluginPanel.updateUI();
+		NodePlugin node = (NodePlugin)jTree.getLastSelectedPathComponent();
+        if (node != null){
+        	pluginPanel.add((JPanel)node.getPlugin());
+        	pluginPanel.updateUI();
+        }
 	}
 
 
