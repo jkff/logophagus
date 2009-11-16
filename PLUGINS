@@ -1,0 +1,64 @@
+// - Log format parsers are plugins
+ - Analysis methods are plugins (for instance: filter by substring)
+   - Typed functions, maybe with several arguments:
+      - Open log from file: 0-argument
+      - Filter log by substring: 1-argument
+      - Compare (diff) logs: 2-argument
+   - Activated as follows:
+      - Select several nodes in the tree
+      - Right-click on one of them
+      - A menu pops up that lists analysis plugins that may produce something out of this set of nodes.
+           
+           read: "java reflection" 
+
+  interface AnalysisPlugin {
+      Class[] getInputTypes();
+      Class getOutputType();
+
+      Object applyTo(Object[] args);
+
+      String getName();
+  }
+
+  class FilterBySubstringPlugin implements AnalysisPlugin {
+    Class[] getInputTypes() {
+        return new Class[] {Log.class};
+    }
+    Class getOutputType() {
+        return Log.class;
+    }
+    Object applyTo(Object[] args) {
+        Log log = args[0];
+        return new FilteredLog(log, askStringFromUser());
+    }
+    String getName() {
+        return "Filter by substring";
+    }
+  }
+
+  class SideBySidePlugin implements AnalysisPlugin {
+    // two logs
+  }
+
+ - Display methods are plugins (for instance: display as a table)
+  
+ interface DisplayPlugin {
+    Class getInputType();
+    JComponent createView(Object data)
+ }
+
+ class ViewLogAsTable implements DisplayPlugin {
+    Class getInputType() {
+        return Log.class;
+    }
+    JComponent createView(Object data) {
+        Log log = (Log)data;
+
+        return new ScrollableLogTable(log);
+    }
+ }
+
+ class ViewSideBySide implements DisplayPlugin {
+    
+ }
+
