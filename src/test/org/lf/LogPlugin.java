@@ -1,4 +1,4 @@
-package test.org.lf;
+package org.lf;
 
 public interface LogPlugin {
 	String toSting();
