@@ -184,7 +184,7 @@ public class MappedFile implements RandomAccessFileIO {
 			@Override
 			public long scrollBack(long offset) throws IOException {
 				ensureOpen();
-				long scrolled=0;
+				long scrolled;
 				long curFilePos = this.offsetInBuffer + this.buf.segmentPosition;
 				try {
 					if (curFilePos <= offset) {

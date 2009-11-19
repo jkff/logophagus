@@ -1,3 +1,12 @@
+Loading plugins on startup:
+    Look into 'plugins' folder for .jar files
+    In each .jar file, look for classes that implement AnalysisPlugin or DisplayPlugin.
+    Register each of them in the corresponding repository.
+
+    Use JarClassLoader for loading classes from .jar's
+
+
+
 // - Log format parsers are plugins
  - Analysis methods are plugins (for instance: filter by substring)
    - Typed functions, maybe with several arguments:
@@ -31,6 +40,7 @@
         Log log = args[0];
         return new FilteredLog(log, askStringFromUser());
     }
+
     String getName() {
         return "Filter by substring";
     }
@@ -61,4 +71,6 @@
  class ViewSideBySide implements DisplayPlugin {
     
  }
+
+ To display a data object, the first DisplayPlugin applicable to it is chosen automatically.
 

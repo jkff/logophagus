@@ -53,7 +53,7 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setJMenuBar(createMenuBar());
 		
-	
+	        
 		rootNode = new DefaultMutableTreeNode("All logs");
 		treeModel = new DefaultTreeModel(rootNode);
 		
