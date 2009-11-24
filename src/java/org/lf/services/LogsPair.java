@@ -9,4 +9,7 @@ public class LogsPair{
 		this.first = first;
 		this.second = second;
 	}
+	public String toString(){
+		return first.toString()+" && "+second.toString();
+	}
 }

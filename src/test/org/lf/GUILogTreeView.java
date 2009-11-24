@@ -200,7 +200,7 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 		}
 		
 		public String toString() {
-			return aPlugin.getName();
+			return data.toString();
 		}
 
 	}
