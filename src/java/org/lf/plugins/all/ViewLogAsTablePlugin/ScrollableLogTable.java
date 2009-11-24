@@ -1,4 +1,4 @@
-package org.lf;
+package org.lf.plugins.all.ViewLogAsTablePlugin;
 
 import org.lf.parser.*;
 
@@ -12,8 +12,7 @@ import java.beans.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
-public class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChangeListener, LogPlugin {
+class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChangeListener {
 	private JButton startButton;
 	private JButton endButton;
 	private JButton prevButton;
@@ -25,10 +24,6 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 	private ArrayList<Record> result;
 	private Position curPos;
 	
-	public String toSting() {
-		return log.toString();
-	}
-
 	private class LogTableModel extends AbstractTableModel {
 		public int getColumnCount() {
 			return 1;

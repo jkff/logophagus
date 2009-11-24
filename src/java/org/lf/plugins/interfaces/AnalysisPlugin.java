@@ -1,4 +1,4 @@
-package org.lf.plugins;
+package org.lf.plugins.interfaces;
 
 public interface AnalysisPlugin {
     Class[] getInputTypes();

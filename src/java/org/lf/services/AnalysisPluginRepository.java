@@ -1,9 +1,8 @@
 package org.lf.services;
 
-
-import org.lf.plugins.AnalysisPlugin;
-
 import java.util.*;
+
+import org.lf.plugins.interfaces.AnalysisPlugin;
 
 public class AnalysisPluginRepository {
     private static AnalysisPluginRepository instance;
@@ -27,9 +26,9 @@ public class AnalysisPluginRepository {
     }
 
     private static boolean areCompatible(Class[] formalParamTypes, Object[] actualParams) {
-        if(formalParamTypes.length != actualParams.length)
+    	if(formalParamTypes.length != actualParams.length)
             return false;
-        for(int i = 0; i < actualParams.length; ++i) {
+    	for(int i = 0; i < actualParams.length; ++i) {
             if(actualParams[i] != null && !formalParamTypes[i].isInstance(actualParams[i]))
                 return false;
         }

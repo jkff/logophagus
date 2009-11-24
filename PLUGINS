@@ -57,7 +57,7 @@ Loading plugins on startup:
     JComponent createView(Object data)
  }
 
- class ViewLogAsTable implements DisplayPlugin {
+ class ViewLogAsTablePlugin implements DisplayPlugin {
     Class getInputType() {
         return Log.class;
     }

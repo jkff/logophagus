@@ -6,18 +6,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -25,7 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -34,12 +27,16 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.lf.parser.FileBackedLog;
-import org.lf.parser.FilteredLog;
-import org.lf.parser.LineParser;
-import org.lf.parser.Log;
-import org.lf.parser.Record;
-import org.lf.util.Filter;
+import org.lf.plugins.all.FileBackedLogPlugin.FileBackedLogPlugin;
+import org.lf.plugins.all.FilterBySubstringPlugin.FilterBySubstringPlugin;
+import org.lf.plugins.all.SideBySidePlugin.SideBySidePlugin;
+import org.lf.plugins.all.ViewLogAsTablePlugin.ViewLogAsTablePlugin;
+import org.lf.plugins.all.ViewSideBySidePlugin.ViewSideBySidePlugin;
+import org.lf.plugins.interfaces.*;
+import org.lf.services.AnalysisPluginRepository;
+import org.lf.services.DisplayPluginRepository;
+import org.lf.services.PluginException;
+
 
 public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 	private JTree jTree;
@@ -48,65 +45,30 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 	JPanel pluginPanel;
 	
 	private GUILogTreeView() {
-		super("Log table");		
+		super("Logophagus");		
 		setMinimumSize(new Dimension(700,300));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setJMenuBar(createMenuBar());
+        setJMenuBar(generateMenuBar());
 		
-	        
 		rootNode = new DefaultMutableTreeNode("All logs");
 		treeModel = new DefaultTreeModel(rootNode);
 		
 		jTree = new JTree(treeModel);
 		jTree.setRootVisible(false);
 
-		jTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		jTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 		
 		jTree.addTreeSelectionListener(this);
 		
 		
 		jTree.addMouseListener(new MouseAdapter() {
 		     public void mousePressed(final MouseEvent e) {
-		         final TreePath selPath = jTree.getPathForLocation(e.getX(), e.getY());
-		         if(e.getClickCount() == 2) {
-		        	 if (selPath==null){
-		        		openFile();
-		        	 } else {
-		        		 new FilterSetUp((NodePlugin)selPath.getLastPathComponent());
-		        	 }
-		         } else if(e.getButton()==MouseEvent.BUTTON3){
-		        	 
-		        	 JMenuItem itemAdd = new JMenuItem("Add");
-
-		        	 itemAdd.addActionListener(new ActionListener() {
-		        		 public void actionPerformed(ActionEvent arg0) {
-		        			 final TreePath selPath = jTree.getPathForLocation(e.getX(), e.getY());
-		        			 if (selPath==null){
-		        				 openFile();
-		        			 } else {
-		        				 new FilterSetUp((NodePlugin)selPath.getLastPathComponent());
-		        			 }
-		        		 }
-		        	 });
-		        	 
-		        	 JMenuItem itemDelete = new JMenuItem("Delete");
-		        	 itemDelete.addActionListener(new ActionListener() {
-		        		 public void actionPerformed(ActionEvent arg0) {
-		        			 final TreePath selPath = jTree.getPathForLocation(e.getX(), e.getY());
-		        			 pluginPanel.removeAll();
-		        			 pluginPanel.updateUI();
-		        			 treeModel.removeNodeFromParent((NodePlugin)selPath.getLastPathComponent());
-		        		 }
-		        	 });
-		        	 JPopupMenu popMenu = new JPopupMenu();
-		        	 popMenu.add(itemAdd);
-		        	 if (selPath != null) {
-		        		 popMenu.add(itemDelete);
-		        	 }
+		         if(e.getButton() == MouseEvent.BUTTON3 ){
+		        	 JPopupMenu popMenu = generatePopUp();
 		        	 popMenu.show(jTree, e.getX(), e.getY());
 		         }
 		     }
-		 });
+		});
 		 
 		
 		JPanel treePanel = new JPanel(new BorderLayout());
@@ -126,14 +88,67 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 		setVisible(true);
 	}
 	
-	private JMenuBar createMenuBar(){
+	private JPopupMenu generatePopUp() {
+		final TreePath[] selPaths = jTree.getSelectionPaths();
+
+		JPopupMenu popMenu = new JPopupMenu();
+		final List<Object> analysisArgs = new LinkedList<Object>();
+
+		if (selPaths != null) { 
+			for (int i=0; i < selPaths.length; ++i){
+				DefaultMutableTreeNode cur = (DefaultMutableTreeNode)(selPaths[i].getLastPathComponent());
+				NodeData data = (NodeData)(cur.getUserObject());
+				analysisArgs.add(data.data);
+			}
+		}
+
+		AnalysisPluginRepository apr = AnalysisPluginRepository.getInstance();
+		List<AnalysisPlugin> availablePlugins = apr.getApplicableAnalysisPlugins(selPaths == null ? new Object[]{}:analysisArgs.toArray());
+
+		for (int i=0; i < availablePlugins.size(); ++i){
+			final AnalysisPlugin aPlugin = availablePlugins.get(i);
+			JMenuItem itemPlugin = new JMenuItem(selPaths==null? "Add "+ aPlugin.getName():"Apply "+aPlugin.getName());
+			itemPlugin.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					Object res = aPlugin.applyTo(analysisArgs.toArray());
+					if (res != null) {
+						DisplayPluginRepository dpr = DisplayPluginRepository.getInstance();
+						List<DisplayPlugin> availabaleDisplays = dpr.getApplicableDisplayPlugins(res);
+						addNode((analysisArgs.size() == 1 ? (DefaultMutableTreeNode)(selPaths[0].getLastPathComponent()) : rootNode) , new DefaultMutableTreeNode(new NodeData(res, availabaleDisplays.get(0).createView(res), aPlugin,availabaleDisplays.get(0))));
+					}
+				}
+			});
+			popMenu.add(itemPlugin);
+		}
+
+		if (selPaths != null) {
+			popMenu.addSeparator();
+			JMenuItem itemDelete = new JMenuItem("Delete");
+			itemDelete.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					pluginPanel.removeAll();
+					for (int i=0; i< selPaths.length; ++i){
+						treeModel.removeNodeFromParent(((DefaultMutableTreeNode)selPaths[i].getLastPathComponent()));
+					}
+				}
+			});
+
+			popMenu.add(itemDelete);
+		}
+		return popMenu;
+	}
+
+	private JMenuBar generateMenuBar(){
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu menuFile = new JMenu("File");
 		JMenuItem fileOpen = new JMenuItem("Open");
 		fileOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				openFile();
+				AnalysisPlugin logPlugin = new FileBackedLogPlugin();
+				Object log = logPlugin.applyTo(new Object[]{});
+				DisplayPlugin disp = DisplayPluginRepository.getInstance().getApplicableDisplayPlugins(log).get(0);
+				addNode(rootNode, new DefaultMutableTreeNode(new NodeData(log, disp.createView(log), logPlugin, disp)));				
 			}
 		});
 		
@@ -150,83 +165,9 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 		return menuBar;
 	}
 	
-	private class FilterSetUp extends JFrame implements ActionListener{
-		private NodePlugin parent;
-		private JTextField text;
-		
-		FilterSetUp(NodePlugin parent) {
-			super("Write filter string");
-			this.parent = parent;
-			this.addWindowListener(closeWindow);
-			JPanel panel = new JPanel();
-			panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
-			JLabel label = new JLabel("Enter filter string:");
-			text = new JTextField(20);
-			
-			JButton button = new  JButton("Ok");
-			button.setActionCommand("ok");
-			
-			button.addActionListener(this);
-
-			panel.add(label,BorderLayout.PAGE_START);
-			panel.add(text,BorderLayout.CENTER);
-			panel.add(button,BorderLayout.PAGE_END);
-			
-			add(panel);
-			
-			this.setAlwaysOnTop(true);
-			this.setMinimumSize(new Dimension(300,120));
-			this.setVisible(true);
-			
-		}
-
-		public void actionPerformed(final ActionEvent e) {
-			if (e.getActionCommand().equals("ok")){
-				Log log = new FilteredLog(new Filter<Record>() {
-					public boolean accepts(Record record) {
-						return record.toString().contains(text.getText());
-					}
-					public String toString(){
-						return text.getText();
-					}
-				}, parent.getLog());
-				addNode( parent, new NodePlugin(log, new ScrollableLogTable(log)) );
-				this.dispose();
-			}
-	
-		}
-	}
-	
-	private static WindowListener closeWindow = new WindowAdapter() {
-        public void windowClosing(WindowEvent e) {
-            e.getWindow().dispose();
-        }
-    };
-    
-	void openFile(){
-	    JFileChooser fileOpen = new JFileChooser();
-        fileOpen.showOpenDialog(GUILogTreeView.this);
-		File f = fileOpen.getSelectedFile();
-		try {
-			if (f != null ){
-				Log log = new FileBackedLog(f.getAbsolutePath(), new LineParser());
-				addNode(rootNode , new NodePlugin(log, new ScrollableLogTable(log)));
-			}
-		}catch (FileNotFoundException e){
-			e.printStackTrace();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-	
-	
-
     private DefaultMutableTreeNode addNode(DefaultMutableTreeNode parent, DefaultMutableTreeNode child) {
         if (parent == null) 
             parent = rootNode;
-	
         treeModel.insertNodeInto(child, parent, parent.getChildCount());
         jTree.scrollPathToVisible(new TreePath(child.getPath()));
         return child;
@@ -234,50 +175,55 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 
 	public void valueChanged(TreeSelectionEvent arg0) {
 		pluginPanel.removeAll();
-		NodePlugin node = (NodePlugin)jTree.getLastSelectedPathComponent();
-        if (node != null){
-        	pluginPanel.add((JPanel)node.getPlugin());
-        	pluginPanel.updateUI();
-        }
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)jTree.getLastSelectedPathComponent();
+		if (node != null) {
+			NodeData nodeData = (NodeData)node.getUserObject(); 
+			if (node != null){
+				pluginPanel.add(nodeData.jComponent);
+			}
+		}
+		pluginPanel.updateUI();
+
 	}
 
+	private class NodeData {
+		final public Object data;
+		final public JComponent jComponent;
+		final public AnalysisPlugin aPlugin;
+		final public DisplayPlugin dPlugin;
 
+		NodeData(Object data, JComponent jComponent, AnalysisPlugin aPlugin, DisplayPlugin dPlugin){
+			this.data = data;
+			this.jComponent = jComponent;
+			this.aPlugin = aPlugin;
+			this.dPlugin = dPlugin;
+		}
+		
+		public String toString() {
+			return aPlugin.getName();
+		}
+
+	}
 
 	public static void main(String[] args) {
-
+		AnalysisPluginRepository apr = AnalysisPluginRepository.getInstance();
+		DisplayPluginRepository dpr = DisplayPluginRepository.getInstance();
+		try {
+			apr.registerAnalysisPlugin(FileBackedLogPlugin.class);
+			apr.registerAnalysisPlugin(FilterBySubstringPlugin.class);
+			apr.registerAnalysisPlugin(SideBySidePlugin.class);
+			dpr.registerDisplayPlugin(ViewLogAsTablePlugin.class);
+			dpr.registerDisplayPlugin(ViewSideBySidePlugin.class);
+		} catch (PluginException e) {
+			System.out.println("Can't register plugin:" + FilterBySubstringPlugin.class);
+			e.printStackTrace();
+		}
+		
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				new GUILogTreeView();	
 			}
 		});
 	}
-
-
-	private class NodePlugin extends DefaultMutableTreeNode{
-		
-		private Log log;
-		private LogPlugin plugin;
-		
-		public NodePlugin(Log log, LogPlugin plugin){
-			super();
-			this.log = log;
-			this.plugin=plugin;
-		}
-		
-		@Override
-		public String toString() {
-			return log.toString();
-		}
-
-		public Log getLog() {
-			return log;
-		}
-		
-		public LogPlugin getPlugin() {
-			return plugin;
-		}
-		
-	}
-
 
 }
