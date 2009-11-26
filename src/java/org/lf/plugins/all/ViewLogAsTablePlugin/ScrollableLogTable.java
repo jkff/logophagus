@@ -10,6 +10,7 @@ import javax.swing.table.AbstractTableModel;
 
 import java.beans.*;
 import java.io.IOException;
+import java.util.List;
 import java.util.ArrayList;
 
 class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChangeListener {
@@ -19,9 +20,14 @@ class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChan
 	private JButton nextButton;
 	private JProgressBar progressBar;
 	private JTable table;
+	//this is for verification that there is only one NavigateTask that executed
+	private enum NavigateTaskState {
+		Busy, Free;
+	}
+	private NavigateTaskState taskState = NavigateTaskState.Free;
 	
 	private Log log;
-	private ArrayList<Record> result;
+	private List<Record> result;
 	private Position curPos;
 	
 	private class LogTableModel extends AbstractTableModel {
@@ -38,7 +44,13 @@ class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChan
 		}
 
 		public Object getValueAt(int row, int col) {
-			return result.get(row);
+			synchronized (result) {
+				if (result.size() > row){
+					return result.get(row);
+				} else {
+					return null;
+				}
+			} 
 		}
 	}
 	
@@ -70,7 +82,9 @@ class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChan
 		}
 
 		public void navigate(boolean directionForward, Position fromWhere) throws IOException {
-			result.clear();
+			synchronized (result) {
+				result.clear();				
+			}
 			int progress = 0;
 			setProgress(progress);
 
@@ -78,10 +92,12 @@ class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChan
 				if (!fromWhere.equals(directionForward ? log.next(fromWhere) : log.prev(fromWhere))) {
 					fromWhere = (directionForward ? log.next(fromWhere) : log.prev(fromWhere));
 					setProgress(++progress);
-					if (directionForward) {
-						result.add(result.size(),log.readRecord(fromWhere));
-					} else {
-						result.add(0,log.readRecord(fromWhere));
+					synchronized (result) {
+						if (directionForward) {
+							result.add(result.size(),log.readRecord(fromWhere));
+						} else {
+							result.add(0,log.readRecord(fromWhere));
+						}						
 					}
 				} else {
 					directionForward = !directionForward;
@@ -100,6 +116,7 @@ class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChan
 			endButton.setEnabled(true);
 			prevButton.setEnabled(true);
 			nextButton.setEnabled(true);
+			taskState = NavigateTaskState.Free;
 		}
 	}
 
@@ -145,20 +162,26 @@ class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChan
         table.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-            	switch(e.getKeyCode()) {
-                case KeyEvent.VK_PAGE_DOWN:
-                    new NavigateTask("next").execute();
-                    break;
-                case KeyEvent.VK_PAGE_UP:
-                    new NavigateTask("prev").execute();
-                    break;
-                case KeyEvent.VK_HOME:
-                    new NavigateTask("start").execute();
-                    break;
-                case KeyEvent.VK_END:
-                    new NavigateTask("end").execute();
-                    break;
-                }
+            	if (taskState == NavigateTaskState.Free){
+            		switch(e.getKeyCode()) {
+            		case KeyEvent.VK_PAGE_DOWN:
+            			taskState = NavigateTaskState.Busy;
+            			new NavigateTask("next").execute();
+            			break;
+            		case KeyEvent.VK_PAGE_UP:
+            			taskState = NavigateTaskState.Busy;
+            			new NavigateTask("prev").execute();
+            			break;
+            		case KeyEvent.VK_HOME:
+            			taskState = NavigateTaskState.Busy;
+            			new NavigateTask("start").execute();
+            			break;
+            		case KeyEvent.VK_END:
+            			taskState = NavigateTaskState.Busy;
+            			new NavigateTask("end").execute();
+            			break;
+            		}
+            	}
             }
         });
 
@@ -180,11 +203,10 @@ class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChan
 //		SwingWorker is only designed to be executed once. 
 //		Executing a SwingWorker more than once will not result in invoking the doInBackground method twice.
 //		So we need to create new NavigateTask
+		taskState = NavigateTaskState.Busy;
 		new NavigateTask(evt.getActionCommand()).execute();
 	}
 
-	
-	
 	// Invoked when NavigateTask's progress property changes
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals("progress")) {
