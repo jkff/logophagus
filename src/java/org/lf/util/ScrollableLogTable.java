@@ -1,4 +1,4 @@
-package org.lf.plugins.all.ViewSideBySidePlugin;
+package org.lf.util;
 
 import org.lf.parser.*;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
-class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChangeListener {
+public class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChangeListener {
 	private JButton startButton;
 	private JButton endButton;
 	private JButton prevButton;
@@ -36,7 +36,9 @@ class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChan
 		}
 
 		public int getRowCount() {
-			return result.size();
+			synchronized (result) {
+				return result.size();
+			}
 		}
 
 		public String getColumnName(int col) {
@@ -87,16 +89,18 @@ class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChan
 			}
 			int progress = 0;
 			setProgress(progress);
-
+			
 			for (int i = 0; i < 100; ++i) {
 				if (!fromWhere.equals(directionForward ? log.next(fromWhere) : log.prev(fromWhere))) {
-					fromWhere = (directionForward ? log.next(fromWhere) : log.prev(fromWhere));
 					setProgress(++progress);
 					synchronized (result) {
 						if (directionForward) {
 							result.add(result.size(),log.readRecord(fromWhere));
+							fromWhere = log.next(fromWhere);
 						} else {
-							result.add(0,log.readRecord(fromWhere));
+							//we always read forward , thats why go back firstly
+							fromWhere = log.prev(fromWhere);
+							result.add(0, log.readRecord(fromWhere));
 						}						
 					}
 				} else {
