@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 import org.lf.plugins.interfaces.DisplayPlugin;
 import org.lf.services.LogsPair;
+import org.lf.util.ScrollableLogTable;;
 
 public class ViewSideBySidePlugin implements DisplayPlugin {
 
