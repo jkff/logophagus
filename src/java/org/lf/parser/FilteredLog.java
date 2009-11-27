@@ -13,7 +13,7 @@ public class FilteredLog implements Log {
 
 	private final Log underlyingLog;
 
-	public FilteredLog(Filter<Record> filter, Log underlyingLog) {
+	public FilteredLog(Log underlyingLog, Filter<Record> filter) {
 		this.filter = filter;
 		this.underlyingLog = underlyingLog;
 	}

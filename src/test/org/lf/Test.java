@@ -16,12 +16,12 @@ public class Test {
 			Log fileLog = new FileBackedLog("test3", new LineParser());
 			
 			Log testLog = new FilteredLog(
-                    new Filter<Record>() {
+                    fileLog, new Filter<Record>() {
                         public boolean accepts(Record record) {
                             return record.toString().contains("123");
                         }
-                    },
-                    fileLog);
+                    }
+            );
 
             Log log = testLog;
 			
