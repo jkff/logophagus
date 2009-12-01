@@ -63,7 +63,7 @@
       <file leaf-file-name="GUILogTreeView.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/test/org/lf/ui/GUILogTreeView.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="84" column="8" selection-start="2832" selection-end="2832" vertical-scroll-proportion="0.5749129">
+            <state line="75" column="70" selection-start="2523" selection-end="2523" vertical-scroll-proportion="0.33972126">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -923,7 +923,7 @@
     </entry>
     <entry file="file:$TEMPLATE$/$PROJECT_DIR$/src/test/org/lf/ui/GUILogTreeView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="84" column="8" selection-start="2832" selection-end="2832" vertical-scroll-proportion="0.5749129">
+        <state line="75" column="70" selection-start="2523" selection-end="2523" vertical-scroll-proportion="0.33972126">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
