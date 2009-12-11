@@ -1,7 +1,7 @@
-package org.lf.plugins.all.SideBySidePlugin;
+package org.lf.plugins.analysis;
 
 import org.lf.parser.Log;
-import org.lf.plugins.interfaces.AnalysisPlugin;
+import org.lf.plugins.AnalysisPlugin;
 import org.lf.services.LogsPair;
 
 

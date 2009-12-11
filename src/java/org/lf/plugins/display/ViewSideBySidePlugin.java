@@ -1,15 +1,12 @@
-package org.lf.plugins.all.ViewSideBySidePlugin;
+package org.lf.plugins.display;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.lf.plugins.interfaces.DisplayPlugin;
+import org.lf.plugins.DisplayPlugin;
 import org.lf.services.LogsPair;
-import org.lf.util.ScrollableLogTable;;
 
 public class ViewSideBySidePlugin implements DisplayPlugin {
 

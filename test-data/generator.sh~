@@ -1,0 +1,6 @@
+#!/bin/bash
+for ((i=0; i <= 10000 ; i++))
+do
+	echo "$i , text$i, \\\"tex\\\"t$i$i, hello \"text+$i+
+ number\"  sdsdscvdsdvc , 1234fff";
+done

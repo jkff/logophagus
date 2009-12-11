@@ -1,10 +1,9 @@
-package org.lf.plugins.all.ViewLogAsTablePlugin;
+package org.lf.plugins.display;
 
 import javax.swing.JComponent;
 
 import org.lf.parser.Log;
-import org.lf.plugins.interfaces.DisplayPlugin;
-import org.lf.util.ScrollableLogTable;
+import org.lf.plugins.DisplayPlugin;
 
 public class ViewLogAsTablePlugin implements DisplayPlugin {
 

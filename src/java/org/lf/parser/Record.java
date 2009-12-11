@@ -1,13 +1,12 @@
 package org.lf.parser;
 
-public class Record {
-	private String rawValue;
 
-	public Record(String rawValue) {
-		this.rawValue = rawValue;
-	}
+public interface Record{
 
-	public String toString() {
-		return rawValue;
-	}
+	public String toString();
+
+	public int size();
+	
+	public String get(int index);
+	
 }

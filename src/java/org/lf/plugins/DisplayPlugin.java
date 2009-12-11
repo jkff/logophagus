@@ -1,4 +1,4 @@
-package org.lf.plugins.interfaces;
+package org.lf.plugins;
 
 import javax.swing.*;
 

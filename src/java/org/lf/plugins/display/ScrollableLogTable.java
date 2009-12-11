@@ -1,4 +1,4 @@
-package org.lf.util;
+package org.lf.plugins.display;
 
 import org.lf.parser.*;
 
@@ -32,7 +32,7 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 	
 	private class LogTableModel extends AbstractTableModel {
 		public int getColumnCount() {
-			return 1;
+			return 5;
 		}
 
 		public int getRowCount() {
@@ -42,16 +42,17 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 		}
 
 		public String getColumnName(int col) {
-			return "Record";
+			return "Field "+ col;
 		}
 
 		public Object getValueAt(int row, int col) {
 			synchronized (result) {
-				if (result.size() > row){
-					return result.get(row);
+				if (result.size() > row && result.get(row).size() > col){
+					return result.get(row).get(col);
 				} else {
 					return null;
 				}
+
 			} 
 		}
 	}

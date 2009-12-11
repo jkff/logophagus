@@ -225,7 +225,8 @@ public class MappedFile implements RandomAccessFileIO {
 				}
 				return scrolled;
 			}
-            //relative read
+
+			//relative read
 			@Override
 			public int read() throws IOException{
 				ensureOpen();
@@ -239,6 +240,7 @@ public class MappedFile implements RandomAccessFileIO {
             	return this.buf.buf[this.offsetInBuffer++];                
 			}
             
+			
             //relative read
 			@Override
 			public int read(byte[] b) throws IOException {				

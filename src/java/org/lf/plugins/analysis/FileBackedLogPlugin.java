@@ -1,14 +1,14 @@
-package org.lf.plugins.all.FileBackedLogPlugin;
+package org.lf.plugins.analysis;
 
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
 
+import org.lf.parser.CSVParser;
 import org.lf.parser.FileBackedLog;
-import org.lf.parser.LineParser;
 import org.lf.parser.Log;
-import org.lf.plugins.interfaces.AnalysisPlugin;
+import org.lf.plugins.AnalysisPlugin;
 
 public class FileBackedLogPlugin implements AnalysisPlugin {
 
@@ -16,18 +16,16 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 		JFileChooser fileOpen = new JFileChooser();
         fileOpen.showOpenDialog(null);
 		File f = fileOpen.getSelectedFile();
-		if (f != null){
-			Log log;
-			try {
-				log = new FileBackedLog(f.getAbsolutePath(), new LineParser());
-				return log;
-
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}else 
+		if (f == null)
 			return null;
+
+		try {
+			Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser('\n',',','"' , '\\' ));
+			return log;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public Class[] getInputTypes() {

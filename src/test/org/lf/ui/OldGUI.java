@@ -1,4 +1,4 @@
-package org.lf;
+package org.lf.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -27,24 +27,22 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.lf.plugins.all.FileBackedLogPlugin.FileBackedLogPlugin;
-import org.lf.plugins.all.FilterBySubstringPlugin.FilterBySubstringPlugin;
-import org.lf.plugins.all.SideBySidePlugin.SideBySidePlugin;
-import org.lf.plugins.all.ViewLogAsTablePlugin.ViewLogAsTablePlugin;
-import org.lf.plugins.all.ViewSideBySidePlugin.ViewSideBySidePlugin;
-import org.lf.plugins.interfaces.*;
+import org.lf.plugins.AnalysisPlugin;
+import org.lf.plugins.display.*;
+import org.lf.plugins.analysis.*;
+import org.lf.plugins.*;
 import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
 import org.lf.services.PluginException;
 
 
-public class GUILogTreeView extends JFrame implements TreeSelectionListener {
+public class OldGUI extends JFrame implements TreeSelectionListener {
 	private JTree jTree;
 	DefaultMutableTreeNode rootNode;
 	DefaultTreeModel treeModel;
 	JPanel pluginPanel;
 	
-	private GUILogTreeView() {
+	private OldGUI() {
 		super("Logophagus");		
 		setMinimumSize(new Dimension(700,300));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -102,8 +100,7 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 			}
 		}
 
-		AnalysisPluginRepository apr = AnalysisPluginRepository.getInstance();
-		List<AnalysisPlugin> availablePlugins = apr.getApplicableAnalysisPlugins(selPaths == null ? new Object[]{}:analysisArgs.toArray());
+		List<AnalysisPlugin> availablePlugins = AnalysisPluginRepository.getApplicablePlugins(selPaths == null ? new Object[]{}:analysisArgs.toArray());
 
 		for (int i=0; i < availablePlugins.size(); ++i){
 			final AnalysisPlugin aPlugin = availablePlugins.get(i);
@@ -112,9 +109,8 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 				public void actionPerformed(ActionEvent arg0) {
 					Object res = aPlugin.applyTo(analysisArgs.toArray());
 					if (res != null) {
-						DisplayPluginRepository dpr = DisplayPluginRepository.getInstance();
-						List<DisplayPlugin> availabaleDisplays = dpr.getApplicableDisplayPlugins(res);
-						addNode((analysisArgs.size() == 1 ? (DefaultMutableTreeNode)(selPaths[0].getLastPathComponent()) : rootNode) , new DefaultMutableTreeNode(new NodeData(res, availabaleDisplays.get(0).createView(res), aPlugin,availabaleDisplays.get(0))));
+						List<DisplayPlugin> availabaleDisplays = DisplayPluginRepository.getApplicablePlugins(res);
+						addNode((analysisArgs.size() == 1 ? (DefaultMutableTreeNode)(selPaths[0].getLastPathComponent()) : rootNode) , new DefaultMutableTreeNode(new NodeData(res, availabaleDisplays.get(0).createView(res))));
 					}
 				}
 			});
@@ -147,8 +143,8 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 			public void actionPerformed(ActionEvent arg0) {
 				AnalysisPlugin logPlugin = new FileBackedLogPlugin();
 				Object log = logPlugin.applyTo(new Object[]{});
-				DisplayPlugin disp = DisplayPluginRepository.getInstance().getApplicableDisplayPlugins(log).get(0);
-				addNode(rootNode, new DefaultMutableTreeNode(new NodeData(log, disp.createView(log), logPlugin, disp)));				
+				DisplayPlugin disp = DisplayPluginRepository.getApplicablePlugins(log).get(0);
+				addNode(rootNode, new DefaultMutableTreeNode(new NodeData(log, disp.createView(log))));				
 			}
 		});
 		
@@ -187,16 +183,12 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 	}
 
 	private class NodeData {
-		final public Object data;
-		final public JComponent jComponent;
-		final public AnalysisPlugin aPlugin;
-		final public DisplayPlugin dPlugin;
+		public final Object data;
+		public final JComponent jComponent;
 
-		NodeData(Object data, JComponent jComponent, AnalysisPlugin aPlugin, DisplayPlugin dPlugin){
+		NodeData(Object data, JComponent jComponent){
 			this.data = data;
 			this.jComponent = jComponent;
-			this.aPlugin = aPlugin;
-			this.dPlugin = dPlugin;
 		}
 		
 		public String toString() {
@@ -206,14 +198,12 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 	}
 
 	public static void main(String[] args) {
-		AnalysisPluginRepository apr = AnalysisPluginRepository.getInstance();
-		DisplayPluginRepository dpr = DisplayPluginRepository.getInstance();
 		try {
-			apr.registerAnalysisPlugin(FileBackedLogPlugin.class);
-			apr.registerAnalysisPlugin(FilterBySubstringPlugin.class);
-			apr.registerAnalysisPlugin(SideBySidePlugin.class);
-			dpr.registerDisplayPlugin(ViewLogAsTablePlugin.class);
-			dpr.registerDisplayPlugin(ViewSideBySidePlugin.class);
+			AnalysisPluginRepository.register(FileBackedLogPlugin.class);
+			AnalysisPluginRepository.register(FilterBySubstringPlugin.class);
+			AnalysisPluginRepository.register(SideBySidePlugin.class);
+			DisplayPluginRepository.register(ViewLogAsTablePlugin.class);
+			DisplayPluginRepository.register(ViewSideBySidePlugin.class);
 		} catch (PluginException e) {
 			System.out.println("Can't register plugin:" + FilterBySubstringPlugin.class);
 			e.printStackTrace();
@@ -221,7 +211,7 @@ public class GUILogTreeView extends JFrame implements TreeSelectionListener {
 		
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				new GUILogTreeView();	
+				new OldGUI();	
 			}
 		});
 	}
