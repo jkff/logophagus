@@ -8,20 +8,21 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-public class AdapterPopUpPluginDeleteToTreeModel implements ActionListener {
+public class DeleteSelectedNodesFromTree implements ActionListener {
 	private DefaultTreeModel treeModel;
 	private JTree jTree;
 
-	public AdapterPopUpPluginDeleteToTreeModel(DefaultTreeModel treeModel, JTree jTree) {
+    // TODO Pass only selection paths
+
+	public DeleteSelectedNodesFromTree(DefaultTreeModel treeModel, JTree jTree) {
 		this.treeModel = treeModel;
 		this.jTree = jTree;
 	}
-	
-	public void actionPerformed(ActionEvent e) {
-		TreePath[] selPaths = jTree.getSelectionPaths();
-		for (int i=0; i < selPaths.length; ++i){
-				treeModel.removeNodeFromParent(((DefaultMutableTreeNode)selPaths[i].getLastPathComponent()));
-			}
-	}
 
+    public void actionPerformed(ActionEvent e) {
+		TreePath[] selPaths = jTree.getSelectionPaths();
+        for (TreePath selPath : selPaths) {
+            treeModel.removeNodeFromParent(((DefaultMutableTreeNode) selPath.getLastPathComponent()));
+        }
+	}
 }

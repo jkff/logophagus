@@ -1,0 +1,3 @@
+Contains business logic, such as the logic of computing the contents 
+of a popup menu, given the selection, or creating a GUI component for
+displaying a data item.

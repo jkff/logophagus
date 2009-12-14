@@ -10,36 +10,28 @@ public class CSVParser implements Parser {
     public static final char DEFAULT_QUOTE_CHARACTER = '"';
     public static final char DEFAULT_ESCAPE_CHARACTER = '\\';
     
-	private Character recordDelimeter; 
-	private Character fieldDelimeter; 
-	private Character quoteCharacter; 
-	private Character escapeCharacter; 
-
-    
+	private char recordDelimeter;
+	private char fieldDelimeter;
+	private char quoteCharacter;
+	private char escapeCharacter;
 
     public CSVParser() {
         this(DEFAULT_RECORD_DELIMETER,DEFAULT_FIELD_DELIMETER, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
     }
 
-    public CSVParser(char fieldDilimeter) {
-        this(DEFAULT_RECORD_DELIMETER,fieldDilimeter, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
-    }
-
-    public CSVParser(char fieldDilimeter, char quoteCharacter) {
-        this(DEFAULT_RECORD_DELIMETER,fieldDilimeter, quoteCharacter, DEFAULT_ESCAPE_CHARACTER);    	
-    }
-
-    public CSVParser(char fieldDilimeter, char quoteCharacter, char escapeCharacter) {
-        this(DEFAULT_RECORD_DELIMETER,fieldDilimeter, quoteCharacter, escapeCharacter);    	
-    }
-
-    public CSVParser(Character recordDelimeter, Character fieldDelimeter, Character quoteCharacter, Character escapeCharacter){
+    public CSVParser(char recordDelimeter, char fieldDelimeter, char quoteCharacter, char escapeCharacter) {
 		this.recordDelimeter = recordDelimeter;
 		this.fieldDelimeter = fieldDelimeter;
 		this.quoteCharacter = quoteCharacter;
 		this.escapeCharacter = escapeCharacter;
 	}
-	
+
+    // TODO: Organize parsing in the form of a DFA
+    // TODO: Remove code/concept duplication between "finding the next record" and "reading a record":
+    // there should be only a "read a record" method, perhaps returning the number of bytes read,
+    // and a "find start point of previous record" method.
+
+
 	public long findNextRecord(ScrollableInputStream is) throws IOException {
 		long offset = 0;
 		char c;		
@@ -48,8 +40,7 @@ public class CSVParser implements Parser {
 			++offset;
 			if (c == quoteCharacter) {
 				offset += countForwardSymbolsInQuote(is);
-				continue;
-			}
+            }
 		} while (c != recordDelimeter);
 		
 		is.scrollBack(offset);
@@ -73,15 +64,24 @@ public class CSVParser implements Parser {
 			++offset;
 			if (c == quoteCharacter) {
 				offset += countBackwardSymbolsInQuote(is);
-				continue;
 			}
 		} while (c != recordDelimeter);
 
 		is.scrollForward(offset);
 		return offset;
 	}
-
-	
+//
+//    enum State {INITIAL, IN_FIELD, ESCAPE, ....}
+//    {
+//        char c;
+//        while (-1 != (c = in.read())) {
+//        switch(state) {
+//        case IN_FIELD:
+//            if()
+//        }
+//        }
+//    }
+//
 	private int countForwardSymbolsInQuote(ScrollableInputStream is) throws IOException{
 		int offset = 0;
 		while (true) {
@@ -202,7 +202,7 @@ public class CSVParser implements Parser {
 	}
 
 	
-	private class CSVRecord implements Record{
+	private class CSVRecord implements Record {
 		List<String> record = new ArrayList<String>();
 		String str;
 		
