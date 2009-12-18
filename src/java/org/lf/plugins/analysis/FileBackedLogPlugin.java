@@ -5,9 +5,9 @@ import java.io.IOException;
 
 import javax.swing.JFileChooser;
 
-import org.lf.parser.CSVParser;
 import org.lf.parser.FileBackedLog;
 import org.lf.parser.Log;
+import org.lf.parser.CSVParser.CSVParser;
 import org.lf.plugins.AnalysisPlugin;
 
 public class FileBackedLogPlugin implements AnalysisPlugin {

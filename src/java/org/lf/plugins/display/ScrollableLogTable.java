@@ -31,8 +31,20 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 	private Position curPos;
 	
 	private class LogTableModel extends AbstractTableModel {
+		private int columnsNumber;
+		
+		public LogTableModel() {
+			try {
+				columnsNumber = log.readRecord(log.getStart()).size(); 
+			} catch (IOException e) {
+				columnsNumber = 0;
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		public int getColumnCount() {
-			return 5;
+			return columnsNumber;
 		}
 
 		public int getRowCount() {
@@ -195,6 +207,8 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 		this.add(new JScrollPane(table), BorderLayout.CENTER);
 		this.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 		
+		taskState = NavigateTaskState.Busy;
+		new NavigateTask("start").execute();
 	}
 
 	/**
