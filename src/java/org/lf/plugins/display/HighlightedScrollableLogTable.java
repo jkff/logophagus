@@ -46,10 +46,13 @@ public class HighlightedScrollableLogTable extends JPanel implements ActionListe
 				
 				if (pattern != null) {
 					Matcher m = pattern.matcher((String)value);
-					if (m.matches()){
+					if (m.find()){
 						cell.setBackground(Color.RED);
 					}
+				} else if (!isSelected) {
+					cell.setBackground(Color.WHITE);
 				}
+				
 				return cell;
 			}
 		};
@@ -159,6 +162,7 @@ public class HighlightedScrollableLogTable extends JPanel implements ActionListe
 				prevButton.setEnabled(true);
 				nextButton.setEnabled(true);
 				taskState = NavigateTaskState.Free;
+				table.updateUI();
 			}
 		}
 

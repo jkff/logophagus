@@ -1,4 +1,4 @@
-package org.lf.ui;
+package org.lf;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
