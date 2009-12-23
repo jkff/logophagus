@@ -1,3 +1,14 @@
  - TODO comments in sources
- - Plugin: split by value of field. Splits a log into many sublogs based on their field value.
  - Plugin: highlight lines matching pattern
+    analysis plugin + visualization plugin
+    LogTable should be configurable with a highlighter.
+ - Plugin: split by value of field. Splits a log into many sublogs based on their field value.
+    User says, "Look at 10000 first records"
+    We scan them and gather values of the field
+    Tree:
+        Field=A
+        Field=B
+        Field=C
+        Field=Other
+
+Read something about attribute grammars; invent how to combine filtering with highlighting with whatever.    
