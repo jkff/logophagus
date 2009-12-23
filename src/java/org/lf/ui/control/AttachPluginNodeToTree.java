@@ -2,8 +2,6 @@ package org.lf.ui.control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -35,7 +33,7 @@ public class AttachPluginNodeToTree implements ActionListener {
     // In the same fashion as PopupOnClickTree.
 
 	public AttachPluginNodeToTree(
-            JTree jtree, Object[] pluginArgs, AnalysisPlugin plugin, DefaultTreeModel treeModel)
+            DefaultMutableTreeNode parent, Object[] pluginArgs, AnalysisPlugin plugin, DefaultTreeModel treeModel)
     {
 		this.treeModel = treeModel;
 		this.plugin = plugin;

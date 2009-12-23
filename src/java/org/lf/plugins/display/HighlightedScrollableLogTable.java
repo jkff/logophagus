@@ -44,11 +44,19 @@ public class HighlightedScrollableLogTable extends JPanel implements ActionListe
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 				Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 				
+<<<<<<< local
+
+				if (pattern != null && pattern.matcher((String)value).find()) {
+						cell.setBackground(Color.RED);					
+				} else {
+					cell.setBackground(Color.WHITE);
+=======
 				if (pattern != null) {
 					Matcher m = pattern.matcher((String)value);
 					if (m.matches()){
 						cell.setBackground(Color.RED);
 					}
+>>>>>>> other
 				}
 				return cell;
 			}
@@ -84,7 +92,6 @@ public class HighlightedScrollableLogTable extends JPanel implements ActionListe
 			public Object getValueAt(int row, int col) {
 				synchronized (result) {
 					if (result.size() > row && result.get(row).size() > col){
-						table.getColumnModel().getColumn(col).setCellRenderer(renderer);
 						return result.get(row).get(col);
 					} else {
 						return null;
@@ -211,6 +218,11 @@ public class HighlightedScrollableLogTable extends JPanel implements ActionListe
 			naviButtons.add(endButton);
 			
 			table = new JTable(new LogTableModel());
+
+			for(int i =0; i < table.getColumnCount(); ++i){
+				table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+			}
+
 			JScrollPane sTable = new JScrollPane(table);
 			table.addKeyListener(new KeyAdapter() {
 	            @Override

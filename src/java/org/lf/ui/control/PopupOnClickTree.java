@@ -48,6 +48,8 @@ public class PopupOnClickTree extends MouseAdapter {
 
             for (AnalysisPlugin plugin : availablePlugins) {
                 JMenuItem item = new JMenuItem("Apply " + plugin.getName());
+                
+                DefaultMutableTreeNode parent = (selPaths.length == 1 ? (DefaultMutableTreeNode) (selPaths[0].getLastPathComponent())
                 item.addActionListener(new AttachPluginNodeToTree(jTree, analysisArgs.toArray(), plugin, treeModel));
                 popMenu.add(item);
             }
