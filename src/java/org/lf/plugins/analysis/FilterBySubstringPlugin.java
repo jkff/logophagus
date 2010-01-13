@@ -1,13 +1,10 @@
 package org.lf.plugins.analysis;
 
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import org.lf.parser.Log;
 import org.lf.parser.FilteredLog;
-import org.lf.parser.Record;
 import org.lf.plugins.AnalysisPlugin;
-import org.lf.util.Filter;
 import org.lf.util.RecordFilter;
 
 public class FilterBySubstringPlugin implements AnalysisPlugin{

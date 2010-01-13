@@ -20,7 +20,7 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 			return null;
 
 		try {
-			Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser('\n',',','"' , '\\' ));
+			Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser());
 			return log;
 		} catch (IOException e) {
 			e.printStackTrace();

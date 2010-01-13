@@ -8,13 +8,13 @@ package org.lf.parser.CSVParser;
 * To change this template use File | Settings | File Templates.
 */
 enum State {
-    BETWEEN_FIELDS,
+    ERROR,
     FIELD,
-    RECORD_BORDER,
     IN_QUOTE,
-    QUOTE_BEGIN,
     QUOTE_END,
-    IN_QUOTE_ESCAPE,
+    QUOTE_BEGIN,
     DOUBLE_QUOTE,
-    ERROR;
+    RECORD_BORDER,
+    BETWEEN_FIELDS,
+    IN_QUOTE_ESCAPE,
 }

@@ -49,9 +49,8 @@ public class FileBackedLog implements Log {
 		PhysicalPosition pp = (PhysicalPosition) pos;
 		is.scrollTo(pp.offsetBytes);
 		long offset = parser.findNextRecord(is);
-		if (offset == -1) {
+		if (offset == 0) 
 			return pos;
-		}
 		return new PhysicalPosition(pp.offsetBytes + offset);
 	}
 
@@ -59,9 +58,8 @@ public class FileBackedLog implements Log {
 		PhysicalPosition pp = (PhysicalPosition) pos;
 		is.scrollTo(pp.offsetBytes);
 		long offset = parser.findPrevRecord(is);
-		if (offset == -1) {
+		if (offset == 0) 
 			return pos;
-		}
 		return new PhysicalPosition(pp.offsetBytes - offset);
 	}
 

@@ -29,8 +29,12 @@ public class CSVParser implements Parser {
     }
 
     public long findPrevRecord(ScrollableInputStream is) throws IOException {
+		if (is.scrollBack(1) == 0)
+			return 0;
         return findBorder(backward(is), new Backward(), new Nop());
 	}
+    
+    
     private long findBorder(
             CharStream stream,
             TransitionFunction<State,SymbolType> tf,
@@ -40,8 +44,12 @@ public class CSVParser implements Parser {
         int offset = 0;
         do {
             int i = stream.next();
-            if(i==-1) return 0;
-            offset++;
+            if (i == -1) { 
+            	sink.recordBorder();
+            	return offset;
+            }
+            offset++;            	
+     
             char c = (char)i;
             SymbolType s =
                     (c == recordDelimeter) ? SymbolType.RECORD_DELIMITER :
@@ -51,12 +59,15 @@ public class CSVParser implements Parser {
                     SymbolType.OTHER;
 
             state = tf.next(state, s);
+            
             switch(state) {
             case FIELD:             sink.onChar(c);     break;
             case IN_QUOTE:          sink.onChar(c);     break;
             case DOUBLE_QUOTE:      sink.onChar(c);     break;
             case BETWEEN_FIELDS:    sink.fieldBreak();  break;
             case ERROR:             sink.error();       break;
+            case RECORD_BORDER:     sink.recordBorder();break;
+            
             default:                                    break;
 			}
         } while (state != State.RECORD_BORDER);
@@ -66,7 +77,8 @@ public class CSVParser implements Parser {
 
     private interface Sink {
         void onChar(char c);
-        void fieldBreak();
+        void recordBorder();
+		void fieldBreak();
         void error();
     }
 
@@ -104,6 +116,10 @@ public class CSVParser implements Parser {
                         sb = new StringBuilder();
                     }
                     public void error() { }
+
+                    public void recordBorder() {
+                        fields.add(sb.toString());
+					}
                 });
 
         return new CSVRecord(fields);
@@ -122,5 +138,6 @@ public class CSVParser implements Parser {
         public void onChar(char c) { }
         public void fieldBreak() { }
         public void error() { }
+		public void recordBorder() {}
     }
 }

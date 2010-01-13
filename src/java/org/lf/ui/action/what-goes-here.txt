@@ -1,2 +1,0 @@
-Contains generic actions, such as "delete selected nodes from tree", "popup a menu on right click" etc.
-The actions don't do any business logic on their own, the logic is abstracted in their constructor arguments.

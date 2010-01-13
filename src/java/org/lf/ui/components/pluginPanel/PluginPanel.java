@@ -1,20 +1,20 @@
-package org.lf.ui;
+package org.lf.ui.components.pluginPanel;
 
-import java.awt.BorderLayout;
 
 import javax.swing.JPanel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.lf.ui.model.NodeData;
+
+
 public class PluginPanel extends JPanel implements TreeSelectionListener {
-	public PluginPanel(){
-		super(new BorderLayout());
-	}
-	
+
+	@Override
 	public void valueChanged(TreeSelectionEvent arg0) {
 		this.removeAll();
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode)arg0.getNewLeadSelectionPath().getLastPathComponent();
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)arg0.getPath().getLastPathComponent();
 		if (node != null) {
 			NodeData nodeData = (NodeData)node.getUserObject(); 
 			if (node != null){
@@ -26,3 +26,4 @@ public class PluginPanel extends JPanel implements TreeSelectionListener {
 	}
 
 }
+

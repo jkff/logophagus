@@ -1,4 +1,4 @@
-package org.lf.ui;
+package org.lf.ui.model;
 
 import javax.swing.JComponent;
 

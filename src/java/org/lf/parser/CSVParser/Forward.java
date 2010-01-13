@@ -1,64 +1,70 @@
 package org.lf.parser.CSVParser;
 
-import java.util.Comparator;
-import java.util.TreeMap;
-
-import org.lf.parser.CSVParser.State;
-import org.lf.parser.CSVParser.SymbolType;
+import static org.lf.parser.CSVParser.State.*;
+import static org.lf.parser.CSVParser.SymbolType.*;
 
 class Forward implements TransitionFunction<State, SymbolType> {
-    // TODO Change like Backward
+	private static final State[] STATES = State.values();
 
-	public Forward()
-	{
+	public State next(State cur, SymbolType in) {
+		return STATES[symbol2state2state[in.ordinal()][cur.ordinal()]];
+	}
 
-		map.put(new StateAndSymbolType(State.IN_QUOTE, SymbolType.QUOTE), State.QUOTE_END);
-		map.put(new StateAndSymbolType(State.IN_QUOTE, SymbolType.ESCAPE), State.IN_QUOTE_ESCAPE);
-		map.put(new StateAndSymbolType(State.IN_QUOTE, SymbolType.FIELD_DELIMITER), State.IN_QUOTE);
-		map.put(new StateAndSymbolType(State.IN_QUOTE, SymbolType.RECORD_DELIMITER), State.IN_QUOTE);
-		map.put(new StateAndSymbolType(State.IN_QUOTE, SymbolType.OTHER), State.IN_QUOTE);
+	private static void put(SymbolType sym, State src, State dest) {
+		symbol2state2state[sym.ordinal()][src.ordinal()] = dest.ordinal();
+	}
 
-		map.put(new StateAndSymbolType(State.DOUBLE_QUOTE, SymbolType.QUOTE), State.QUOTE_END); 
-		map.put(new StateAndSymbolType(State.DOUBLE_QUOTE, SymbolType.ESCAPE), State.IN_QUOTE_ESCAPE); 
-		map.put(new StateAndSymbolType(State.DOUBLE_QUOTE, SymbolType.FIELD_DELIMITER), State.IN_QUOTE);
-		map.put(new StateAndSymbolType(State.DOUBLE_QUOTE, SymbolType.OTHER), State.IN_QUOTE);
-		map.put(new StateAndSymbolType(State.DOUBLE_QUOTE, SymbolType.RECORD_DELIMITER), State.IN_QUOTE);
+	private static int[][] symbol2state2state = new int[SymbolType.values().length][STATES.length];
 
-		map.put(new StateAndSymbolType(State.QUOTE_BEGIN, SymbolType.QUOTE), State.QUOTE_END); 
-		map.put(new StateAndSymbolType(State.QUOTE_BEGIN, SymbolType.ESCAPE), State.IN_QUOTE_ESCAPE);
-		map.put(new StateAndSymbolType(State.QUOTE_BEGIN, SymbolType.FIELD_DELIMITER), State.IN_QUOTE);
-		map.put(new StateAndSymbolType(State.QUOTE_BEGIN, SymbolType.OTHER), State.IN_QUOTE); 
-		map.put(new StateAndSymbolType(State.QUOTE_BEGIN, SymbolType.RECORD_DELIMITER), State.IN_QUOTE);
 
-		map.put(new StateAndSymbolType(State.QUOTE_END, SymbolType.QUOTE), State.DOUBLE_QUOTE);
-		map.put(new StateAndSymbolType(State.QUOTE_END, SymbolType.ESCAPE), State.ERROR);
-		map.put(new StateAndSymbolType(State.QUOTE_END, SymbolType.FIELD_DELIMITER), State.BETWEEN_FIELDS);
-		map.put(new StateAndSymbolType(State.QUOTE_END, SymbolType.OTHER), State.FIELD);
-		map.put(new StateAndSymbolType(State.QUOTE_END, SymbolType.RECORD_DELIMITER), State.RECORD_BORDER);
+	static {
+		put(QUOTE, 				FIELD, QUOTE_BEGIN);
+		put(ESCAPE, 			FIELD, FIELD);
+		put(FIELD_DELIMITER, 	FIELD, BETWEEN_FIELDS);
+		put(OTHER, 				FIELD, FIELD);
+		put(RECORD_DELIMITER,	FIELD, RECORD_BORDER);
 
-		map.put(new StateAndSymbolType(State.IN_QUOTE_ESCAPE, SymbolType.QUOTE), State.IN_QUOTE);
-		map.put(new StateAndSymbolType(State.IN_QUOTE_ESCAPE, SymbolType.ESCAPE), State.IN_QUOTE);
-		map.put(new StateAndSymbolType(State.IN_QUOTE_ESCAPE, SymbolType.FIELD_DELIMITER), State.IN_QUOTE);
-		map.put(new StateAndSymbolType(State.IN_QUOTE_ESCAPE, SymbolType.OTHER), State.IN_QUOTE);
-		map.put(new StateAndSymbolType(State.IN_QUOTE_ESCAPE, SymbolType.RECORD_DELIMITER), State.IN_QUOTE);
+		put(QUOTE, 				IN_QUOTE, QUOTE_END);
+		put(ESCAPE, 			IN_QUOTE, IN_QUOTE_ESCAPE);
+		put(FIELD_DELIMITER,	IN_QUOTE, IN_QUOTE);
+		put(RECORD_DELIMITER,	IN_QUOTE, IN_QUOTE);
+		put(OTHER, 				IN_QUOTE, IN_QUOTE);
 
-		map.put(new StateAndSymbolType(State.BETWEEN_FIELDS, SymbolType.RECORD_DELIMITER), State.RECORD_BORDER);
-		map.put(new StateAndSymbolType(State.BETWEEN_FIELDS, SymbolType.ESCAPE), State.FIELD);
-		map.put(new StateAndSymbolType(State.BETWEEN_FIELDS, SymbolType.FIELD_DELIMITER), State.BETWEEN_FIELDS);
-		map.put(new StateAndSymbolType(State.BETWEEN_FIELDS, SymbolType.OTHER), State.FIELD);
-		map.put(new StateAndSymbolType(State.BETWEEN_FIELDS, SymbolType.QUOTE), State.QUOTE_BEGIN);
+		put(QUOTE, 				QUOTE_END, DOUBLE_QUOTE);
+		put(ESCAPE, 			QUOTE_END, ERROR);
+		put(FIELD_DELIMITER, 	QUOTE_END, BETWEEN_FIELDS);
+		put(OTHER, 				QUOTE_END, FIELD);
+		put(RECORD_DELIMITER, 	QUOTE_END, RECORD_BORDER);
 
-		map.put(new StateAndSymbolType(State.FIELD, SymbolType.QUOTE), State.QUOTE_BEGIN);
-		map.put(new StateAndSymbolType(State.FIELD, SymbolType.ESCAPE), State.FIELD);
-		map.put(new StateAndSymbolType(State.FIELD, SymbolType.FIELD_DELIMITER), State.BETWEEN_FIELDS);
-		map.put(new StateAndSymbolType(State.FIELD, SymbolType.OTHER), State.FIELD);
-		map.put(new StateAndSymbolType(State.FIELD, SymbolType.RECORD_DELIMITER), State.RECORD_BORDER);
+		put(QUOTE, 				QUOTE_BEGIN, QUOTE_END); 
+		put(ESCAPE, 			QUOTE_BEGIN, IN_QUOTE_ESCAPE);
+		put(FIELD_DELIMITER, 	QUOTE_BEGIN, IN_QUOTE);
+		put(OTHER, 				QUOTE_BEGIN, IN_QUOTE); 
+		put(RECORD_DELIMITER, 	QUOTE_BEGIN, IN_QUOTE);
 
-		map.put(new StateAndSymbolType(State.RECORD_BORDER, SymbolType.QUOTE), State.QUOTE_BEGIN);
-		map.put(new StateAndSymbolType(State.RECORD_BORDER, SymbolType.ESCAPE), State.FIELD);
-		map.put(new StateAndSymbolType(State.RECORD_BORDER, SymbolType.FIELD_DELIMITER), State.BETWEEN_FIELDS);
-		map.put(new StateAndSymbolType(State.RECORD_BORDER, SymbolType.OTHER), State.FIELD);
-		map.put(new StateAndSymbolType(State.RECORD_BORDER, SymbolType.RECORD_DELIMITER), State.RECORD_BORDER);
+		put(QUOTE, 				DOUBLE_QUOTE, QUOTE_END); 
+		put(ESCAPE, 			DOUBLE_QUOTE, IN_QUOTE_ESCAPE); 
+		put(FIELD_DELIMITER, 	DOUBLE_QUOTE, IN_QUOTE);
+		put(OTHER, 				DOUBLE_QUOTE, IN_QUOTE);
+		put(RECORD_DELIMITER, 	DOUBLE_QUOTE, IN_QUOTE);
+
+		put(QUOTE, 				RECORD_BORDER, QUOTE_BEGIN);
+		put(ESCAPE, 			RECORD_BORDER, FIELD);
+		put(FIELD_DELIMITER, 	RECORD_BORDER, BETWEEN_FIELDS);
+		put(OTHER,				RECORD_BORDER, FIELD);
+		put(RECORD_DELIMITER,	RECORD_BORDER, RECORD_BORDER);
+
+		put(RECORD_DELIMITER, 	BETWEEN_FIELDS, RECORD_BORDER);
+		put(ESCAPE, 			BETWEEN_FIELDS, FIELD);
+		put(FIELD_DELIMITER, 	BETWEEN_FIELDS, BETWEEN_FIELDS);
+		put(OTHER, 				BETWEEN_FIELDS, FIELD);
+		put(QUOTE, 				BETWEEN_FIELDS, QUOTE_BEGIN);
+
+		put(QUOTE, 				IN_QUOTE_ESCAPE, IN_QUOTE);
+		put(ESCAPE, 			IN_QUOTE_ESCAPE, IN_QUOTE);
+		put(FIELD_DELIMITER, 	IN_QUOTE_ESCAPE, IN_QUOTE);
+		put(OTHER, 				IN_QUOTE_ESCAPE, IN_QUOTE);
+		put(RECORD_DELIMITER,	IN_QUOTE_ESCAPE, IN_QUOTE);
 
 	}
 }

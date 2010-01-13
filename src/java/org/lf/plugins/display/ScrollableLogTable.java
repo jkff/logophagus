@@ -176,6 +176,7 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 		allButtons.add(endButton);
 		
 		table = new JTable(new LogTableModel());
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -204,7 +205,7 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 
 		this.add(allButtons,BorderLayout.PAGE_START);
 		this.add(progressBar,BorderLayout.PAGE_END);
-		this.add(new JScrollPane(table), BorderLayout.CENTER);
+		this.add(new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS), BorderLayout.CENTER);
 		this.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 		
 		taskState = NavigateTaskState.Busy;

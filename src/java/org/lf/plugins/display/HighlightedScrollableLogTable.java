@@ -14,7 +14,6 @@ import java.beans.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -44,19 +43,10 @@ public class HighlightedScrollableLogTable extends JPanel implements ActionListe
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 				Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 				
-<<<<<<< local
-
 				if (pattern != null && pattern.matcher((String)value).find()) {
 						cell.setBackground(Color.RED);					
 				} else {
 					cell.setBackground(Color.WHITE);
-=======
-				if (pattern != null) {
-					Matcher m = pattern.matcher((String)value);
-					if (m.matches()){
-						cell.setBackground(Color.RED);
-					}
->>>>>>> other
 				}
 				return cell;
 			}
@@ -67,7 +57,7 @@ public class HighlightedScrollableLogTable extends JPanel implements ActionListe
 			
 			public LogTableModel() {
 				try {
-					columnsNumber = log.readRecord(log.getStart()).size(); 
+					columnsNumber = log.readRecord(log.getStart()).size();
 				} catch (IOException e) {
 					columnsNumber = 0;
 					// TODO Auto-generated catch block
@@ -294,8 +284,4 @@ public class HighlightedScrollableLogTable extends JPanel implements ActionListe
 					progressBar.setValue((Integer)evt.getNewValue());
 			}
 		}
-
-
-
-
 }
