@@ -165,7 +165,6 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 		}
 
 		public ScrollableLogTable(Log log) {
-			super(new BorderLayout());
 			this.log = log;
 			try {
 				curPos = log.getStart();
@@ -237,8 +236,15 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 	        
 	        SpringLayout layout = new SpringLayout();
 	        layout.putConstraint(SpringLayout.NORTH, naviButtons, 5, SpringLayout.NORTH, this);
+	        
 	        layout.putConstraint(SpringLayout.NORTH, sTable, 5, SpringLayout.SOUTH, naviButtons);
-	        layout.putConstraint(SpringLayout.NORTH, progressBar, 5, SpringLayout.SOUTH, sTable);
+	        layout.putConstraint(SpringLayout.EAST, sTable, 0, SpringLayout.EAST, this);
+	        layout.putConstraint(SpringLayout.WEST, sTable, 5, SpringLayout.WEST, this);
+	        layout.putConstraint(SpringLayout.SOUTH, sTable, -5, SpringLayout.NORTH, progressBar);
+	        
+	        layout.putConstraint(SpringLayout.SOUTH, progressBar, -5, SpringLayout.SOUTH, this);
+	        layout.putConstraint(SpringLayout.WEST, progressBar, 5, SpringLayout.WEST, this);
+	        layout.putConstraint(SpringLayout.EAST, progressBar, 0, SpringLayout.EAST, this);
 	        
 	        this.setLayout(layout);
 	        this.add(naviButtons);

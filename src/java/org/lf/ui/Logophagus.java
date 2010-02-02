@@ -42,6 +42,8 @@ public class Logophagus extends JFrame {
         this.setJMenuBar(getLogophagusMenuBar());		
 
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		splitPane.setDividerSize(5);
+		splitPane.setContinuousLayout(true);
 		splitPane.setRightComponent(getPluginPanel());
 		splitPane.setLeftComponent(getLogsHierarchyView());
 		splitPane.setDividerLocation(250); 
