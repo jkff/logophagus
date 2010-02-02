@@ -1,8 +1,9 @@
 package org.lf.plugins.analysis;
 
-import org.jetbrains.annotations.Nullable;
 import org.lf.parser.Record;
 import org.lf.plugins.Attributes;
+
+import com.sun.istack.internal.Nullable;
 
 import java.awt.*;
 

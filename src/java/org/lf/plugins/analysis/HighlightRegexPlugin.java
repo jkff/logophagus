@@ -10,6 +10,7 @@ import org.lf.util.RecordFilter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.regex.Pattern;
 
 /**
  * User: jkff
@@ -34,7 +35,11 @@ public class HighlightRegexPlugin implements AnalysisPlugin {
         	return null;
         return new Entity(Attributes.with(args[0].attributes, Highlighter.class, new Highlighter() {
             public Color getHighlightColor(Record rec) {
-                return rec.toString().matches(regex) ? Color.RED : null;
+            	Pattern p = Pattern.compile(regex);
+            	for (int i = 0; i < rec.size(); ++i) {
+            		if (p.matcher(rec.get(i)).find()) return Color.RED; 
+            	}
+                return null;
             }
         }, Highlighter.COMBINE_SEQUENTIALLY), log);
     }

@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 
 public class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChangeListener {
-		private JTextField patternField;
 
         private JButton startButton;
 		private JButton endButton;
@@ -28,7 +27,7 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 		private JTable table;
 
     public void setHighlighter(Highlighter value) {
-        this.highlighter = highlighter;
+        this.highlighter = value;
     }
 
     //this is for verification that there is only one NavigateTask that executed
@@ -47,12 +46,13 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 			public Component getTableCellRendererComponent(
                     JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
             {
-                Record rec = result.get(row);
-
+				if (highlighter == null) 
+					return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+					
+				Record rec = result.get(row);
                 Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
                 Color bg = highlighter.getHighlightColor(rec);
-                cell.setBackground(bg==null ? Color.WHITE : bg);					
+                cell.setBackground(bg == null ? Color.WHITE : bg);					
 				return cell;
 			}
 		};
@@ -175,15 +175,6 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 			result = new ArrayList<Record>();
 			
 			// Create UI
-			patternField = new JTextField(20);
-
-            JButton setPatternButton = new JButton("Set Pattern");
-			setPatternButton.setActionCommand("set");
-			setPatternButton.addActionListener(this);
-
-			JPanel patternPanel = new JPanel();
-			patternPanel.add(patternField);
-			patternPanel.add(setPatternButton);
 			
 			startButton = new JButton("Start");
 			startButton.setActionCommand("start");
@@ -213,11 +204,10 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 			naviButtons.add(endButton);
 			
 			table = new JTable(new LogTableModel());
-
 			for(int i =0; i < table.getColumnCount(); ++i){
 				table.getColumnModel().getColumn(i).setCellRenderer(renderer);
 			}
-
+			
 			JScrollPane sTable = new JScrollPane(table);
 			table.addKeyListener(new KeyAdapter() {
 	            @Override
@@ -246,13 +236,11 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 	        });
 	        
 	        SpringLayout layout = new SpringLayout();
-	        layout.putConstraint(SpringLayout.NORTH, patternPanel, 5, SpringLayout.NORTH, this);
-	        layout.putConstraint(SpringLayout.NORTH, naviButtons, 5, SpringLayout.SOUTH, patternPanel);
+	        layout.putConstraint(SpringLayout.NORTH, naviButtons, 5, SpringLayout.NORTH, this);
 	        layout.putConstraint(SpringLayout.NORTH, sTable, 5, SpringLayout.SOUTH, naviButtons);
 	        layout.putConstraint(SpringLayout.NORTH, progressBar, 5, SpringLayout.SOUTH, sTable);
 	        
 	        this.setLayout(layout);
-	        this.add(patternPanel);
 	        this.add(naviButtons);
 			this.add(sTable);
 			this.add(progressBar);
@@ -275,14 +263,6 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 				//			So we need to create new NavigateTask
 				taskState = NavigateTaskState.BUSY;
 				new NavigateTask(evt.getActionCommand()).execute();
-			} else {
-				System.out.println(patternField.getText());
-                highlighter = new Highlighter() {
-                    public Color getHighlightColor(Record rec) {
-                        return rec.toString().matches(patternField.getText()) ? Color.RED : null;
-                    }
-                };
-				table.updateUI();
 			}
 		}
 

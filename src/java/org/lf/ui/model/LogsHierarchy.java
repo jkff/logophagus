@@ -62,7 +62,7 @@ public class LogsHierarchy extends Observable{
 		Entity res = plugin.applyTo(data.toArray(new Entity[0]));
 		if (res == null) return;
 
-		List<DisplayPlugin> availabaleDisplays = DisplayPluginRepository.getApplicablePlugins(res);
+		List<DisplayPlugin> availabaleDisplays = DisplayPluginRepository.getApplicablePlugins(res.data);
 //		System.out.println(availabaleDisplays);
 		MutableTreeNode childNode = new DefaultMutableTreeNode(new NodeData(res, availabaleDisplays.get(0).createView(res))); 
 		if (data.size() == 1) {
