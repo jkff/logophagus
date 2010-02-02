@@ -3,6 +3,7 @@ package org.lf.plugins.analysis;
 import org.lf.parser.FilteredLog;
 import org.lf.parser.Log;
 import org.lf.plugins.AnalysisPlugin;
+import org.lf.plugins.Entity;
 import org.lf.util.FieldFilter;
 
 public class SameFieldValuePlugin implements AnalysisPlugin {
@@ -20,6 +21,10 @@ public class SameFieldValuePlugin implements AnalysisPlugin {
 
     public Class getOutputType() {
         return Log.class;
+    }
+
+    public Entity applyTo(Entity[] args) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public Object applyTo(Object[] args) {

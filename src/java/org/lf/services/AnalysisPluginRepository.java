@@ -3,6 +3,7 @@ package org.lf.services;
 import java.util.*;
 
 import org.lf.plugins.AnalysisPlugin;
+import org.lf.plugins.Entity;
 
 public class AnalysisPluginRepository {
     private static List<AnalysisPlugin> analysisPlugins = new ArrayList<AnalysisPlugin>();
@@ -17,7 +18,7 @@ public class AnalysisPluginRepository {
         }
     }
 
-    public static List<AnalysisPlugin> getApplicablePlugins(Object[] args) {
+    public static List<AnalysisPlugin> getApplicablePlugins(Entity[] args) {
         List<AnalysisPlugin> res = new ArrayList<AnalysisPlugin>();
         for (AnalysisPlugin plugin : analysisPlugins) {
             if(areCompatible(plugin.getInputTypes(), args))
@@ -26,11 +27,11 @@ public class AnalysisPluginRepository {
         return res;
     }
 
-    private static boolean areCompatible(Class[] formalParamTypes, Object[] actualParams) {
+    private static boolean areCompatible(Class[] formalParamTypes, Entity[] actualParams) {
         if(formalParamTypes.length != actualParams.length)
             return false;
         for(int i = 0; i < actualParams.length; ++i) {
-            if(actualParams[i] != null && !formalParamTypes[i].isInstance(actualParams[i]))
+            if(actualParams[i] != null && !formalParamTypes[i].isInstance(actualParams[i].data))
                 return false;
         }
         return true;

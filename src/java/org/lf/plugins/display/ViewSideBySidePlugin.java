@@ -6,15 +6,17 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.lf.plugins.DisplayPlugin;
+import org.lf.plugins.Entity;
 import org.lf.services.LogsPair;
 
 public class ViewSideBySidePlugin implements DisplayPlugin {
 
-	public JComponent createView(Object data) {
+	public JComponent createView(Entity entity) {
+        LogsPair p = (LogsPair) entity.data;
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 2));
-		panel.add(new ScrollableLogTable(((LogsPair)data).first));
-		panel.add(new ScrollableLogTable(((LogsPair)data).second));
+		panel.add(new ScrollableLogTable(p.first));
+		panel.add(new ScrollableLogTable(p.second));
 		return panel;
 	}
 

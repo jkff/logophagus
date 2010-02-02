@@ -7,12 +7,14 @@ import javax.swing.JFileChooser;
 
 import org.lf.parser.FileBackedLog;
 import org.lf.parser.Log;
-import org.lf.parser.CSVParser.CSVParser;
+import org.lf.parser.csv.CSVParser;
 import org.lf.plugins.AnalysisPlugin;
+import org.lf.plugins.Attributes;
+import org.lf.plugins.Entity;
 
 public class FileBackedLogPlugin implements AnalysisPlugin {
 
-	public Object applyTo(Object[] args) {
+	public Entity applyTo(Entity[] args) {
 		JFileChooser fileOpen = new JFileChooser();
         fileOpen.showOpenDialog(null);
 		File f = fileOpen.getSelectedFile();
@@ -21,7 +23,7 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 
 		try {
 			Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser());
-			return log;
+			return new Entity(Attributes.NONE, log);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

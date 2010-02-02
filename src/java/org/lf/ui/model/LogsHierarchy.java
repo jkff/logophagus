@@ -12,6 +12,7 @@ import javax.swing.tree.TreePath;
 
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.DisplayPlugin;
+import org.lf.plugins.Entity;
 import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
 
@@ -34,7 +35,6 @@ public class LogsHierarchy extends Observable{
 
 	public void addChildToNode(MutableTreeNode child, MutableTreeNode parent) {
 		treeModel.insertNodeInto(child, parent, parent.getChildCount());
-//		parent.insert(child, parent.getChildCount());
 		setChanged();
 		notifyObservers();
 	}
@@ -52,14 +52,14 @@ public class LogsHierarchy extends Observable{
 	}
 
 	public List<AnalysisPlugin> getApplicablePlugins(TreePath[] selPaths) {
-		List<Object> pluginArgs = getContentByPaths(selPaths);
-		Object[] argsArray  = (selPaths == null ? new Object[]{} : pluginArgs.toArray()	);
+		List<Entity> pluginArgs = getContentByPaths(selPaths);
+		Entity[] argsArray  = (selPaths == null ? new Entity[0] : pluginArgs.toArray(new Entity[0]));
 		return AnalysisPluginRepository.getApplicablePlugins(argsArray);
 	}
 
 	public void applyPluginForPath(AnalysisPlugin plugin, TreePath[] selPaths) {
-		List<Object> data = getContentByPaths(selPaths);
-		Object res = plugin.applyTo(data.toArray());
+		List<Entity> data = getContentByPaths(selPaths);
+		Entity res = plugin.applyTo(data.toArray(new Entity[0]));
 		if (res == null) return;
 
 		List<DisplayPlugin> availabaleDisplays = DisplayPluginRepository.getApplicablePlugins(res);
@@ -77,13 +77,13 @@ public class LogsHierarchy extends Observable{
 	}
 
 
-	private List<Object> getContentByPaths(TreePath[] selPaths) {
-		List<Object> nodeObjects = new LinkedList<Object>();
+	private List<Entity> getContentByPaths(TreePath[] selPaths) {
+		List<Entity> nodeObjects = new LinkedList<Entity>();
 		if (selPaths != null) {
 			for (int i=0; i < selPaths.length; ++i){
 				DefaultMutableTreeNode cur = (DefaultMutableTreeNode)(selPaths[i].getLastPathComponent());
 				NodeData data = (NodeData)(cur.getUserObject());
-				nodeObjects.add(data.data);
+				nodeObjects.add(data.entity);
 			}
 		}
 		return nodeObjects;

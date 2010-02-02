@@ -4,11 +4,15 @@ import javax.swing.JComponent;
 
 import org.lf.parser.Log;
 import org.lf.plugins.DisplayPlugin;
+import org.lf.plugins.Entity;
+import org.lf.plugins.analysis.Highlighter;
 
 public class ViewLogAsTablePlugin implements DisplayPlugin {
 
-	public JComponent createView(Object data) {
-		return new ScrollableLogTable((Log)data);
+	public JComponent createView(Entity entity) {
+        ScrollableLogTable table = new ScrollableLogTable((Log) entity.data);
+        table.setHighlighter(entity.attributes.getValue(Highlighter.class));
+        return table;
 	}
 
 	public Class getInputType() {

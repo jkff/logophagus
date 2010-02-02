@@ -16,11 +16,9 @@ public class PluginPanel extends JPanel implements TreeSelectionListener {
 		this.removeAll();
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)arg0.getPath().getLastPathComponent();
 		if (node != null) {
-			NodeData nodeData = (NodeData)node.getUserObject(); 
-			if (node != null){
-				this.add(nodeData.jComponent);
-			}
-		}
+			NodeData nodeData = (NodeData)node.getUserObject();
+            this.add(nodeData.jComponent);
+        }
 		this.updateUI();
 
 	}

@@ -2,10 +2,12 @@ package org.lf.plugins.analysis;
 
 import org.lf.parser.Log;
 import org.lf.plugins.AnalysisPlugin;
+import org.lf.plugins.Attributes;
+import org.lf.plugins.Entity;
 import org.lf.services.LogsPair;
 
 
-public class SideBySidePlugin implements AnalysisPlugin{
+public class SideBySidePlugin implements AnalysisPlugin {
     public Class[] getInputTypes() {
         return new Class[]{Log.class , Log.class}; 
     }
@@ -14,8 +16,8 @@ public class SideBySidePlugin implements AnalysisPlugin{
         return LogsPair.class; 
     }
 
-    public Object applyTo(Object[] args) {
-    	return new LogsPair((Log)args[0] , (Log)args[1]);
+    public Entity applyTo(Entity[] args) {
+    	return new Entity(Attributes.NONE, new LogsPair((Log)args[0].data, (Log)args[1].data));
     }
 
     public String getName() {

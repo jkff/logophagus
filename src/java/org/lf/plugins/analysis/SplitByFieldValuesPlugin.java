@@ -11,12 +11,12 @@ import org.lf.parser.Log;
 import org.lf.parser.Position;
 import org.lf.parser.Record;
 import org.lf.plugins.AnalysisPlugin;
+import org.lf.plugins.Entity;
 import org.lf.util.FieldFilter;
 import org.lf.util.RecordFilter;
 
 public class SplitByFieldValuesPlugin implements AnalysisPlugin {
 
-	@Override
 	public Object applyTo(Object[] args) {
 		Log log = (Log) args[0];
 
@@ -65,5 +65,9 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
 	public Class getOutputType() {
 		return Log.class;
 	}
+
+    public Entity applyTo(Entity[] args) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
 }
