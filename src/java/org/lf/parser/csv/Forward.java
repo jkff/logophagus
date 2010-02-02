@@ -1,7 +1,7 @@
-package org.lf.parser.CSVParser;
+package org.lf.parser.csv;
 
-import static org.lf.parser.CSVParser.State.*;
-import static org.lf.parser.CSVParser.SymbolType.*;
+import static org.lf.parser.csv.State.*;
+import static org.lf.parser.csv.SymbolType.*;
 
 class Forward implements TransitionFunction<State, SymbolType> {
 	private static final State[] STATES = State.values();

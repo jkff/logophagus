@@ -1,4 +1,4 @@
-package org.lf.parser.CSVParser;
+package org.lf.parser.csv;
 
 import java.io.IOException;
 import java.util.*;
