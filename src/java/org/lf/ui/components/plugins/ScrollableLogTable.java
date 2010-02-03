@@ -1,8 +1,8 @@
-package org.lf.plugins.display;
+package org.lf.ui.components.plugins;
 
 
 import org.lf.parser.*;
-import org.lf.plugins.analysis.Highlighter;
+import org.lf.services.Highlighter;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -52,7 +52,7 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 				Record rec = result.get(row);
                 Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 Color bg = highlighter.getHighlightColor(rec);
-                cell.setBackground(bg == null ? Color.WHITE : bg);					
+                cell.setBackground(bg == null ? Color.WHITE : bg);		
 				return cell;
 			}
 		};
@@ -129,6 +129,7 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 				}
 				int progress = 0;
 				setProgress(progress);
+//				int reflectionCount = 0;
 				
 				for (int i = 0; i < 100; ++i) {
 					if (!fromWhere.equals(directionForward ? log.next(fromWhere) : log.prev(fromWhere))) {
@@ -144,13 +145,17 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 							}						
 						}
 					} else {
+//						++reflectionCount;
+//						System.out.print(reflectionCount);
+//						if (reflectionCount == 2) break;
 						directionForward = !directionForward;
 						fromWhere = curPos;
 						--i;
 					}
-
+//					System.out.println(">> " + i);
 				}
 				curPos = fromWhere;
+				setProgress(100);
 			}
 
 			//		  Executed in event dispatching thread when doInBackground() ends
@@ -196,7 +201,7 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 			progressBar.setStringPainted(true);
 			
 			JPanel naviButtons = new JPanel();
-			
+			naviButtons.setLayout(new GridLayout(1, 4, 5, 0));
 			naviButtons.add(startButton);
 			naviButtons.add(prevButton);
 			naviButtons.add(nextButton);
@@ -236,6 +241,7 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 	        
 	        SpringLayout layout = new SpringLayout();
 	        layout.putConstraint(SpringLayout.NORTH, naviButtons, 5, SpringLayout.NORTH, this);
+	        layout.putConstraint(SpringLayout.WEST, naviButtons, 5, SpringLayout.WEST, this);
 	        
 	        layout.putConstraint(SpringLayout.NORTH, sTable, 5, SpringLayout.SOUTH, naviButtons);
 	        layout.putConstraint(SpringLayout.EAST, sTable, 0, SpringLayout.EAST, this);

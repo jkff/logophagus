@@ -1,4 +1,4 @@
-package org.lf.plugins.analysis;
+package org.lf.services;
 
 import org.lf.parser.Record;
 import org.lf.plugins.Attributes;

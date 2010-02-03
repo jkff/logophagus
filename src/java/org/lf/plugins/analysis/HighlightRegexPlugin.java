@@ -1,12 +1,11 @@
 package org.lf.plugins.analysis;
 
-import org.lf.parser.FilteredLog;
 import org.lf.parser.Log;
 import org.lf.parser.Record;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
-import org.lf.util.RecordFilter;
+import org.lf.services.Highlighter;
 
 import javax.swing.*;
 import java.awt.*;

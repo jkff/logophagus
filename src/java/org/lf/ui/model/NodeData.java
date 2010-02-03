@@ -14,6 +14,6 @@ public class NodeData {
 	}
 	
 	public String toString() {
-		return entity.toString();
+		return entity.data.toString();
 	}
 }

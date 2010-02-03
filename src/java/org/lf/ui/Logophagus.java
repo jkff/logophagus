@@ -87,9 +87,11 @@ public class Logophagus extends JFrame {
 			AnalysisPluginRepository.register(FileBackedLogPlugin.class);
 			AnalysisPluginRepository.register(FilterBySubstringPlugin.class);
 			AnalysisPluginRepository.register(SideBySidePlugin.class);
-            AnalysisPluginRepository.register(HighlightRegexPlugin.class);
+			AnalysisPluginRepository.register(SplitByFieldValuesPlugin.class);
+			AnalysisPluginRepository.register(HighlightRegexPlugin.class);
 			DisplayPluginRepository.register(ViewLogAsTablePlugin.class);
 			DisplayPluginRepository.register(ViewSideBySidePlugin.class);
+			DisplayPluginRepository.register(ViewFieldSplittedLogPlugin.class);
 
 		} catch (PluginException e) {
 			System.out.println("Can't register plugin:" + e);
