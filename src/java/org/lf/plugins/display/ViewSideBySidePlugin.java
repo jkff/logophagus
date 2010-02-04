@@ -5,10 +5,11 @@ import java.awt.GridLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import org.lf.parser.Log;
 import org.lf.plugins.DisplayPlugin;
 import org.lf.plugins.Entity;
 import org.lf.services.LogsPair;
-import org.lf.ui.components.plugins.ScrollableLogTable;
+import org.lf.ui.components.plugins.scrollableLogTable.ScrollableLogTable;
 
 public class ViewSideBySidePlugin implements DisplayPlugin {
 
@@ -16,8 +17,8 @@ public class ViewSideBySidePlugin implements DisplayPlugin {
         LogsPair p = (LogsPair) entity.data;
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 2));
-		panel.add(new ScrollableLogTable(p.first));
-		panel.add(new ScrollableLogTable(p.second));
+		panel.add(new ScrollableLogTable((Log)p.first.data, p.first.attributes));
+		panel.add(new ScrollableLogTable((Log)p.second.data, p.second.attributes));
 		return panel;
 	}
 

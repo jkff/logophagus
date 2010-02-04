@@ -12,7 +12,7 @@ import org.lf.services.LogAndField;
 
 import com.sun.istack.internal.Nullable;
 
-public class FieldValuesListModel extends AbstractListModel {
+class FieldValuesListModel extends AbstractListModel {
 	ArrayList<String> arrayData =  new ArrayList<String>();
 	private HashMap<String, JPanel> mapData = new HashMap<String, JPanel>();	
 	

@@ -1,16 +1,21 @@
 package org.lf.plugins.analysis;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import javax.swing.JFileChooser;
 
 import org.lf.parser.FileBackedLog;
 import org.lf.parser.Log;
+import org.lf.parser.Record;
 import org.lf.parser.csv.CSVParser;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
+import org.lf.services.Bookmarks;
+import org.lf.services.Highlighter;
 
 public class FileBackedLogPlugin implements AnalysisPlugin {
 
@@ -23,7 +28,8 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 
 		try {
 			Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser());
-			return new Entity(Attributes.NONE, log);
+			Bookmarks empty = new Bookmarks(null);
+			return new Entity(Attributes.with(Attributes.NONE, Bookmarks.class, empty, Bookmarks.COMBINE_BOOKMARK), log);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;

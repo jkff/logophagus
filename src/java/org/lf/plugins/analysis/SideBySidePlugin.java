@@ -17,7 +17,7 @@ public class SideBySidePlugin implements AnalysisPlugin {
     }
 
     public Entity applyTo(Entity[] args) {
-    	return new Entity(Attributes.NONE, new LogsPair((Log)args[0].data, (Log)args[1].data));
+    	return new Entity(Attributes.NONE, new LogsPair(args[0], args[1]));
     }
 
     public String getName() {

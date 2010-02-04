@@ -11,7 +11,7 @@ public class ViewFieldSplittedLogPlugin implements DisplayPlugin {
 
 	@Override
 	public JComponent createView(Entity entity) {		
-		return new FieldSplittedLog((LogAndField)entity.data);
+		return new FieldSplittedLog((LogAndField)entity.data, entity.attributes);
 	}
 
 	@Override
