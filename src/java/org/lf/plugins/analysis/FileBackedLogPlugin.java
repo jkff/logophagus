@@ -1,24 +1,21 @@
 package org.lf.plugins.analysis;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
-import java.util.regex.Pattern;
-
-import javax.swing.JFileChooser;
-
+import org.jetbrains.annotations.Nullable;
 import org.lf.parser.FileBackedLog;
 import org.lf.parser.Log;
-import org.lf.parser.Record;
 import org.lf.parser.csv.CSVParser;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
 import org.lf.services.Bookmarks;
-import org.lf.services.Highlighter;
+
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 
 public class FileBackedLogPlugin implements AnalysisPlugin {
 
+    @Nullable
 	public Entity applyTo(Entity[] args) {
 		JFileChooser fileOpen = new JFileChooser();
         fileOpen.showOpenDialog(null);

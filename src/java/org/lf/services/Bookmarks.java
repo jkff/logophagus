@@ -2,6 +2,8 @@ package org.lf.services;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.lf.parser.Position;
 import org.lf.plugins.Attributes;
@@ -9,13 +11,8 @@ import org.lf.util.Filter;
 
 public class Bookmarks {
 	private Bookmarks parent;
-	private LinkedHashMap<String, Position> data = new LinkedHashMap<String, Position>();
-	private Filter<Position> filter;
-	
-	public Bookmarks(Filter<Position> filter) {
-		this.filter = filter;
-	}
-	
+	private Map<String, Position> data = new LinkedHashMap<String, Position>();
+
     public static Attributes.Combiner<Bookmarks> COMBINE_BOOKMARK = new Attributes.Combiner<Bookmarks>() {
         public Bookmarks combine(Bookmarks a, Bookmarks b) {
             b.parent = a;
@@ -23,7 +20,7 @@ public class Bookmarks {
         }
     };
 
-	public ArrayList<String> getNames() {
+	public List<String> getNames() {
 		ArrayList<String> result = new ArrayList<String>(data.keySet());
 		if (parent != null)
 			result.addAll(parent.getNames());
@@ -37,5 +34,5 @@ public class Bookmarks {
 			return null;
 		return parent.getValue(name);
 	}
-	
+    	
 }

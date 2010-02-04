@@ -13,6 +13,9 @@ public abstract class Attributes {
     };
 
     public interface Combiner<T> {
+        /**
+         * This method must be a pure function (t.i. should not have any side-effects). 
+         */
         T combine(T a, T b);
     }
 
