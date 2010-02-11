@@ -51,7 +51,7 @@ public class ScrollableLogTable extends JPanel {
 			addPropertyChangeListener(naviProgressListener);
 		}
 
-		//		 Reading log records in background Worker thread.
+		//Reading log records in background Worker thread.
 		@Override
 		public Void doInBackground() {
 			try {
@@ -119,6 +119,8 @@ public class ScrollableLogTable extends JPanel {
 
 		bookmarksList = new JComboBox(new BookmarksComboBoxModel(attributes.getValue(Bookmarks.class)));
 		bookmarksList.addActionListener(new ComboBoxActionListener());
+		//update bookmarks before any actions 
+		bookmarksList.addFocusListener(new BookmarkFocusListener());
 
 		addBookmark = new JButton("Add bookmark");
 		addBookmark.addActionListener(new AddBookmarkActionListener());
@@ -192,6 +194,10 @@ public class ScrollableLogTable extends JPanel {
 
 	}
 
+	
+	
+	//controls
+	
 	class NavigateTaskProgressListener implements PropertyChangeListener { 
 		// Invoked when NavigateTask's progress property changes
 		public void propertyChange(PropertyChangeEvent evt) {
@@ -260,6 +266,12 @@ public class ScrollableLogTable extends JPanel {
 
 	}
 
+	class BookmarkFocusListener extends FocusAdapter {
+		@Override
+		public void focusGained(FocusEvent arg0) {
+			((BookmarksComboBoxModel)bookmarksList.getModel()).update();
+		}
+	}
 
 	class TableKeyListener extends KeyAdapter {
 		@Override

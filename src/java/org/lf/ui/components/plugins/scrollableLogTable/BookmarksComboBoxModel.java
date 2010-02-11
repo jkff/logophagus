@@ -30,14 +30,10 @@ public class BookmarksComboBoxModel extends AbstractListModel implements Mutable
 	}
 
 	@Override
-	public void removeElement(Object arg0) {
-		return;
-	}
+	public void removeElement(Object arg0) { }
 
 	@Override
-	public void removeElementAt(int arg0) {
-		return;
-	}
+	public void removeElementAt(int arg0) {	}
 
 	@Override
 	public Object getSelectedItem() {
@@ -60,5 +56,9 @@ public class BookmarksComboBoxModel extends AbstractListModel implements Mutable
 	@Override
 	public int getSize() {
 		return bookmarks.getSize();
+	}
+	
+	public void update() {
+		fireContentsChanged(this,0, getSize());
 	}
 }
