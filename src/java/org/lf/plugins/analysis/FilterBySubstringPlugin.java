@@ -8,14 +8,14 @@ import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Entity;
 import org.lf.util.RecordFilter;
 
-public class FilterBySubstringPlugin implements AnalysisPlugin {
-    
-    public Class[] getInputTypes() {
-        return new Class[] {Log.class};
-    }
+import com.sun.istack.internal.Nullable;
 
-    public Class getOutputType() {
-        return Log.class;
+public class FilterBySubstringPlugin implements AnalysisPlugin {
+    @Nullable
+	public Class getOutputType(Class[] inputTypes) {
+    	if ( inputTypes.length == 1 && Log.class.isAssignableFrom(inputTypes[0])) 
+			return Log.class;
+		return null;
     }
 
     public Entity applyTo(Entity[] args) {
@@ -24,7 +24,7 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
         String substring = JOptionPane.showInputDialog(null, "Enter substring for filter", "Filter setup",JOptionPane.QUESTION_MESSAGE );
         if (substring == null)
         	return null;
-        return new Entity(args[0].attributes, new FilteredLog(log, new RecordFilter(substring)));
+        return new Entity(args[0].attributes.createSuccessor(), new FilteredLog(log, new RecordFilter(substring)));
     }
 
     public String getName() {

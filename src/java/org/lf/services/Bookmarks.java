@@ -6,20 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.lf.parser.Position;
-import org.lf.plugins.Attributes;
-import org.lf.util.Filter;
+import org.lf.plugins.Attribute;
 
-public class Bookmarks {
+public class Bookmarks implements Attribute{
 	private Bookmarks parent;
 	private Map<String, Position> data = new LinkedHashMap<String, Position>();
 
-    public static Attributes.Combiner<Bookmarks> COMBINE_BOOKMARK = new Attributes.Combiner<Bookmarks>() {
-        public Bookmarks combine(Bookmarks a, Bookmarks b) {
-            b.parent = a;
-            return b;
-        }
-    };
-
+	public Bookmarks(Bookmarks parent) {
+		this.parent = parent;
+	}
+		
+	
 	public List<String> getNames() {
 		ArrayList<String> result = new ArrayList<String>(data.keySet());
 		if (parent != null)
@@ -33,6 +30,22 @@ public class Bookmarks {
 		if (parent == null)
 			return null;
 		return parent.getValue(name);
+	}
+
+	public int getSize() {
+		return data.size() + (parent == null ? 0 : parent.getSize());
+	}
+
+	public boolean addBookmark(String name, Position pos) {
+		if (data.containsKey(name))
+			return false;
+		data.put(name, pos);
+		return true;
+	}
+
+	@Override
+	public Attribute createSuccessor() {
+		return new Bookmarks(this);
 	}
     	
 }

@@ -37,7 +37,7 @@ public class Logophagus extends JFrame {
 	}
 	
 	private void initComponents() {
-		this.setMinimumSize(new Dimension(700,300));
+		this.setMinimumSize(new Dimension(800,600));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setJMenuBar(getLogophagusMenuBar());		
 
@@ -48,7 +48,7 @@ public class Logophagus extends JFrame {
 		splitPane.setLeftComponent(getLogsHierarchyView());
 		splitPane.setDividerLocation(250); 
 		splitPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
-		add(splitPane);
+		this.setContentPane(splitPane);
 		setVisible(true);
 	}
 	
@@ -97,12 +97,7 @@ public class Logophagus extends JFrame {
 			System.out.println("Can't register plugin:" + e);
 			e.printStackTrace();
 		}
-		
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				new Logophagus();	
-			}
-		});
+		new Logophagus().pack();	
 	}
 
 	

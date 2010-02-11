@@ -19,21 +19,19 @@ public class AnalysisPluginRepository {
     }
 
     public static List<AnalysisPlugin> getApplicablePlugins(Entity[] args) {
+    	List<Class> pluginArgsList = new LinkedList<Class>();
+    	for (Entity entity : args) {
+    		pluginArgsList.add(entity.data.getClass());
+		}
+    	
+		Class[] pluginArgsArray = pluginArgsList.toArray(new Class[0]);
+		
         List<AnalysisPlugin> res = new ArrayList<AnalysisPlugin>();
         for (AnalysisPlugin plugin : analysisPlugins) {
-            if(areCompatible(plugin.getInputTypes(), args))
+            if(plugin.getOutputType(pluginArgsArray) != null)
                 res.add(plugin);
         }
+        
         return res;
-    }
-
-    private static boolean areCompatible(Class[] formalParamTypes, Entity[] actualParams) {
-        if(formalParamTypes.length != actualParams.length)
-            return false;
-        for(int i = 0; i < actualParams.length; ++i) {
-            if(actualParams[i] != null && !formalParamTypes[i].isInstance(actualParams[i].data))
-                return false;
-        }
-        return true;
     }
 }

@@ -3,7 +3,9 @@ package org.lf.ui.components.plugins.scrollableLogTable;
 
 import org.lf.parser.*;
 import org.lf.plugins.Attributes;
+import org.lf.services.Bookmarks;
 import org.lf.services.Highlighter;
+import org.lf.util.Pair;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -14,28 +16,31 @@ import java.beans.*;
 import java.io.IOException;
 
 
-public class ScrollableLogTable extends JPanel implements ActionListener,  PropertyChangeListener {
+public class ScrollableLogTable extends JPanel {
+
 	private JButton addBookmark;
+	private JComboBox bookmarksList; 
+
 	private JButton startButton;
 	private JButton endButton;
 	private JButton prevButton;
 	private JButton nextButton;
-	private JProgressBar progressBar;
+
 	private JTable table;
-	private JComboBox bookmarksList; 
+	private JProgressBar progressBar;
 
-
-	private NavigateTaskState taskState = NavigateTaskState.FREE;		
 	private Log log;
+	private Attributes attributes;
+
 	private Position curPos;
 	private LogTableModel tableModel;
-	private Highlighter highlighter;
 	private LogTableCellRenderer cellRenderer;
 
-	//this is for verification that there is only one NavigateTask that executed
-	private enum NavigateTaskState {
-		BUSY, FREE
-	}
+	private ActionListener naviBtnListener = new NavigateButtonsActionListener(); 
+	private PropertyChangeListener naviProgressListener = new NavigateTaskProgressListener(); 
+
+	//this is for verification that there is only one NavigateTask that executes 
+	private boolean navigateTaskDone = true;
 
 
 	//Reads log records on its own thread
@@ -43,7 +48,7 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 		private String command;
 		public NavigateTask(String command) {
 			this.command = command;
-			addPropertyChangeListener(ScrollableLogTable.this);
+			addPropertyChangeListener(naviProgressListener);
 		}
 
 		//		 Reading log records in background Worker thread.
@@ -100,6 +105,7 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 
 	public ScrollableLogTable(Log log, Attributes attributes) {
 		this.log = log;
+		this.attributes = attributes;
 		try {
 			curPos = log.getStart();
 			tableModel = new LogTableModel(log.readRecord(curPos).size());
@@ -107,32 +113,35 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 			e.printStackTrace();
 		}
 
-		highlighter = attributes.getValue(Highlighter.class);
-		cellRenderer = new LogTableCellRenderer(highlighter);
+
+		cellRenderer = new LogTableCellRenderer(attributes.getValue(Highlighter.class));
 		// Create UI
 
+		bookmarksList = new JComboBox(new BookmarksComboBoxModel(attributes.getValue(Bookmarks.class)));
+		bookmarksList.addActionListener(new ComboBoxActionListener());
 
-		bookmarksList = new JComboBox();
 		addBookmark = new JButton("Add bookmark");
+		addBookmark.addActionListener(new AddBookmarkActionListener());
+		
 		JPanel bookmarkPanel = new JPanel();
 		bookmarkPanel.add(addBookmark);
 		bookmarkPanel.add(bookmarksList);
 
 		startButton = new JButton("Start");
 		startButton.setActionCommand("start");
-		startButton.addActionListener(this);
+		startButton.addActionListener(naviBtnListener);
 
 		endButton = new JButton("End");
 		endButton.setActionCommand("end");
-		endButton.addActionListener(this);
+		endButton.addActionListener(naviBtnListener);
 
 		prevButton = new JButton("Prev");
 		prevButton.setActionCommand("prev");
-		prevButton.addActionListener(this);
+		prevButton.addActionListener(naviBtnListener);
 
 		nextButton = new JButton("Next");
 		nextButton.setActionCommand("next");
-		nextButton.addActionListener(this);
+		nextButton.addActionListener(naviBtnListener);
 
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setValue(0);
@@ -151,32 +160,8 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 			table.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
 		}
 
-		JScrollPane sTable = new JScrollPane(table);
-		table.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (taskState == NavigateTaskState.FREE){
-					switch(e.getKeyCode()) {
-					case KeyEvent.VK_PAGE_DOWN:
-						taskState = NavigateTaskState.BUSY;
-						new NavigateTask("next").execute();
-						break;
-					case KeyEvent.VK_PAGE_UP:
-						taskState = NavigateTaskState.BUSY;
-						new NavigateTask("prev").execute();
-						break;
-					case KeyEvent.VK_HOME:
-						taskState = NavigateTaskState.BUSY;
-						new NavigateTask("start").execute();
-						break;
-					case KeyEvent.VK_END:
-						taskState = NavigateTaskState.BUSY;
-						new NavigateTask("end").execute();
-						break;
-					}
-				}
-			}
-		});
+		JScrollPane scrollTable = new JScrollPane(table);
+		table.addKeyListener(new TableKeyListener());
 
 		SpringLayout layout = new SpringLayout();
 
@@ -186,10 +171,10 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 		layout.putConstraint(SpringLayout.NORTH, naviButtons, 5, SpringLayout.SOUTH, bookmarkPanel);
 		layout.putConstraint(SpringLayout.WEST, naviButtons, 5, SpringLayout.WEST, this);
 
-		layout.putConstraint(SpringLayout.NORTH, sTable, 5, SpringLayout.SOUTH, naviButtons);
-		layout.putConstraint(SpringLayout.EAST, sTable, 0, SpringLayout.EAST, this);
-		layout.putConstraint(SpringLayout.WEST, sTable, 5, SpringLayout.WEST, this);
-		layout.putConstraint(SpringLayout.SOUTH, sTable, -5, SpringLayout.NORTH, progressBar);
+		layout.putConstraint(SpringLayout.NORTH, scrollTable, 5, SpringLayout.SOUTH, naviButtons);
+		layout.putConstraint(SpringLayout.EAST, scrollTable, 0, SpringLayout.EAST, this);
+		layout.putConstraint(SpringLayout.WEST, scrollTable, 5, SpringLayout.WEST, this);
+		layout.putConstraint(SpringLayout.SOUTH, scrollTable, -5, SpringLayout.NORTH, progressBar);
 
 		layout.putConstraint(SpringLayout.SOUTH, progressBar, -5, SpringLayout.SOUTH, this);
 		layout.putConstraint(SpringLayout.WEST, progressBar, 5, SpringLayout.WEST, this);
@@ -199,51 +184,106 @@ public class ScrollableLogTable extends JPanel implements ActionListener,  Prope
 
 		this.add(bookmarkPanel);
 		this.add(naviButtons);
-		this.add(sTable);
+		this.add(scrollTable);
 		this.add(progressBar);
 
-		taskState = NavigateTaskState.BUSY;
+		navigateTaskDone = false;
 		new NavigateTask("start").execute();
 
 	}
 
-	/**
-	 * Invoked when the user presses button.
-	 */
-	public void actionPerformed(ActionEvent evt) {
-		if (!evt.getActionCommand().equals("set")){
-			nextButton.setEnabled(false);
-			prevButton.setEnabled(false);
-			startButton.setEnabled(false);
-			endButton.setEnabled(false);
-			//			SwingWorker is only designed to be executed once. 
-			//			Executing a SwingWorker more than once will not result in invoking the doInBackground method twice.
-			//			So we need to create new NavigateTask
-			taskState = NavigateTaskState.BUSY;
-			new NavigateTask(evt.getActionCommand()).execute();
+	class NavigateTaskProgressListener implements PropertyChangeListener { 
+		// Invoked when NavigateTask's progress property changes
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (evt.getPropertyName().equals("progress")) {
+				table.updateUI();
+				progressBar.setValue((Integer)evt.getNewValue());
+			} else if (evt.getPropertyName().equals("state") 
+					&& 
+					((NavigateTask)evt.getSource()).getState().equals(SwingWorker.StateValue.DONE)) 
+			{
+				startButton.setEnabled(true);
+				endButton.setEnabled(true);
+				prevButton.setEnabled(true);
+				nextButton.setEnabled(true);
+				navigateTaskDone = true;
+			}
 		}
 	}
 
-	// Invoked when NavigateTask's progress property changes
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equals("progress")) {
-			table.updateUI();
-			progressBar.setValue((Integer)evt.getNewValue());
-		} else if (evt.getPropertyName().equals("state") 
-				&& 
-				((NavigateTask)evt.getSource()).getState().equals(SwingWorker.StateValue.DONE)) 
-		{
-			startButton.setEnabled(true);
-			endButton.setEnabled(true);
-			prevButton.setEnabled(true);
-			nextButton.setEnabled(true);
-			taskState = NavigateTaskState.FREE;
+	class AddBookmarkActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			do {
+				String name = JOptionPane.showInputDialog(null, "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE );
+				if (name == null) return;
+
+				if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
+					JOptionPane.showMessageDialog(ScrollableLogTable.this, "Bookmark with such name already exist. Please enter other name.");
+				} else {
+					bookmarksList.addItem(new Pair<String, Position>(name , curPos));
+					return;
+				}
+			} while (true);
+		}
+
+	}
+
+	class ComboBoxActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JComboBox cb = (JComboBox)e.getSource();
+			String selectedBookmark = (String)cb.getSelectedItem();
+			curPos = attributes.getValue(Bookmarks.class).getValue(selectedBookmark);
+			navigateTaskDone = false;
+			new NavigateTask("prev").execute();
+		}
+
+	}
+
+	class NavigateButtonsActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+			if (!evt.getActionCommand().equals("set")){
+				nextButton.setEnabled(false);
+				prevButton.setEnabled(false);
+				startButton.setEnabled(false);
+				endButton.setEnabled(false);
+				//			SwingWorker is only designed to be executed once. 
+				//			Executing a SwingWorker more than once will not result in invoking the doInBackground method twice.
+				//			So we need to create new NavigateTask
+				navigateTaskDone = false;
+				new NavigateTask(evt.getActionCommand()).execute();
+			}
+		}
+
+	}
+
+
+	class TableKeyListener extends KeyAdapter {
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if (navigateTaskDone){
+				switch(e.getKeyCode()) {
+				case KeyEvent.VK_PAGE_DOWN:
+					navigateTaskDone = false;
+					new NavigateTask("next").execute();
+					break;
+				case KeyEvent.VK_PAGE_UP:
+					navigateTaskDone = false;
+					new NavigateTask("prev").execute();
+					break;
+				case KeyEvent.VK_HOME:
+					navigateTaskDone = false;
+					new NavigateTask("start").execute();
+					break;
+				case KeyEvent.VK_END:
+					navigateTaskDone = false;
+					new NavigateTask("end").execute();
+					break;
+				}
+			}
 		}
 	}
-
-	public void setHighlighter(Highlighter value) {
-		this.highlighter = value;
-	}
-
-
 }

@@ -16,8 +16,8 @@
  - Bookmarks. They should work through filters, too. Consider both cases where a bookmarked position
    corresponds to a record that is accepted by the filter and when it is rejected.
 
- TODO Complete refactoring of AnalysisPlugin
+ + TODO Complete refactoring of AnalysisPlugin
 
- TODO get rid of Attributes.with() in favor of the context approach
++  TODO get rid of Attributes.with() in favor of the context approach
 
  TODO "Merge logs" plugin. Input: any number of logs (of any format); for each log, the time axis is indicated. 

@@ -1,6 +1,7 @@
 package org.lf.plugins;
 
-import org.jetbrains.annotations.Nullable;
+import com.sun.istack.internal.Nullable;
+
 
 public interface AnalysisPlugin {
     @Nullable

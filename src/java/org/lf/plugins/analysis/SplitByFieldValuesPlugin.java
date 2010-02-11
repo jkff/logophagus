@@ -1,20 +1,26 @@
 package org.lf.plugins.analysis;
 
-import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
 
 import org.lf.parser.Log;
-import org.lf.parser.Position;
-import org.lf.parser.Record;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
 import org.lf.services.LogAndField;
 
+import com.sun.istack.internal.Nullable;
+
 
 public class SplitByFieldValuesPlugin implements AnalysisPlugin {
+
+	@Nullable
+	public Class getOutputType(Class[] inputTypes) {
+		if( inputTypes.length == 1 && Log.class.isAssignableFrom(inputTypes[0])) 
+			return LogAndField.class;
+		return null;
+    }
 
 	@Override
 	public Entity applyTo(Entity[] args) {
@@ -23,23 +29,14 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
 			return null;
 		 Log log = (Log) args[0].data;
 		 LogAndField result = new LogAndField(log, Integer.parseInt(index));
-		return new Entity(Attributes.NONE, result);
+		return new Entity(new Attributes(), result);
 	}
 
-
-	@Override
-	public Class[] getInputTypes() {
-		return new Class[] {Log.class};
-	}
 
 	@Override
 	public String getName() {
 		return "Split by field values";  
 	}
 
-	@Override
-	public Class getOutputType() {
-		return LogAndField.class;
-	}
 
 }
