@@ -29,7 +29,7 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
 			return null;
 		 Log log = (Log) args[0].data;
 		 LogAndField result = new LogAndField(log, Integer.parseInt(index));
-		return new Entity(new Attributes(), result);
+		return new Entity(args[0].attributes.createSuccessor(), result);
 	}
 
 
