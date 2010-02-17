@@ -15,12 +15,17 @@ import com.sun.istack.internal.Nullable;
 class FieldValuesListModel extends AbstractListModel {
 	ArrayList<String> arrayData =  new ArrayList<String>();
 	private HashMap<String, JPanel> mapData = new HashMap<String, JPanel>();	
+	private Position otherPosition;
 	
+	@Nullable
+	public Position getOtherPosition() {
+		return otherPosition;
+	}
 	public void fillModel(final LogAndField logAndField) {
 		new Thread() {
 			public void run(){
 				try {
-					Position cur = logAndField.log.getStart();
+					Position cur = logAndField.log.first();
 					Position prev = new Position() {};
 					for (int i = 0; i < 1000; ++i) {
 						if (cur.equals(prev)) break;
@@ -29,6 +34,9 @@ class FieldValuesListModel extends AbstractListModel {
 						prev = cur;
 						cur = logAndField.log.next(cur);
 					}
+					otherPosition = cur;
+					FieldValuesListModel.this.addFieldValue("Other");
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -38,17 +46,6 @@ class FieldValuesListModel extends AbstractListModel {
 		
 	}
 	
-	@Nullable
-	public JPanel getView(String fieldValue) {
-		return mapData.get(fieldValue);
-	}
-	
-	@Nullable	
-	public JPanel getView(int index) {
-		if (index >= arrayData.size()) return null; 
-		return getView(arrayData.get(index));
-	}
-
 	public void setView(String fieldValue, JPanel view) {
 		if (!mapData.containsKey(fieldValue)) return;
 		mapData.put(fieldValue, view);
@@ -61,6 +58,18 @@ class FieldValuesListModel extends AbstractListModel {
 			arrayData.add(fieldValue);
 		}
 		fireIntervalAdded(this, arrayData.size() - 1, arrayData.size() - 1);
+	}
+
+	@Nullable
+	public JPanel getView(String fieldValue) {
+		//TODO check that there is no any field with value "other"
+		return mapData.get(fieldValue);
+	}
+	
+	@Nullable	
+	public JPanel getView(int index) {
+		if (index >= arrayData.size()) return null; 
+		return getView(arrayData.get(index));
 	}
 	
 	@Override

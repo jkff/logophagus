@@ -23,6 +23,6 @@ public class SideBySidePlugin implements AnalysisPlugin {
     }
 
     public String getName() {
-        return "SideBySideLogs";
+        return "Side by side logs";
     }
 }

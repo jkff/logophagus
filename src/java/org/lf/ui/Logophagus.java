@@ -89,6 +89,8 @@ public class Logophagus extends JFrame {
 			AnalysisPluginRepository.register(SideBySidePlugin.class);
 			AnalysisPluginRepository.register(SplitByFieldValuesPlugin.class);
 			AnalysisPluginRepository.register(HighlightRegexPlugin.class);
+			AnalysisPluginRepository.register(MergeLogsPlugin.class);
+
 			DisplayPluginRepository.register(ViewLogAsTablePlugin.class);
 			DisplayPluginRepository.register(ViewSideBySidePlugin.class);
 			DisplayPluginRepository.register(ViewFieldSplittedLogPlugin.class);

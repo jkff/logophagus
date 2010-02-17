@@ -8,12 +8,12 @@
         Field=C
         Field=Other // TODO
 
-    TODO fix bug reproducible in this way: split by field value, go to END, press PageDown a couple of times.
+  +  TODO fix bug reproducible in this way: split by field value, go to END, press PageDown a couple of times.
     The log disappears.
 
-    TODO single-click selection of field values
+  +  TODO single-click selection of field values
 
- - Bookmarks. They should work through filters, too. Consider both cases where a bookmarked position
+ + Bookmarks. They should work through filters, too. Consider both cases where a bookmarked position
    corresponds to a record that is accepted by the filter and when it is rejected.
 
  + TODO Complete refactoring of AnalysisPlugin

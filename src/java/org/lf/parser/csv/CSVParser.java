@@ -44,11 +44,11 @@ public class CSVParser implements Parser {
         int offset = 0;
         do {
             int i = stream.next();
+            offset++;            	
             if (i == -1) { 
             	sink.recordBorder();
             	return offset;
             }
-            offset++;            	
      
             char c = (char)i;
             SymbolType s =

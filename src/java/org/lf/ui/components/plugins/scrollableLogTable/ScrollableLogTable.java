@@ -7,13 +7,16 @@ import org.lf.services.Bookmarks;
 import org.lf.services.Highlighter;
 import org.lf.util.Pair;
 
+
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.table.TableColumn;
 
 import java.beans.*;
 import java.io.IOException;
+import java.util.Enumeration;
 
 
 public class ScrollableLogTable extends JPanel {
@@ -45,7 +48,9 @@ public class ScrollableLogTable extends JPanel {
 
 	//Reads log records on its own thread
 	class NavigateTask extends SwingWorker<Void, Void> {
+
 		private String command;
+
 		public NavigateTask(String command) {
 			this.command = command;
 			addPropertyChangeListener(naviProgressListener);
@@ -54,15 +59,20 @@ public class ScrollableLogTable extends JPanel {
 		//Reading log records in background Worker thread.
 		@Override
 		public Void doInBackground() {
+			EventQueue.invokeLater(new Runnable() {
+		        public void run() {
+		        	disableControls();
+		        }
+			});
 			try {
 				if ("next".equals(command)) {
 					navigate(true, curPos);
 				} else if ("prev".equals(command)) {
 					navigate(false, curPos);
 				} else if ("start".equals(command)) {
-					navigate(true, log.getStart());
+					navigate(true, log.first());
 				} else if ("end".equals(command)) {
-					navigate(false, log.getEnd());
+					navigate(false, log.last());
 				}
 			} catch (IOException e) {
 				System.out.print(e.getMessage());
@@ -74,29 +84,23 @@ public class ScrollableLogTable extends JPanel {
 			tableModel.clear();
 			int progress = 0;
 			setProgress(progress);
-			//				int reflectionCount = 0;
+			Position begin = log.first();
+			Position end = log.last();
+			int reflectionCount = 0;
 
 			for (int i = 0; i < 100; ++i) {
-				if (!fromWhere.equals(directionForward ? log.next(fromWhere) : log.prev(fromWhere))) {
-					setProgress(++progress);
-					if (directionForward) {
-						tableModel.add(tableModel.getRowCount(), log.readRecord(fromWhere));
-						fromWhere = log.next(fromWhere);
-					} else {
-						//we always read forward , thats why go back firstly
-						fromWhere = log.prev(fromWhere);
-						tableModel.add(0, log.readRecord(fromWhere));
-					}						
-				} else {
-					//						++reflectionCount;
-					//						System.out.print(reflectionCount);
-					//						if (reflectionCount == 2) break;
-					directionForward = !directionForward;
-					fromWhere = curPos;
-					--i;
+				tableModel.add(directionForward ? tableModel.getRowCount() : 0 , log.readRecord(fromWhere), fromWhere);
+				setProgress(++progress);
+				if (fromWhere.equals(end) || fromWhere.equals(begin) ) { 
+					if (++reflectionCount == 2 ) break;
+					if (fromWhere.equals(directionForward ? end : begin)) {
+						directionForward = !directionForward;
+						fromWhere = curPos;
+					}
 				}
-				//					System.out.println(">> " + i);
+				fromWhere = directionForward ? log.next(fromWhere) : log.prev(fromWhere);						
 			}
+
 			curPos = fromWhere;
 			setProgress(100);
 		}
@@ -107,7 +111,7 @@ public class ScrollableLogTable extends JPanel {
 		this.log = log;
 		this.attributes = attributes;
 		try {
-			curPos = log.getStart();
+			curPos = log.first();
 			tableModel = new LogTableModel(log.readRecord(curPos).size());
 		} catch(IOException e){
 			e.printStackTrace();
@@ -124,7 +128,7 @@ public class ScrollableLogTable extends JPanel {
 
 		addBookmark = new JButton("Add bookmark");
 		addBookmark.addActionListener(new AddBookmarkActionListener());
-		
+
 		JPanel bookmarkPanel = new JPanel();
 		bookmarkPanel.add(addBookmark);
 		bookmarkPanel.add(bookmarksList);
@@ -158,8 +162,11 @@ public class ScrollableLogTable extends JPanel {
 
 		table = new JTable(tableModel);
 
-		for(int i =0; i < table.getColumnCount(); ++i){
-			table.getColumnModel().getColumn(i).setCellRenderer(cellRenderer);
+		Enumeration e = table.getColumnModel().getColumns();
+		while ( e.hasMoreElements() ) {
+		           TableColumn column = (TableColumn)e.nextElement();
+		           column.setCellRenderer(cellRenderer);
+		           column.sizeWidthToFit();
 		}
 
 		JScrollPane scrollTable = new JScrollPane(table);
@@ -194,10 +201,42 @@ public class ScrollableLogTable extends JPanel {
 
 	}
 
+	public Position getSelectedRecord() {
+		if (table.getSelectedRow() == -1) return tableModel.getPosition(0);
+		return tableModel.getPosition(table.getSelectedRow());
+	}
+
+	public void scrollTo(Position pos) throws IOException {
+		System.out.println("Secroll");
+		if (!curPos.getClass().equals(pos.getClass())) return;
+		curPos = log.next(pos);
+		if (navigateTaskDone) {
+			navigateTaskDone = false;
+			new NavigateTask("next").execute();
+		}
+	}
+	
+	private void enableControls() {
+		nextButton.setEnabled(true);
+		prevButton.setEnabled(true);
+		startButton.setEnabled(true);
+		endButton.setEnabled(true);
+		addBookmark.setEnabled(true);
+		bookmarksList.setEnabled(true);
+	}
+	
+	private void disableControls() {
+		nextButton.setEnabled(false);
+		prevButton.setEnabled(false);
+		startButton.setEnabled(false);
+		endButton.setEnabled(false);
+		addBookmark.setEnabled(false);
+		bookmarksList.setEnabled(false);
+	}
 	
 	
-	//controls
-	
+	//controllers
+
 	class NavigateTaskProgressListener implements PropertyChangeListener { 
 		// Invoked when NavigateTask's progress property changes
 		public void propertyChange(PropertyChangeEvent evt) {
@@ -208,10 +247,7 @@ public class ScrollableLogTable extends JPanel {
 					&& 
 					((NavigateTask)evt.getSource()).getState().equals(SwingWorker.StateValue.DONE)) 
 			{
-				startButton.setEnabled(true);
-				endButton.setEnabled(true);
-				prevButton.setEnabled(true);
-				nextButton.setEnabled(true);
+				enableControls();
 				navigateTaskDone = true;
 			}
 		}
@@ -222,13 +258,13 @@ public class ScrollableLogTable extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			do {
-				String name = JOptionPane.showInputDialog(null, "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE );
+				String name = JOptionPane.showInputDialog(ScrollableLogTable.this, "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE );
 				if (name == null) return;
 
 				if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
 					JOptionPane.showMessageDialog(ScrollableLogTable.this, "Bookmark with such name already exist. Please enter other name.");
 				} else {
-					bookmarksList.addItem(new Pair<String, Position>(name , curPos));
+					bookmarksList.addItem(new Pair<String, Position>(name , getSelectedRecord()));
 					return;
 				}
 			} while (true);
@@ -239,11 +275,20 @@ public class ScrollableLogTable extends JPanel {
 	class ComboBoxActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JComboBox cb = (JComboBox)e.getSource();
-			String selectedBookmark = (String)cb.getSelectedItem();
-			curPos = attributes.getValue(Bookmarks.class).getValue(selectedBookmark);
-			navigateTaskDone = false;
-			new NavigateTask("prev").execute();
+			if (navigateTaskDone) {
+				JComboBox cb = (JComboBox)e.getSource();
+				String selectedBookmark = (String)cb.getSelectedItem();
+				if (selectedBookmark == null ) return;
+				try {
+					curPos = log.prev(attributes.getValue(Bookmarks.class).getValue(selectedBookmark));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				navigateTaskDone = false;
+				new NavigateTask("next").execute();
+			}
+
 		}
 
 	}
@@ -252,10 +297,6 @@ public class ScrollableLogTable extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent evt) {
 			if (!evt.getActionCommand().equals("set")){
-				nextButton.setEnabled(false);
-				prevButton.setEnabled(false);
-				startButton.setEnabled(false);
-				endButton.setEnabled(false);
 				//			SwingWorker is only designed to be executed once. 
 				//			Executing a SwingWorker more than once will not result in invoking the doInBackground method twice.
 				//			So we need to create new NavigateTask

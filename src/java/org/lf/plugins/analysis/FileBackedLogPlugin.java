@@ -26,16 +26,8 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 
 		try {
 			Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser());
-			Bookmarks bmParent = new Bookmarks(null);
-			bmParent.addBookmark("test-1", log.getStart());
-			bmParent.addBookmark("test0", log.getStart());
-
-			Bookmarks bm = new Bookmarks(bmParent);
-			bm.addBookmark("test1", log.getStart());
-			bm.addBookmark("test2", log.getEnd());
-
 			Attributes atr = new Attributes();
-			atr.addAttribute(bm);
+			atr.addAttribute(new Bookmarks(null));
 			return new Entity(atr, log);
 		} catch (IOException e) {
 			e.printStackTrace();

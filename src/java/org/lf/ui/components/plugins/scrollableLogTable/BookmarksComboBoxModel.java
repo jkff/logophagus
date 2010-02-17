@@ -9,7 +9,7 @@ import org.lf.parser.Position;
 import org.lf.services.Bookmarks;
 import org.lf.util.Pair;
 
-public class BookmarksComboBoxModel extends AbstractListModel implements MutableComboBoxModel {
+class BookmarksComboBoxModel extends AbstractListModel implements MutableComboBoxModel {
 	private Bookmarks bookmarks;
 	private Object selectedElement;
 	

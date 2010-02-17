@@ -6,7 +6,6 @@ import javax.swing.JOptionPane;
 
 import org.lf.parser.Log;
 import org.lf.plugins.AnalysisPlugin;
-import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
 import org.lf.services.LogAndField;
 

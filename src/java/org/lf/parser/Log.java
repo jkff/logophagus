@@ -3,9 +3,9 @@ package org.lf.parser;
 import java.io.IOException;
 
 public interface Log {
-	public Position getStart() throws IOException;
+	public Position first() throws IOException;
 
-	public Position getEnd() throws IOException;
+	public Position last() throws IOException;
 
 	public Position next(Position pos) throws IOException;
 

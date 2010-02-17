@@ -10,4 +10,9 @@ public class LogAndField {
 		this.log = log;
 		this.field = field;
 	}
+	
+	public String toString(){
+		return log.toString() + " => split by field " + field;
+	}
+
 }

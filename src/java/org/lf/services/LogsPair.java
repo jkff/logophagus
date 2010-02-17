@@ -11,6 +11,6 @@ public class LogsPair{
 	}
 	
 	public String toString(){
-		return first.toString()+" && "+second.toString();
+		return first.data.toString()+" && "+second.data.toString();
 	}
 }

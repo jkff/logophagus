@@ -29,7 +29,7 @@ public class FilteredLog implements Log {
 	private Position seekForward(Position pos) throws IOException {
 		while (true) {
             pos = underlyingLog.next(pos);
-            if(pos.equals(underlyingLog.getEnd()) || filter.accepts(readRecord(pos)))
+            if(pos.equals(underlyingLog.last()) || filter.accepts(readRecord(pos)))
                 return pos;
         }	
 	}
@@ -45,12 +45,12 @@ public class FilteredLog implements Log {
 		}
 	}
 
-	public Position getStart() throws IOException {
-		return seekForward(underlyingLog.getStart());
+	public Position first() throws IOException {
+		return seekForward(underlyingLog.first());
 	}
 
-	public Position getEnd() throws IOException {
-		return seekBackward(underlyingLog.getEnd());
+	public Position last() throws IOException {
+		return seekBackward(underlyingLog.last());
 	}
 
 	public Record readRecord(Position pos) throws IOException {
@@ -58,6 +58,6 @@ public class FilteredLog implements Log {
 	}
 
 	public String toString(){
-		return underlyingLog.toString() + " } filter : " + filter.toString();
+		return underlyingLog.toString() + " => filter : " + filter.toString();
 	}
 }

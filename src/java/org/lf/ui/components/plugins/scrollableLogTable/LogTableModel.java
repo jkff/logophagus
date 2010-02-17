@@ -4,62 +4,68 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.lf.parser.Position;
 import org.lf.parser.Record;
 
 import com.sun.istack.internal.Nullable;
 
 class LogTableModel extends AbstractTableModel {
-	private ArrayList<Record> data = new ArrayList<Record>();
+	private ArrayList<Record> recData = new ArrayList<Record>();
+	private ArrayList<Position> posData = new ArrayList<Position>();
+
 	private int columnsNumber;
-	
-	
+
+
 	@Nullable
-	public Record getRecord(int index) {
-		synchronized (data) {
-			if (data.size() <= index) return null; 
-			return data.get(index); 			
-		}
+	synchronized public Record getRecord(int index) {
+		if (recData.size() <= index) return null; 
+		return recData.get(index); 			
 	}
 
-	public void clear() {
-		synchronized (data) {
-			data.clear();
-		}
+	synchronized public Position getPosition(int index) {
+		if (posData.size() <= index) return null; 
+		return posData.get(index); 			
+	}
+
+	synchronized public void clear() {
+		recData.clear();
+		posData.clear();
 		this.fireTableDataChanged();
 	}
-	
-	public void add(int index, Record rec) {
-		synchronized (data) {
-			data.add(index, rec);
+
+	synchronized public void add(int index, Record rec, Position pos) {
+		recData.add(index, rec);
+		posData.add(index, pos);
+		if (columnsNumber < rec.size()) {
+			columnsNumber = rec.size();
+			this.fireTableStructureChanged();
+			return;
 		}
 		this.fireTableRowsInserted(index, index);
 	}
 
 	public LogTableModel( int columnsNumber) {
-			this.columnsNumber = columnsNumber;
+		this.columnsNumber = columnsNumber;
 	}
-	
+
 	public int getColumnCount() {
 		return columnsNumber;
 	}
 
-	public int getRowCount() {
-		synchronized (data) {
-			return data.size();
-		}
+	synchronized public int getRowCount() {
+		return recData.size();
 	}
 
 	public String getColumnName(int col) {
 		return "Field "+ col;
 	}
-	
-	public Object getValueAt(int row, int col) {
-		synchronized (data) {
-			if (data.size() > row && data.get(row).size() > col){
-				return data.get(row).get(col);
-			}
-		} 
+
+	synchronized public Object getValueAt(int row, int col) {
+		if (recData.size() > row && recData.get(row).size() > col){
+			return recData.get(row).get(col);
+		}
 		return null;
 	}
+		
 }
 
