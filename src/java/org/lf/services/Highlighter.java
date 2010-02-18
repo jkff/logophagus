@@ -12,7 +12,7 @@ import java.awt.*;
  * Date: Dec 18, 2009
  * Time: 6:35:47 PM
  */
-public class Highlighter implements Attribute{
+public class Highlighter implements Attribute<Highlighter> {
 	private Highlighter parent; 
 	private RecordColorer colorer;
 	
@@ -31,11 +31,15 @@ public class Highlighter implements Attribute{
 		if (parent == null)
 			return null;
 		return parent.getHighlightColor(rec);
- 
 	}
 
-	@Override
-	public Attribute createSuccessor() {
+    @Override
+    public Highlighter getParent() {
+        return parent;
+    }
+
+    @Override
+	public Highlighter createChild() {
 		return new Highlighter(this);
 	}
 

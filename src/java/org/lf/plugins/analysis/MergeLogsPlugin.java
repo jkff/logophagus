@@ -29,12 +29,7 @@ public class MergeLogsPlugin implements AnalysisPlugin {
 		Attributes atr = new Attributes();
 		atr.addAttribute(new Bookmarks(null));
 		return new Entity(atr,
-				new MergeLogs(logs, fields, new Comparator<String>() {
-					@Override
-					public int compare(String arg0, String arg1) {
-						return arg0.compareTo(arg1);
-					}
-				}));
+				new MergeLogs(logs, fields));
 	}
 
 	@Override

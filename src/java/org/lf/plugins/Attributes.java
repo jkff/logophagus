@@ -15,13 +15,13 @@ import com.sun.istack.internal.Nullable;
  */
 public class Attributes {
 	
-	private Map<Class , Attribute> data = new HashMap< Class, Attribute>();
+	private Map<Class, Attribute> data = new HashMap< Class, Attribute>();
 	
 	public Attributes createSuccessor() {
 		Attributes result = new Attributes();
-		Set<Entry<Class , Attribute> > set = data.entrySet();
+		Set<Entry<Class, Attribute>> set = data.entrySet();
 		for (Entry<Class, Attribute> cur : set) {
-			result.addAttribute(cur.getValue().createSuccessor());
+			result.addAttribute(cur.getValue().createChild());
 		}
 		return result;
 	}

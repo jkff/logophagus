@@ -8,7 +8,7 @@ import java.util.Map;
 import org.lf.parser.Position;
 import org.lf.plugins.Attribute;
 
-public class Bookmarks implements Attribute{
+public class Bookmarks implements Attribute<Bookmarks> {
 	private Bookmarks parent;
 	private Map<String, Position> data = new LinkedHashMap<String, Position>();
 
@@ -43,8 +43,12 @@ public class Bookmarks implements Attribute{
 		return true;
 	}
 
+    public Bookmarks getParent() {
+        return parent;
+    }
+
 	@Override
-	public Attribute createSuccessor() {
+	public Bookmarks createChild() {
 		return new Bookmarks(this);
 	}
     	
