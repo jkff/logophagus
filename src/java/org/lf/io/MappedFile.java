@@ -14,9 +14,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 
-/**
- * User: jkff Date: Oct 13, 2009 Time: 3:24:53 PM
- */
 public class MappedFile implements RandomAccessFileIO {
 
 	private class Buffer {
@@ -58,18 +55,15 @@ public class MappedFile implements RandomAccessFileIO {
 			if (fileSize - segmentPosition < bufSize) {
 				curBufSize = fileSize - segmentPosition; 
 			}
-//            System.out.println("Get buffer for " + segmentPosition);
 			if (base2buf.containsKey(segmentPosition)) {
-//                System.out.println("Buffer hit at " + segmentPosition);
 				Buffer b = base2buf.get(segmentPosition);
 				b.refCount++;
 				return b;
-			} // or create a new buffer with refCount = 1 || wait and check
-			// whether it was made
-//            System.out.println("Buffer miss at " + segmentPosition);
+			}
+
+            // Wait till there's space in the buffer pool
             if (base2buf.size() >= maxBuffers) {
-//                System.out.println("Not enough buffers");
-            //need reconstruct
+                //need reconstruct
             	while(true) {
                     garbageCollectBuffers();
                     if(base2buf.size() >= maxBuffers)
@@ -79,6 +73,7 @@ public class MappedFile implements RandomAccessFileIO {
                 }
             }
 
+            // Create a new buffer with refCount = 1
             FileChannel rafChannel = raf.getChannel();
             // surprisingly, rafChannel can be closed
             while (!rafChannel.isOpen()) {
@@ -101,7 +96,6 @@ public class MappedFile implements RandomAccessFileIO {
         }
 
         private synchronized void garbageCollectBuffers() {
-//            System.out.println("Garbage collecting buffers");
             for (Iterator<Long> it = base2buf.keySet().iterator(); it.hasNext();) {
                 Long offset = it.next();
                 Buffer b = base2buf.get(offset);
@@ -109,14 +103,11 @@ public class MappedFile implements RandomAccessFileIO {
                     it.remove();
                 }
             }
-//            System.out.println("Garbage collected " + n + " buffers");
         }
 
 		synchronized void releaseBuffer(Buffer buf) {
-//            System.out.println("Releasing buffer at " + buf.segmentPosition);
             buf.refCount--;
             if(buf.refCount == 0) {
-//                System.out.println("Buffer at " + buf.segmentPosition + " has become garbage");
                 notifyAll();
             }
 		}

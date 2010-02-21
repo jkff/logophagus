@@ -4,7 +4,7 @@ import javax.swing.JComponent;
 
 import org.lf.plugins.DisplayPlugin;
 import org.lf.plugins.Entity;
-import org.lf.services.LogAndField;
+import org.lf.plugins.analysis.splitbyfield.LogAndField;
 import org.lf.ui.components.plugins.fieldSplittedLog.FieldSplittedLog;
 
 public class ViewFieldSplittedLogPlugin implements DisplayPlugin {

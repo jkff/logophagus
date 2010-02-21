@@ -6,7 +6,11 @@ import java.util.*;
 import org.lf.parser.Log;
 import org.lf.parser.Position;
 import org.lf.parser.Record;
+import org.lf.util.Comparators;
 import org.lf.util.Pair;
+
+import static org.lf.util.CollectionFactory.newList;
+import static org.lf.util.CollectionFactory.pair;
 
 public class MergeLogs implements Log {
 	//pairs of log and record column number for merging
@@ -38,11 +42,7 @@ public class MergeLogs implements Log {
 	}
 	
 	public MergeLogs(Log[] logs, Integer[] fields) {
-        this(logs, fields, new Comparator<String>() {
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
+        this(logs, fields, Comparators.<String>naturalOrder());
     }
     public MergeLogs(Log[] logs, Integer[] fields, Comparator<String> timeComparator) {
 		this.logs = logs;
@@ -52,12 +52,12 @@ public class MergeLogs implements Log {
 	
 	@Override
 	public String toString() {
-		StringBuilder strB = new StringBuilder();
-		strB.append("MergeLogs of:");
+		StringBuilder sb = new StringBuilder();
+		sb.append("Merge:");
 		for (Log cur : logs) {
-			strB.append(cur + ", ");
+            sb.append(cur).append(", ");
 		}
-		return strB.substring(0, strB.length() - 2);
+		return sb.substring(0, sb.length() - 2);
 	}
 
     private PriorityQueue<Pair<Integer,Position>> fromList(List<Pair<Integer,Position>> positions) {
@@ -69,15 +69,15 @@ public class MergeLogs implements Log {
 
 	@Override
 	public Position first() throws IOException {
-        List<Pair<Integer,Position>> p = new ArrayList<Pair<Integer, Position>>();
-        for(int i = 0; i < logs.length; ++i) p.add(new Pair<Integer, Position>(i, logs[i].first()));
+        List<Pair<Integer,Position>> p = newList();
+        for(int i = 0; i < logs.length; ++i) p.add(pair(i, logs[i].first()));
 		return new MergedPosition(fromList(p));
 	}
 
 	@Override
 	public Position last() throws IOException {
         List<Pair<Integer,Position>> p = new ArrayList<Pair<Integer, Position>>();
-        for(int i = 0; i < logs.length; ++i) p.add(new Pair<Integer, Position>(i, logs[i].last()));
+        for(int i = 0; i < logs.length; ++i) p.add(pair(i, logs[i].last()));
 		return new MergedPosition(fromList(p));
 	}
 

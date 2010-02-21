@@ -5,8 +5,10 @@ import java.util.*;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Entity;
 
+import static org.lf.util.CollectionFactory.newList;
+
 public class AnalysisPluginRepository {
-    private static List<AnalysisPlugin> analysisPlugins = new ArrayList<AnalysisPlugin>();
+    private static List<AnalysisPlugin> analysisPlugins = newList();
 
     public static void register(Class<? extends AnalysisPlugin> plugin) throws PluginException {
         try {
@@ -26,7 +28,7 @@ public class AnalysisPluginRepository {
     	
 		Class[] pluginArgsArray = pluginArgsList.toArray(new Class[0]);
 		
-        List<AnalysisPlugin> res = new ArrayList<AnalysisPlugin>();
+        List<AnalysisPlugin> res = newList();
         for (AnalysisPlugin plugin : analysisPlugins) {
             if(plugin.getOutputType(pluginArgsArray) != null)
                 res.add(plugin);

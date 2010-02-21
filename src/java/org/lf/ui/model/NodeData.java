@@ -6,11 +6,11 @@ import javax.swing.JComponent;
 
 public class NodeData {
 	public final Entity entity;
-	public final JComponent jComponent;
+	public final JComponent component;
 
-    public NodeData(Entity entity, JComponent jComponent){
+    public NodeData(Entity entity, JComponent component){
 		this.entity = entity;
-		this.jComponent = jComponent;
+		this.component = component;
 	}
 	
 	public String toString() {

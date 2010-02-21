@@ -7,6 +7,8 @@ import org.lf.parser.Parser;
 import org.lf.parser.Record;
 import org.lf.parser.ScrollableInputStream;
 
+import static org.lf.util.CollectionFactory.newList;
+
 public class CSVParser implements Parser {
     private final char recordDelimeter;
     private final char fieldDelimeter;
@@ -102,7 +104,7 @@ public class CSVParser implements Parser {
     }
 
 	public Record readRecord(ScrollableInputStream is) throws IOException {
-        final List<String> fields = new ArrayList<String>();
+        final List<String> fields = newList();
 
 		findBorder(forward(is), new Forward(),
                 new Sink() {

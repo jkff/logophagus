@@ -3,8 +3,8 @@ package org.lf.ui.components.plugins.scrollableLogTable;
 
 import org.lf.parser.*;
 import org.lf.plugins.Attributes;
-import org.lf.services.Bookmarks;
-import org.lf.services.Highlighter;
+import org.lf.plugins.analysis.Bookmarks;
+import org.lf.plugins.analysis.highlight.Highlighter;
 import org.lf.util.Pair;
 
 
@@ -18,9 +18,10 @@ import java.beans.*;
 import java.io.IOException;
 import java.util.Enumeration;
 
+import static org.lf.util.CollectionFactory.pair;
+
 
 public class ScrollableLogTable extends JPanel {
-
 	private JButton addBookmark;
 	private JComboBox bookmarksList; 
 
@@ -207,7 +208,6 @@ public class ScrollableLogTable extends JPanel {
 	}
 
 	public void scrollTo(Position pos) throws IOException {
-		System.out.println("Secroll");
 		if (!curPos.getClass().equals(pos.getClass())) return;
 		curPos = log.next(pos);
 		if (navigateTaskDone) {
@@ -256,18 +256,22 @@ public class ScrollableLogTable extends JPanel {
 	class AddBookmarkActionListener implements ActionListener {
 
 		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			do {
-				String name = JOptionPane.showInputDialog(ScrollableLogTable.this, "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE );
+		public void actionPerformed(ActionEvent e) {
+			while(true) {
+				String name = JOptionPane.showInputDialog(
+                        ScrollableLogTable.this,
+                        "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE );
 				if (name == null) return;
 
 				if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
-					JOptionPane.showMessageDialog(ScrollableLogTable.this, "Bookmark with such name already exist. Please enter other name.");
+					JOptionPane.showMessageDialog(
+                            ScrollableLogTable.this,
+                            "Bookmark with such name already exists. Please input a different name.");
 				} else {
-					bookmarksList.addItem(new Pair<String, Position>(name , getSelectedRecord()));
+					bookmarksList.addItem(pair(name , getSelectedRecord()));
 					return;
 				}
-			} while (true);
+			}
 		}
 
 	}
@@ -295,13 +299,13 @@ public class ScrollableLogTable extends JPanel {
 
 	class NavigateButtonsActionListener implements ActionListener {
 		@Override
-		public void actionPerformed(ActionEvent evt) {
-			if (!evt.getActionCommand().equals("set")){
+		public void actionPerformed(ActionEvent e) {
+			if (!e.getActionCommand().equals("set")){
 				//			SwingWorker is only designed to be executed once. 
 				//			Executing a SwingWorker more than once will not result in invoking the doInBackground method twice.
 				//			So we need to create new NavigateTask
 				navigateTaskDone = false;
-				new NavigateTask(evt.getActionCommand()).execute();
+				new NavigateTask(e.getActionCommand()).execute();
 			}
 		}
 
@@ -309,7 +313,7 @@ public class ScrollableLogTable extends JPanel {
 
 	class BookmarkFocusListener extends FocusAdapter {
 		@Override
-		public void focusGained(FocusEvent arg0) {
+		public void focusGained(FocusEvent e) {
 			((BookmarksComboBoxModel)bookmarksList.getModel()).update();
 		}
 	}

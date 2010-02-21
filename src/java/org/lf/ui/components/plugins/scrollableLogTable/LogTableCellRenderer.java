@@ -7,7 +7,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import org.lf.parser.Record;
-import org.lf.services.Highlighter;
+import org.lf.plugins.analysis.highlight.Highlighter;
 
 class LogTableCellRenderer extends DefaultTableCellRenderer {
 	private Highlighter highlighter;

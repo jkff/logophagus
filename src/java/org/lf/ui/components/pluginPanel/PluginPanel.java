@@ -12,15 +12,14 @@ import org.lf.ui.model.NodeData;
 public class PluginPanel extends JPanel implements TreeSelectionListener {
 
 	@Override
-	public void valueChanged(TreeSelectionEvent arg0) {
+	public void valueChanged(TreeSelectionEvent event) {
 		this.removeAll();
-		DefaultMutableTreeNode node = (DefaultMutableTreeNode)arg0.getPath().getLastPathComponent();
+		DefaultMutableTreeNode node = (DefaultMutableTreeNode)event.getPath().getLastPathComponent();
 		if (node != null) {
 			NodeData nodeData = (NodeData)node.getUserObject();
-            this.add(nodeData.jComponent);
+            this.add(nodeData.component);
         }
 		this.updateUI();
-
 	}
 
 }

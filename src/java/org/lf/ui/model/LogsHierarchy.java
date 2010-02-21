@@ -1,23 +1,18 @@
 package org.lf.ui.model;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Observable;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
-
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.DisplayPlugin;
 import org.lf.plugins.Entity;
 import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
 
-public class LogsHierarchy extends Observable{
+import javax.swing.tree.*;
+import java.util.List;
+import java.util.Observable;
 
+import static org.lf.util.CollectionFactory.newLinkedList;
+
+public class LogsHierarchy extends Observable{
 	private DefaultTreeModel treeModel;
 	private NodeData currentNode;
 
@@ -63,8 +58,8 @@ public class LogsHierarchy extends Observable{
 		if (res == null) return;
 
 		List<DisplayPlugin> availabaleDisplays = DisplayPluginRepository.getApplicablePlugins(res.data);
-//		System.out.println(availabaleDisplays);
-		MutableTreeNode childNode = new DefaultMutableTreeNode(new NodeData(res, availabaleDisplays.get(0).createView(res))); 
+		MutableTreeNode childNode = new DefaultMutableTreeNode(
+                new NodeData(res, availabaleDisplays.get(0).createView(res))); 
 		if (data.size() == 1) {
 			addChildToNode(childNode, (MutableTreeNode)(selPaths[0].getLastPathComponent()));
 		} else {
@@ -72,26 +67,15 @@ public class LogsHierarchy extends Observable{
 		}
 	}
 
-	public NodeData getCurrentNodeData() {
-		return currentNode;
-	}
-
-
-	private List<Entity> getContentByPaths(TreePath[] selPaths) {
-		List<Entity> nodeObjects = new LinkedList<Entity>();
+    private List<Entity> getContentByPaths(TreePath[] selPaths) {
+		List<Entity> nodeObjects = newLinkedList();
 		if (selPaths != null) {
-			for (int i=0; i < selPaths.length; ++i){
-				DefaultMutableTreeNode cur = (DefaultMutableTreeNode)(selPaths[i].getLastPathComponent());
-				NodeData data = (NodeData)(cur.getUserObject());
-				nodeObjects.add(data.entity);
-			}
+            for (TreePath selPath : selPaths) {
+                DefaultMutableTreeNode cur = (DefaultMutableTreeNode) (selPath.getLastPathComponent());
+                NodeData data = (NodeData) (cur.getUserObject());
+                nodeObjects.add(data.entity);
+            }
 		}
 		return nodeObjects;
 	}
-
-	private void setCurrentNodeData(NodeData nodeData) {
-		this.currentNode = nodeData;
-	}
-	
-
 }

@@ -6,7 +6,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.MutableComboBoxModel;
 
 import org.lf.parser.Position;
-import org.lf.services.Bookmarks;
+import org.lf.plugins.analysis.Bookmarks;
 import org.lf.util.Pair;
 
 class BookmarksComboBoxModel extends AbstractListModel implements MutableComboBoxModel {
@@ -18,22 +18,26 @@ class BookmarksComboBoxModel extends AbstractListModel implements MutableComboBo
 	}
 	
 	@Override
-	public void addElement(Object arg0) {
-		Pair<String,Position> data = (Pair<String, Position>) arg0;
+	public void addElement(Object value) {
+		Pair<String,Position> data = (Pair<String, Position>) value;
 		bookmarks.addBookmark(data.first, data.second);
 		fireContentsChanged(this, 0, getSize());
 	}
 
 	@Override
-	public void insertElementAt(Object arg0, int arg1) {
-		addElement(arg0);
+	public void insertElementAt(Object value, int index) {
+		addElement(value);
 	}
 
 	@Override
-	public void removeElement(Object arg0) { }
+	public void removeElement(Object index) {
+        throw new UnsupportedOperationException();
+    }
 
 	@Override
-	public void removeElementAt(int arg0) {	}
+	public void removeElementAt(int index) {
+        throw new UnsupportedOperationException();
+    }
 
 	@Override
 	public Object getSelectedItem() {
@@ -41,16 +45,18 @@ class BookmarksComboBoxModel extends AbstractListModel implements MutableComboBo
 	}
 
 	@Override
-	public void setSelectedItem(Object arg0) {
-		selectedElement = arg0;
+	public void setSelectedItem(Object value) {
+		selectedElement = value;
 		fireContentsChanged(this, 0, getSize());
 	}
 
 
 	@Override
-	public Object getElementAt(int arg0) {
-		if (bookmarks.getSize() <= arg0 || arg0 < 0) return null;
-		return bookmarks.getNames().get(arg0);
+	public Object getElementAt(int index) {
+		if (bookmarks.getSize() <= index || index < 0)
+            throw new IndexOutOfBoundsException(
+                    "" + index + " is not in bounds [0,"+bookmarks.getSize()+")");
+		return bookmarks.getNames().get(index);
 	}
 
 	@Override

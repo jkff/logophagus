@@ -1,10 +1,10 @@
 package org.lf.util;
 
-public class Pair<FirstType, SecondType> {
-	public final FirstType first;
-	public final SecondType second;
+public class Pair<A, B> {
+	public final A first;
+	public final B second;
 	
-	public Pair(FirstType first, SecondType second) {
+	public Pair(A first, B second) {
 		this.first = first;
 		this.second = second;
 	}

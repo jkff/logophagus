@@ -1,21 +1,17 @@
 package org.lf.plugins;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
 import com.sun.istack.internal.Nullable;
 
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
-/**
- * User: jkff
- * Date: Jan 26, 2010
- * Time: 3:45:26 PM
- */
+import static org.lf.util.CollectionFactory.newHashMap;
+
+
 public class Attributes {
 	
-	private Map<Class, Attribute> data = new HashMap< Class, Attribute>();
+	private Map<Class, Attribute> data = newHashMap();
 	
 	public Attributes createSuccessor() {
 		Attributes result = new Attributes();
@@ -27,7 +23,9 @@ public class Attributes {
 	}
 	
 	public <T extends Attribute> void addAttribute(T newAttribute) {
-		if (data.containsKey(newAttribute.getClass())) return;
+		if (data.containsKey(newAttribute.getClass()))
+            throw new IllegalStateException(
+                    "Attribute of class " + newAttribute.getClass() + " already present");
 		data.put(newAttribute.getClass(), newAttribute);
 	}
 	

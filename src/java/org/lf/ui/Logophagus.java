@@ -11,8 +11,13 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.lf.plugins.analysis.filelog.FileBackedLogPlugin;
+import org.lf.plugins.analysis.filtersubstr.FilterBySubstringPlugin;
+import org.lf.plugins.analysis.highlight.HighlightRegexPlugin;
+import org.lf.plugins.analysis.merge.MergeLogsPlugin;
+import org.lf.plugins.analysis.sidebyside.SideBySidePlugin;
+import org.lf.plugins.analysis.splitbyfield.SplitByFieldValuesPlugin;
 import org.lf.plugins.display.*;
-import org.lf.plugins.analysis.*;
 import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
 import org.lf.services.PluginException;
@@ -72,7 +77,7 @@ public class Logophagus extends JFrame {
 		logsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 		logsTree.addMouseListener(new MouseAdapter() {
 		     public void mousePressed(final MouseEvent e) {
-		         if(e.getButton() == MouseEvent.BUTTON3 ){
+		         if(e.getButton() == MouseEvent.BUTTON3) {
 		        	 JPopupMenu popMenu = new TreeRightClickPopup(logsHierarchy, logsTree.getSelectionPaths());
 		        	 popMenu.show(logsTree, e.getX(), e.getY());
 		         }

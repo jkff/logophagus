@@ -1,6 +1,7 @@
 package org.lf.ui.components.plugins.scrollableLogTable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -9,33 +10,35 @@ import org.lf.parser.Record;
 
 import com.sun.istack.internal.Nullable;
 
+import static org.lf.util.CollectionFactory.newList;
+
 class LogTableModel extends AbstractTableModel {
-	private ArrayList<Record> recData = new ArrayList<Record>();
-	private ArrayList<Position> posData = new ArrayList<Position>();
+	private List<Record> records = newList();
+	private List<Position> positions = newList();
 
 	private int columnsNumber;
 
 
 	@Nullable
 	synchronized public Record getRecord(int index) {
-		if (recData.size() <= index) return null; 
-		return recData.get(index); 			
+		if (records.size() <= index) return null;
+		return records.get(index);
 	}
 
 	synchronized public Position getPosition(int index) {
-		if (posData.size() <= index) return null; 
-		return posData.get(index); 			
+		if (positions.size() <= index) return null;
+		return positions.get(index);
 	}
 
 	synchronized public void clear() {
-		recData.clear();
-		posData.clear();
+		records.clear();
+		positions.clear();
 		this.fireTableDataChanged();
 	}
 
 	synchronized public void add(int index, Record rec, Position pos) {
-		recData.add(index, rec);
-		posData.add(index, pos);
+		records.add(index, rec);
+		positions.add(index, pos);
 		if (columnsNumber < rec.size()) {
 			columnsNumber = rec.size();
 			this.fireTableStructureChanged();
@@ -53,7 +56,7 @@ class LogTableModel extends AbstractTableModel {
 	}
 
 	synchronized public int getRowCount() {
-		return recData.size();
+		return records.size();
 	}
 
 	public String getColumnName(int col) {
@@ -61,8 +64,8 @@ class LogTableModel extends AbstractTableModel {
 	}
 
 	synchronized public Object getValueAt(int row, int col) {
-		if (recData.size() > row && recData.get(row).size() > col){
-			return recData.get(row).get(col);
+		if (records.size() > row && records.get(row).size() > col){
+			return records.get(row).get(col);
 		}
 		return null;
 	}

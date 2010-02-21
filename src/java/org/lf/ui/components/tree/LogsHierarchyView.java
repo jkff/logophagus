@@ -21,8 +21,6 @@ public class LogsHierarchyView extends JTree implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		this.updateUI();
-		
 	}
-
 	
 }

@@ -5,9 +5,6 @@ import java.io.IOException;
 import org.lf.util.Filter;
 
 
-/**
- * User: jkff Date: Oct 6, 2009 Time: 10:33:15 AM
- */
 public class FilteredLog implements Log {
 	private final Filter<Record> filter;
 

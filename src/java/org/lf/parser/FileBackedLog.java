@@ -15,14 +15,14 @@ public class FileBackedLog implements Log {
 
 		@Override
 		public int hashCode() {
-			// TODO think about better solution
-			return (int)offsetBytes;
-		}
+            return (int)(offsetBytes ^ (offsetBytes >>> 32));
+        }
 
 		@Override
 		public boolean equals(Object obj) {
-			return obj != null && obj.getClass() == PhysicalPosition.class && 
-				((PhysicalPosition)obj).offsetBytes == this.offsetBytes;
+			return obj != null &&
+                   obj.getClass() == PhysicalPosition.class &&
+				   ((PhysicalPosition)obj).offsetBytes == this.offsetBytes;
 		}
 
 		PhysicalPosition(long offsetBytes) {
@@ -31,10 +31,8 @@ public class FileBackedLog implements Log {
 
 		@Override
 		public String toString() {
-			return "Phis. Pos. = " + offsetBytes;
+			return "Phyical position " + offsetBytes;
 		}
-		
-		
 	}
 	
 	public FileBackedLog(String fileName, Parser in) throws IOException {

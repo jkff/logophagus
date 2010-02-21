@@ -10,11 +10,11 @@ import javax.swing.JList;
 class FieldValuesCellRenderer extends DefaultListCellRenderer {
 
 	@Override
-	public Component getListCellRendererComponent(JList arg0, Object arg1,
-			int arg2, boolean arg3, boolean arg4) {
-		JLabel label = (JLabel)super.getListCellRendererComponent(arg0, arg1, arg2, arg3, arg4);
-		FieldValuesListModel model = (FieldValuesListModel)arg0.getModel();
-		if (model.getView(arg2) == null) 
+	public Component getListCellRendererComponent(JList list, Object value,
+			int index, boolean isSelected, boolean cellHasFocus) {
+		JLabel label = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+		FieldValuesListModel model = (FieldValuesListModel)list.getModel();
+		if (model.getView(index) == null) 
 			return label; 
 		label.setForeground(Color.BLUE);
 		return label;
