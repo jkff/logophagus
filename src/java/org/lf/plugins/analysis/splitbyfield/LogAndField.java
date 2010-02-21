@@ -1,4 +1,4 @@
-package org.lf.services;
+package org.lf.plugins.analysis.splitbyfield;
 
 import org.lf.parser.Log;
 
@@ -14,5 +14,4 @@ public class LogAndField {
 	public String toString(){
 		return log.toString() + " => split by field " + field;
 	}
-
 }

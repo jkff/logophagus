@@ -1,6 +1,4 @@
-package org.lf.plugins.analysis;
-
-import java.util.Comparator;
+package org.lf.plugins.analysis.merge;
 
 import javax.swing.JOptionPane;
 
@@ -9,7 +7,7 @@ import org.lf.parser.MergeLogs;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
-import org.lf.services.Bookmarks;
+import org.lf.plugins.analysis.Bookmarks;
 
 public class MergeLogsPlugin implements AnalysisPlugin {
 

@@ -1,8 +1,8 @@
-package org.lf.services;
+package org.lf.plugins.analysis.sidebyside;
 
 import org.lf.plugins.Entity;
 
-public class LogsPair{
+public class LogsPair {
 	final public Entity first;
 	final public Entity second;
 	public LogsPair(Entity first, Entity  second){

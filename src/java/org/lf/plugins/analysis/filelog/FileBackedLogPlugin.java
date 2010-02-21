@@ -1,4 +1,4 @@
-package org.lf.plugins.analysis;
+package org.lf.plugins.analysis.filelog;
 
 import org.lf.parser.FileBackedLog;
 import org.lf.parser.Log;
@@ -6,7 +6,7 @@ import org.lf.parser.csv.CSVParser;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
-import org.lf.services.Bookmarks;
+import org.lf.plugins.analysis.Bookmarks;
 
 import com.sun.istack.internal.Nullable;
 
@@ -36,7 +36,7 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 	}
 
 	public String getName() {
-		return "FileBackedLog";
+		return "Open log from file";
 	}
 
 	public Class getOutputType(Class[] inputTypes) {

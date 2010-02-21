@@ -1,4 +1,4 @@
-package org.lf.services;
+package org.lf.plugins.analysis.highlight;
 
 import org.lf.parser.Record;
 import org.lf.plugins.Attribute;
@@ -13,9 +13,9 @@ import java.awt.*;
  * Time: 6:35:47 PM
  */
 public class Highlighter implements Attribute<Highlighter> {
-	private Highlighter parent; 
+	private Highlighter parent;
 	private RecordColorer colorer;
-	
+
 	public Highlighter(Highlighter parent) {
 		this.parent = parent;
 	}

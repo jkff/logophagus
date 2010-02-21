@@ -1,16 +1,16 @@
-package org.lf.services;
+package org.lf.plugins.analysis;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.lf.parser.Position;
 import org.lf.plugins.Attribute;
+import org.lf.util.CollectionFactory;
+
+import static org.lf.util.CollectionFactory.newList;
 
 public class Bookmarks implements Attribute<Bookmarks> {
 	private Bookmarks parent;
-	private Map<String, Position> data = new LinkedHashMap<String, Position>();
+	private Map<String, Position> data = CollectionFactory.newLinkedHashMap();
 
 	public Bookmarks(Bookmarks parent) {
 		this.parent = parent;
@@ -18,13 +18,13 @@ public class Bookmarks implements Attribute<Bookmarks> {
 		
 	
 	public List<String> getNames() {
-		ArrayList<String> result = new ArrayList<String>(data.keySet());
+		ArrayList<String> result = newList(data.keySet());
 		if (parent != null)
 			result.addAll(parent.getNames());
 		return result;
 	}
-	
-	public Position getValue(String name) {
+
+    public Position getValue(String name) {
 		if (data.containsKey(name))
 			return data.get(name);
 		if (parent == null)
