@@ -5,7 +5,7 @@ import javax.swing.JComponent;
 import org.lf.parser.Log;
 import org.lf.plugins.DisplayPlugin;
 import org.lf.plugins.Entity;
-import org.lf.ui.components.plugins.scrollableLogTable.ScrollableLogTable;
+import org.lf.ui.components.plugins.scrollablelogtable.ScrollableLogTable;
 
 public class ViewLogAsTablePlugin implements DisplayPlugin {
 
