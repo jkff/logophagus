@@ -1,11 +1,11 @@
-package org.lf.ui.components.plugins.fieldSplittedLog;
+package org.lf.ui.components.plugins.fieldsplittedlog;
 
 import org.lf.parser.FilteredLog;
 import org.lf.parser.Log;
 import org.lf.parser.Record;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.analysis.splitbyfield.LogAndField;
-import org.lf.ui.components.plugins.scrollableLogTable.ScrollableLogTable;
+import org.lf.ui.components.plugins.scrollablelogtable.ScrollableLogTable;
 import org.lf.util.Filter;
 
 import javax.swing.*;

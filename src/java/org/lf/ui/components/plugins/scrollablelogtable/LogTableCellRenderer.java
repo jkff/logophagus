@@ -1,4 +1,4 @@
-package org.lf.ui.components.plugins.scrollableLogTable;
+package org.lf.ui.components.plugins.scrollablelogtable;
 
 import java.awt.Color;
 import java.awt.Component;

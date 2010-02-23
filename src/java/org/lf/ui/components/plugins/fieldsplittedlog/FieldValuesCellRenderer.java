@@ -1,4 +1,4 @@
-package org.lf.ui.components.plugins.fieldSplittedLog;
+package org.lf.ui.components.plugins.fieldsplittedlog;
 
 import java.awt.Color;
 import java.awt.Component;

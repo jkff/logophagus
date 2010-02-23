@@ -1,4 +1,4 @@
-package org.lf.ui.components.plugins.fieldSplittedLog;
+package org.lf.ui.components.plugins.fieldsplittedlog;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -43,7 +43,7 @@ class FieldValuesListModel extends AbstractListModel {
         }
     }
 
-    private void addFieldValue(String fieldValue) {
+    private synchronized void addFieldValue(String fieldValue) {
         if (value2panel.containsKey(fieldValue)) return;
         value2panel.put(fieldValue, null);
         values.add(fieldValue);
@@ -52,30 +52,30 @@ class FieldValuesListModel extends AbstractListModel {
     }
     
 
-    public void setView(String fieldValue, JPanel view) {
+    public synchronized void setView(String fieldValue, JPanel view) {
         if (!value2panel.containsKey(fieldValue)) return;
         value2panel.put(fieldValue, view);
     }
 
     @Nullable
-    public JPanel getView(String fieldValue) {
+    public synchronized JPanel getView(String fieldValue) {
         //TODO check that there is no any field with value "other"
         return value2panel.get(fieldValue);
     }
 
     @Nullable
-    public JPanel getView(int index) {
+    public synchronized JPanel getView(int index) {
         if (index >= values.size()) return null;
         return getView(values.get(index));
     }
 
     @Override
-    public Object getElementAt(int i) {
+    public synchronized Object getElementAt(int i) {
         return values.get(i);
     }
 
     @Override
-    public int getSize() {
+    public synchronized int getSize() {
         return values.size();
     }
 }
