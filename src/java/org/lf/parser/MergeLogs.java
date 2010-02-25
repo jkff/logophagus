@@ -1,20 +1,15 @@
 package org.lf.parser;
 
-import java.io.IOException;
-import java.util.*;
-
-import org.lf.parser.Log;
-import org.lf.parser.Position;
-import org.lf.parser.Record;
-import static org.lf.util.Comparators.inverse;
-
 import org.lf.util.Comparators;
-import org.lf.util.Pair;
 import org.lf.util.Triple;
 
-import static org.lf.util.CollectionFactory.newPriorityQueue;
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TreeSet;
+
 import static org.lf.util.CollectionFactory.newList;
-import static org.lf.util.CollectionFactory.triple;
 
 public class MergeLogs implements Log {
 	private final Log[] logs;
@@ -23,34 +18,28 @@ public class MergeLogs implements Log {
 	//used for comparing record columns 
 	private Comparator<String> timeComparator;
 
-    private Comparator<Triple<Integer,Position,Record>> POS_COMPARATOR = new Comparator<Triple<Integer, Position,Record>>() {
+    private class IPR extends Triple<Integer,Position,Record> {
+        private IPR(Integer first, Position second, Record third) {
+            super(first, second, third);
+        }
+    }
+    
+    private Comparator<IPR> POS_COMPARATOR = new Comparator<IPR>() {
         @Override
-        public int compare(Triple<Integer,Position,Record> o1, Triple<Integer,Position,Record> o2) {
+        public int compare(IPR o1, IPR o2) {
         	return timeComparator.compare(
         			o1.third.get(timeFieldIndices[o1.first]),
         			o1.third.get(timeFieldIndices[o2.first]));
         }
     };
 
-    private Comparator<Triple<Integer,Position,Record>> INVERSE_POS_COMPARATOR = new Comparator<Triple<Integer, Position,Record>>() {
-        @Override
-        public int compare(Triple<Integer,Position,Record> o1, Triple<Integer,Position,Record> o2) {
-        	return inverse(timeComparator).compare(
-        			o1.third.get(timeFieldIndices[o1.first]),
-        			o1.third.get(timeFieldIndices[o2.first]));
-        }
-    };
-
     private class MergedPosition implements Position {
-		PriorityQueue<Triple<Integer,Position,Record>> positions;
-		PriorityQueue<Triple<Integer,Position,Record>> inversePositions;
+		TreeSet<IPR> queue;
 
-		public MergedPosition(PriorityQueue<Triple<Integer,Position,Record>> positions,
-				PriorityQueue<Triple<Integer,Position,Record>> inversePositions) {
-            this.positions = positions;
-            this.inversePositions = inversePositions;
-		}
-	}
+        private MergedPosition(TreeSet<IPR> queue) {
+            this.queue = queue;
+        }
+    }
 	
 	public MergeLogs(Log[] logs, Integer[] fields) {
         this(logs, fields, Comparators.<String>naturalOrder());
@@ -72,54 +61,55 @@ public class MergeLogs implements Log {
 		return sb.substring(0, sb.length() - 2);
 	}
 
-    private PriorityQueue<Triple<Integer,Position, Record>> fromList(List<Triple<Integer,Position,Record>> positions) {
-        PriorityQueue<Triple<Integer,Position,Record>> q = new PriorityQueue<Triple<Integer, Position,Record>>(
-                positions.size(), POS_COMPARATOR);
-        for (Triple<Integer, Position, Record> p : positions) q.offer(p);
+    private TreeSet<IPR> fromList(List<IPR> positions) {
+        TreeSet<IPR> q = new TreeSet<IPR>(POS_COMPARATOR);
+        for (IPR p : positions) q.add(p);
         return q;
     }
 
-    private PriorityQueue<Triple<Integer,Position, Record>> inverseFromList(List<Triple<Integer,Position,Record>> positions) {
-        PriorityQueue<Triple<Integer,Position,Record>> q = new PriorityQueue<Triple<Integer, Position,Record>>(
-                positions.size(), INVERSE_POS_COMPARATOR);
-        for (Triple<Integer, Position, Record> p : positions) q.offer(p);
-        return q;
-    }
-
-    
 	@Override
 	public Position first() throws IOException {
-        List<Triple<Integer,Position,Record>> p = newList();
-        for(int i = 0; i < logs.length; ++i) p.add(triple(i, logs[i].first(), logs[i].readRecord(logs[i].first())));
-		return new MergedPosition(fromList(p), inverseFromList(p));
+        List<IPR> p = newList();
+        for(int i = 0; i < logs.length; ++i) p.add(new IPR(i, logs[i].first(), logs[i].readRecord(logs[i].first())));
+		return new MergedPosition(fromList(p));
 	}
 
 	@Override
 	public Position last() throws IOException {
-        List<Triple<Integer,Position,Record>> p = newList();
-        for(int i = 0; i < logs.length; ++i) p.add(triple(i, logs[i].last(), logs[i].readRecord(logs[i].last())));
-		return new MergedPosition(fromList(p), inverseFromList(p));
+        List<IPR> p = newList();
+        for(int i = 0; i < logs.length; ++i) p.add(new IPR(i, logs[i].last(), logs[i].readRecord(logs[i].last())));
+		return new MergedPosition(fromList(p));
 	}
 
 	@Override
 	public Position next(Position pos) throws IOException {
         MergedPosition p = (MergedPosition) pos;
-        Triple<Integer,Position,Record> cur = p.positions.poll();
+        TreeSet<IPR> copy = new TreeSet<IPR>(p.queue);
+        Iterator<IPR> i = copy.iterator();
+        IPR cur = i.next();
+        i.remove();
         Position nextPos = logs[cur.first].next(cur.second);
-        Triple<Integer,Position,Record> next = triple(cur.first, nextPos, logs[cur.first].readRecord(nextPos));
-        PriorityQueue<Triple<Integer,Position,Record>> res = newPriorityQueue(p.positions);
-        res.offer(next);
-        return new MergedPosition(res);
+        IPR next = new IPR(cur.first, nextPos, logs[cur.first].readRecord(nextPos));
+        copy.add(next);
+        return new MergedPosition(copy);
 	}
 
 	@Override
 	public Position prev(Position pos) throws IOException {
-        throw new UnsupportedOperationException(";'FIXME: Add second priority queue with reverse order");
+        MergedPosition p = (MergedPosition) pos;
+        TreeSet<IPR> copy = new TreeSet<IPR>(p.queue);
+        Iterator<IPR> i = copy.descendingIterator();
+        IPR cur = i.next();
+        i.remove();
+        Position nextPos = logs[cur.first].prev(cur.second);
+        IPR next = new IPR(cur.first, nextPos, logs[cur.first].readRecord(nextPos));
+        copy.add(next);
+        return new MergedPosition(copy);
 	}
 
 	@Override
 	public Record readRecord(Position pos) throws IOException {
-		Triple<Integer,Position,Record> p = ((MergedPosition) pos).positions.peek();
+		IPR p = ((MergedPosition) pos).queue.iterator().next();
         return p.third;
     }
 }

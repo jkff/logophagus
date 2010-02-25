@@ -1,76 +1,25 @@
  - TODO comments in sources
- + Plugin: split by value of field. Splits a log into many sublogs based on their field value.
-    User says, "Look at 10000 first records"
-    We scan them and gather values of the field
-    Tree:
-        Field=A
-        Field=B
-        Field=C
-        Field=Other // TODO <---- "Other" means "Not A, B or C" (t.i. the first record in "Other" will be beyond the first 10000)
-  
  - TODO (in case merge turns out to be too slow because of priority queue copying in MergeLogs.next()) Use an immutable (purely functional) priority queue there. See, for example, Okasaki "Purely functional data structures" or take one from the internet
 
-  +  TODO Make reaction to nagivation controls closer to common sense (for instance, record 0 disappears after we press PgUp while staying on record 0 and can't be reached with "Up" arrow, etc.)
-  -  TODO Selecting a bookmark should scroll to its position and highlight the corresponding record.
-  +  TODO Better labels for tree nodes (interesting part gets obscured by file name). Probably use icons.
+  - TODO Scrolling should be continuous. Must react to scrollbar and up/down arrows.
+  - TODO Scrolling forward at end of file should do nothing; same thing with scrolling backward at the beginning.
+  - TODO More rows in preview
+  - TODO Split by field values: should read log in a separate thread and be unusable (show a progress bar) until user presses Stop or enough records are read
+  - TODO Remove "Apply" from popup menu
+  - TODO Split by field values: combobox with field names instead of input textbox
+  - TODO Selecting a bookmark should scroll to its position and highlight the corresponding record.
+  - TODO Use icons for tree nodes.
 
  - TODO Multiple inheritance for attributes (so that bookmarks and highlighters of merged logs show up in the merge result, too)
 
  - TODO "Merge logs" plugin. Input: any number of logs (of any format); for each log, the time axis is indicated. 
 
- + TODO File open dialog should have state persistent across its invocations during the program's lifetime and also across program launches (always start from the same folder at which it was closed last time).
+ - TODO File open dialog should have state persistent across program launches (always start from the same folder at which it was closed last time). (java.util.Properties)
 
- + TODO Click (left or right) on an empty area in the log tree should clear selection (and consequently, right click should trigger a context menu for zero selected logs even if something is selected)
+ - TODO When a node is created, select it automatically
 
- + TODO Beautify interface (at least use native platform look-and-feel)
+ - TODO BUG: Selected cells in a highlighted log have text and background rendered in white (?)
 
-+ Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException
-	at org.lf.plugins.analysis.HighlightRegexPlugin$1.getColor(HighlightRegexPlugin.java:51)
-	at org.lf.services.Highlighter.getHighlightColor(Highlighter.java:29)
-	at org.lf.ui.components.plugins.scrollableLogTable.LogTableCellRenderer.getTableCellRendererComponent(LogTableCellRenderer.java:29)
-	at javax.swing.JTable.prepareRenderer(JTable.java:5719)
-	at javax.swing.plaf.basic.BasicTableUI.paintCell(BasicTableUI.java:2072)
-	at javax.swing.plaf.basic.BasicTableUI.paintCells(BasicTableUI.java:1974)
-	at javax.swing.plaf.basic.BasicTableUI.paint(BasicTableUI.java:1770)
-	at javax.swing.plaf.ComponentUI.update(ComponentUI.java:143)
-	at javax.swing.JComponent.paintComponent(JComponent.java:752)
-	at javax.swing.JComponent.paint(JComponent.java:1029)
-	at javax.swing.JComponent.paintToOffscreen(JComponent.java:5124)
-	at javax.swing.RepaintManager$PaintManager.paintDoubleBuffered(RepaintManager.java:1479)
-	at javax.swing.RepaintManager$PaintManager.paint(RepaintManager.java:1410)
-	at javax.swing.RepaintManager.paint(RepaintManager.java:1224)
-	at javax.swing.JComponent.paintForceDoubleBuffered(JComponent.java:1065)
-	at javax.swing.JViewport.paintView(JViewport.java:1633)
-	at javax.swing.JViewport.flushViewDirtyRegion(JViewport.java:1523)
-	at javax.swing.JViewport.setViewPosition(JViewport.java:1112)
-	at javax.swing.JViewport.scrollRectToVisible(JViewport.java:415)
-	at javax.swing.JComponent.scrollRectToVisible(JComponent.java:3065)
-	at javax.swing.JTable.changeSelection(JTable.java:2429)
-	at javax.swing.plaf.basic.BasicTableUI$Actions.actionPerformed(BasicTableUI.java:526)
-	at javax.swing.SwingUtilities.notifyAction(SwingUtilities.java:1633)
-	at javax.swing.JComponent.processKeyBinding(JComponent.java:2851)
-	at javax.swing.JTable.processKeyBinding(JTable.java:5246)
-	at javax.swing.JComponent.processKeyBindings(JComponent.java:2897)
-	at javax.swing.JComponent.processKeyEvent(JComponent.java:2814)
-	at java.awt.Component.processEvent(Component.java:6040)
-	at java.awt.Container.processEvent(Container.java:2041)
-	at java.awt.Component.dispatchEventImpl(Component.java:4630)
-	at java.awt.Container.dispatchEventImpl(Container.java:2099)
-	at java.awt.Component.dispatchEvent(Component.java:4460)
-	at java.awt.KeyboardFocusManager.redispatchEvent(KeyboardFocusManager.java:1850)
-	at java.awt.DefaultKeyboardFocusManager.dispatchKeyEvent(DefaultKeyboardFocusManager.java:712)
-	at java.awt.DefaultKeyboardFocusManager.preDispatchKeyEvent(DefaultKeyboardFocusManager.java:990)
-	at java.awt.DefaultKeyboardFocusManager.typeAheadAssertions(DefaultKeyboardFocusManager.java:855)
-	at java.awt.DefaultKeyboardFocusManager.dispatchEvent(DefaultKeyboardFocusManager.java:676)
-	at java.awt.Component.dispatchEventImpl(Component.java:4502)
-	at java.awt.Container.dispatchEventImpl(Container.java:2099)
-	at java.awt.Window.dispatchEventImpl(Window.java:2478)
-	at java.awt.Component.dispatchEvent(Component.java:4460)
-	at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
-	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:269)
-	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:184)
-	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:174)
-	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:169)
-	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:161)
-	at java.awt.EventDispatchThread.run(EventDispatchThread.java:122)
+ - Read logs with user-specified format pattern (regex; 1 capturing group = 1 field ; list of field names)
 
+ - Find some example large apache or IIS log, try using program on it
