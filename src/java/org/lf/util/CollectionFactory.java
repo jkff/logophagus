@@ -21,11 +21,21 @@ public class CollectionFactory {
     public static <K> HashSet<K> newHashSet() {
         return new HashSet<K>();
     }
+
     public static <T> PriorityQueue<T> newPriorityQueue() {
         return new PriorityQueue<T>();
+    }
+
+    public static <T> PriorityQueue<T> newPriorityQueue( PriorityQueue<T> other) {
+        return new PriorityQueue<T>(other);
     }
 
     public static <A,B> Pair<A,B> pair(A a,B b) {
         return new Pair<A,B>(a,b);
     }
+    
+    public static <A,B,C> Triple<A,B,C> triple(A a,B b, C c) {
+        return new Triple<A,B,C>(a, b, c);
+    }
+
 }

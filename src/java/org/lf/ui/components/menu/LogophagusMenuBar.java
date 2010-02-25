@@ -9,6 +9,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import org.lf.plugins.analysis.filelog.FileBackedLogPlugin;
 import org.lf.ui.model.LogsHierarchy;
 
 
@@ -27,10 +28,7 @@ public class LogophagusMenuBar extends JMenuBar implements Observer{
 		JMenuItem fileOpen = new JMenuItem("Open");
 		fileOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//				AnalysisPlugin logPlugin = new FileBackedLogPlugin();
-				//				Object log = logPlugin.applyTo(new Object[]{});
-				//				DisplayPlugin disp = DisplayPluginRepository.getApplicablePlugins(log).get(0);
-				//				addNode(rootNode, new DefaultMutableTreeNode(new NodeData(log, disp.createView(log))));				
+				logsTree.applyPluginForPath(new FileBackedLogPlugin(), null);
 			}
 		});
 

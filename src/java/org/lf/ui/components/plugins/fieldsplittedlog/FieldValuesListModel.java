@@ -25,24 +25,29 @@ class FieldValuesListModel extends AbstractListModel {
         return otherPosition;
     }
 
-    public void fillModel(final LogAndField logAndField) {
+    void fillModel(final LogAndField logAndField) {
         try {
             Position cur = logAndField.log.first();
-            Position prev = null;
+            Position end = logAndField.log.last();
             for (int i = 0; i < 1000; ++i) {
-                if (prev != null && cur.equals(prev)) break;
                 Record rec = logAndField.log.readRecord(cur);
                 FieldValuesListModel.this.addFieldValue(rec.get(logAndField.field));
-                prev = cur;
+                if (cur.equals(end)) break;
                 cur = logAndField.log.next(cur);
             }
-            otherPosition = cur;
+            System.out.println(cur);
+            if (!cur.equals(end))
+            	otherPosition = cur;
             FieldValuesListModel.this.addFieldValue("Other");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    synchronized List<String> getValues() {
+    	return values.subList(0, values.size() -1);
+    }
+    
     private synchronized void addFieldValue(String fieldValue) {
         if (value2panel.containsKey(fieldValue)) return;
         value2panel.put(fieldValue, null);
@@ -52,19 +57,19 @@ class FieldValuesListModel extends AbstractListModel {
     }
     
 
-    public synchronized void setView(String fieldValue, JPanel view) {
+    synchronized void setView(String fieldValue, JPanel view) {
         if (!value2panel.containsKey(fieldValue)) return;
         value2panel.put(fieldValue, view);
     }
 
     @Nullable
-    public synchronized JPanel getView(String fieldValue) {
+    synchronized JPanel getView(String fieldValue) {
         //TODO check that there is no any field with value "other"
         return value2panel.get(fieldValue);
     }
 
     @Nullable
-    public synchronized JPanel getView(int index) {
+    synchronized JPanel getView(int index) {
         if (index >= values.size()) return null;
         return getView(values.get(index));
     }

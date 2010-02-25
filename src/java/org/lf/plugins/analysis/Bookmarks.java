@@ -51,5 +51,11 @@ public class Bookmarks implements Attribute<Bookmarks> {
 	public Bookmarks createChild() {
 		return new Bookmarks(this);
 	}
+
+
+	@Override
+	public Bookmarks intersect(Bookmarks other) {
+		return null;
+	}
     	
 }

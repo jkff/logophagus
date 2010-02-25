@@ -1,5 +1,5 @@
  - TODO comments in sources
- - Plugin: split by value of field. Splits a log into many sublogs based on their field value.
+ + Plugin: split by value of field. Splits a log into many sublogs based on their field value.
     User says, "Look at 10000 first records"
     We scan them and gather values of the field
     Tree:
@@ -10,21 +10,21 @@
   
  - TODO (in case merge turns out to be too slow because of priority queue copying in MergeLogs.next()) Use an immutable (purely functional) priority queue there. See, for example, Okasaki "Purely functional data structures" or take one from the internet
 
-  -  TODO Make reaction to nagivation controls closer to common sense (for instance, record 0 disappears after we press PgUp while staying on record 0 and can't be reached with "Up" arrow, etc.)
+  +  TODO Make reaction to nagivation controls closer to common sense (for instance, record 0 disappears after we press PgUp while staying on record 0 and can't be reached with "Up" arrow, etc.)
   -  TODO Selecting a bookmark should scroll to its position and highlight the corresponding record.
-  -  TODO Better labels for tree nodes (interesting part gets obscured by file name). Probably use icons.
+  +  TODO Better labels for tree nodes (interesting part gets obscured by file name). Probably use icons.
 
  - TODO Multiple inheritance for attributes (so that bookmarks and highlighters of merged logs show up in the merge result, too)
 
  - TODO "Merge logs" plugin. Input: any number of logs (of any format); for each log, the time axis is indicated. 
 
- - TODO File open dialog should have state persistent across its invocations during the program's lifetime and also across program launches (always start from the same folder at which it was closed last time).
+ + TODO File open dialog should have state persistent across its invocations during the program's lifetime and also across program launches (always start from the same folder at which it was closed last time).
 
- - TODO Click (left or right) on an empty area in the log tree should clear selection (and consequently, right click should trigger a context menu for zero selected logs even if something is selected)
+ + TODO Click (left or right) on an empty area in the log tree should clear selection (and consequently, right click should trigger a context menu for zero selected logs even if something is selected)
 
- - TODO Beautify interface (at least use native platform look-and-feel)
+ + TODO Beautify interface (at least use native platform look-and-feel)
 
-Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException
++ Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException
 	at org.lf.plugins.analysis.HighlightRegexPlugin$1.getColor(HighlightRegexPlugin.java:51)
 	at org.lf.services.Highlighter.getHighlightColor(Highlighter.java:29)
 	at org.lf.ui.components.plugins.scrollableLogTable.LogTableCellRenderer.getTableCellRendererComponent(LogTableCellRenderer.java:29)

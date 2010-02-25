@@ -43,4 +43,14 @@ public class Highlighter implements Attribute<Highlighter> {
 		return new Highlighter(this);
 	}
 
+	@Override
+	public Highlighter intersect(final Highlighter other) {
+		Highlighter h = new Highlighter(null) {
+			public Color getHighlightColor(Record rec) {
+				return this.createChild().getHighlightColor(rec) != null ? this.getHighlightColor(rec) : other.createChild().getHighlightColor(rec);  
+			}
+		};
+		return h;
+	}
+
 }

@@ -79,7 +79,7 @@ public class MappedFile implements RandomAccessFileIO {
             while (!rafChannel.isOpen()) {
                 rafChannel.close();
                 raf.close();
-                raf = new RandomAccessFile(fileName,"r");
+                raf = new RandomAccessFile(file.getAbsolutePath() ,"r");
                 rafChannel = raf.getChannel();
             }
 
@@ -127,8 +127,8 @@ public class MappedFile implements RandomAccessFileIO {
 
 		BufferPool(long bufSize, int maxBuffers) throws FileNotFoundException {
 			this.bufSize = bufSize;
-			this.fileSize = new File(fileName).length();
-			this.raf = new RandomAccessFile(fileName, "r");
+			this.fileSize = file.length();
+			this.raf = new RandomAccessFile(file.getAbsolutePath(), "r");
 			this.maxBuffers = maxBuffers;
 			this.base2buf = new HashMap<Long, Buffer>();
 		}
@@ -136,10 +136,10 @@ public class MappedFile implements RandomAccessFileIO {
 
 	private BufferPool bufferPool;
 
-	private String fileName;
+	private File file;
 
 	public MappedFile(String fileName) throws FileNotFoundException {
-		this.fileName = fileName;
+		this.file = new File(fileName);
 		this.bufferPool = new BufferPool(100000, 100);
 	}
 
@@ -313,6 +313,6 @@ public class MappedFile implements RandomAccessFileIO {
 	}
 
 	public String getFileName() {
-		return fileName;
+		return file.getName();
 	}
 }

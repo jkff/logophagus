@@ -1,6 +1,5 @@
 package org.lf.ui.components.plugins.scrollablelogtable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -21,7 +20,7 @@ class LogTableModel extends AbstractTableModel {
 
 	@Nullable
 	synchronized public Record getRecord(int index) {
-		if (records.size() <= index) return null;
+		if (index >= records.size()) return null;
 		return records.get(index);
 	}
 

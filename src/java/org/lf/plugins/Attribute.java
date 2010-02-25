@@ -8,4 +8,7 @@ public interface Attribute<T extends Attribute<T>> {
      * equals to 'this'.
      */
 	public Attribute<T> createChild();
+	
+	//method for combining attributes of same type
+	public Attribute<T> intersect(T other);
 }

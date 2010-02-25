@@ -6,7 +6,6 @@ import java.io.IOException;
 
 public class FileBackedLog implements Log {
 	private RandomAccessFileIO file;
-
 	private Parser parser;
 	private ScrollableInputStream is;
 
@@ -31,7 +30,7 @@ public class FileBackedLog implements Log {
 
 		@Override
 		public String toString() {
-			return "Phyical position " + offsetBytes;
+			return "Physical position " + offsetBytes;
 		}
 	}
 	
@@ -64,6 +63,8 @@ public class FileBackedLog implements Log {
 		PhysicalPosition pp = (PhysicalPosition) pos;
 		is.scrollTo(pp.offsetBytes);
 		long offset = parser.findNextRecord(is);
+		if (offset == 0) 
+			throw new IOException("Can't get next record position from position " + pos);
 		return new PhysicalPosition(pp.offsetBytes + offset);
 	}
 
@@ -72,13 +73,14 @@ public class FileBackedLog implements Log {
 		PhysicalPosition pp = (PhysicalPosition) pos;
 		is.scrollTo(pp.offsetBytes);
 		long offset = parser.findPrevRecord(is);
+		if (offset == 0) 
+			throw new IOException("Can't get previous record position from position " + pos);
 		return new PhysicalPosition(pp.offsetBytes - offset);
 	}
 
 	@Override
 	public String toString() {
-		String fileName = file.getFileName(); 
-		return fileName.substring(fileName.lastIndexOf("/") + 1, fileName.length());
+		return file.getFileName();
 	}
 	
 }

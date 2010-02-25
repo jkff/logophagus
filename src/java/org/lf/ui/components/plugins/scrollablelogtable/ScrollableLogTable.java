@@ -5,7 +5,6 @@ import org.lf.parser.*;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.analysis.Bookmarks;
 import org.lf.plugins.analysis.highlight.Highlighter;
-import org.lf.util.Pair;
 
 
 import java.awt.*;
@@ -24,7 +23,7 @@ import static org.lf.util.CollectionFactory.pair;
 public class ScrollableLogTable extends JPanel {
 	private JButton addBookmark;
 	private JComboBox bookmarksList; 
-
+	private JScrollPane scrollTable;
 	private JButton startButton;
 	private JButton endButton;
 	private JButton prevButton;
@@ -36,7 +35,9 @@ public class ScrollableLogTable extends JPanel {
 	private Log log;
 	private Attributes attributes;
 
-	private Position curPos;
+	private Position beginPos;
+	private Position endPos;
+
 	private LogTableModel tableModel;
 	private LogTableCellRenderer cellRenderer;
 
@@ -61,15 +62,15 @@ public class ScrollableLogTable extends JPanel {
 		@Override
 		public Void doInBackground() {
 			EventQueue.invokeLater(new Runnable() {
-		        public void run() {
-		        	disableControls();
-		        }
+				public void run() {
+					disableControls();
+				}
 			});
 			try {
 				if ("next".equals(command)) {
-					navigate(true, curPos);
+					navigate(true, endPos);
 				} else if ("prev".equals(command)) {
-					navigate(false, curPos);
+					navigate(false, beginPos);
 				} else if ("start".equals(command)) {
 					navigate(true, log.first());
 				} else if ("end".equals(command)) {
@@ -82,38 +83,60 @@ public class ScrollableLogTable extends JPanel {
 		}
 
 		public void navigate(boolean directionForward, Position fromWhere) throws IOException {
-			tableModel.clear();
-			int progress = 0;
-			setProgress(progress);
 			Position begin = log.first();
 			Position end = log.last();
+			
+			tableModel.clear();
+			int progress = 0;
 			int reflectionCount = 0;
 
-			for (int i = 0; i < 100; ++i) {
-				tableModel.add(directionForward ? tableModel.getRowCount() : 0 , log.readRecord(fromWhere), fromWhere);
+			setProgress(progress);			
+			Position tempPos = fromWhere;
+
+			if (directionForward)	beginPos = fromWhere;
+			else 					endPos = fromWhere;
+
+			for (int i = 0; i < 20; ++i) {
+				tableModel.add(directionForward ? tableModel.getRowCount() : 0, log.readRecord(tempPos), tempPos);
 				setProgress(++progress);
-				if (fromWhere.equals(end) || fromWhere.equals(begin) ) { 
+
+				if (tempPos.equals(begin)) {
 					if (++reflectionCount == 2 ) break;
-					if (fromWhere.equals(directionForward ? end : begin)) {
+					beginPos = begin ;
+					if (!directionForward) {
 						directionForward = !directionForward;
-						fromWhere = curPos;
+						tempPos = fromWhere;
 					}
+				} else if (tempPos.equals(end)) {
+					if (++reflectionCount == 2 ) break;
+					endPos = end ;
+					if (directionForward) {
+						directionForward = !directionForward;
+						tempPos = fromWhere;
+					}						
 				}
-				fromWhere = directionForward ? log.next(fromWhere) : log.prev(fromWhere);						
+				
+				tempPos = directionForward ? log.next(tempPos) : log.prev(tempPos);						
 			}
 
-			curPos = fromWhere;
+			if (directionForward)	endPos = tempPos;				
+			else					beginPos = tempPos;
+
 			setProgress(100);
 		}
 
 	}
 
-	public ScrollableLogTable(Log log, Attributes attributes) {
+	public ScrollableLogTable(Log log, Attributes attributes, Position pos) {
 		this.log = log;
 		this.attributes = attributes;
 		try {
-			curPos = log.first();
-			tableModel = new LogTableModel(log.readRecord(curPos).size());
+			if (pos != null) {
+				beginPos =  (log.last().equals(pos) ? log.prev(pos) :  log.next(pos));
+			} else {
+				beginPos = log.first();
+			}
+			tableModel = new LogTableModel(log.readRecord(beginPos).size());
 		} catch(IOException e){
 			e.printStackTrace();
 		}
@@ -163,14 +186,14 @@ public class ScrollableLogTable extends JPanel {
 
 		table = new JTable(tableModel);
 
-		Enumeration e = table.getColumnModel().getColumns();
+		Enumeration<TableColumn> e = table.getColumnModel().getColumns();
 		while ( e.hasMoreElements() ) {
-		           TableColumn column = (TableColumn)e.nextElement();
-		           column.setCellRenderer(cellRenderer);
-		           column.sizeWidthToFit();
+			TableColumn column = (TableColumn)e.nextElement();
+			column.setCellRenderer(cellRenderer);
+			column.sizeWidthToFit();
 		}
 
-		JScrollPane scrollTable = new JScrollPane(table);
+		scrollTable = new JScrollPane(table);
 		table.addKeyListener(new TableKeyListener());
 
 		SpringLayout layout = new SpringLayout();
@@ -196,10 +219,14 @@ public class ScrollableLogTable extends JPanel {
 		this.add(naviButtons);
 		this.add(scrollTable);
 		this.add(progressBar);
+		this.setVisible(true);
 
 		navigateTaskDone = false;
-		new NavigateTask("start").execute();
+		new NavigateTask("prev").execute();
+	}
 
+	public ScrollableLogTable(Log log, Attributes attributes) {
+		this(log, attributes, null);
 	}
 
 	public Position getSelectedRecord() {
@@ -208,14 +235,14 @@ public class ScrollableLogTable extends JPanel {
 	}
 
 	public void scrollTo(Position pos) throws IOException {
-		if (!curPos.getClass().equals(pos.getClass())) return;
-		curPos = log.next(pos);
+		if (!beginPos.getClass().equals(pos.getClass())) return;
+		beginPos = log.next(pos);
 		if (navigateTaskDone) {
 			navigateTaskDone = false;
 			new NavigateTask("next").execute();
 		}
 	}
-	
+
 	private void enableControls() {
 		nextButton.setEnabled(true);
 		prevButton.setEnabled(true);
@@ -224,7 +251,7 @@ public class ScrollableLogTable extends JPanel {
 		addBookmark.setEnabled(true);
 		bookmarksList.setEnabled(true);
 	}
-	
+
 	private void disableControls() {
 		nextButton.setEnabled(false);
 		prevButton.setEnabled(false);
@@ -233,8 +260,8 @@ public class ScrollableLogTable extends JPanel {
 		addBookmark.setEnabled(false);
 		bookmarksList.setEnabled(false);
 	}
-	
-	
+
+
 	//controllers
 
 	class NavigateTaskProgressListener implements PropertyChangeListener { 
@@ -259,14 +286,14 @@ public class ScrollableLogTable extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			while(true) {
 				String name = JOptionPane.showInputDialog(
-                        ScrollableLogTable.this,
-                        "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE );
+						ScrollableLogTable.this,
+						"Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE );
 				if (name == null) return;
 
 				if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
 					JOptionPane.showMessageDialog(
-                            ScrollableLogTable.this,
-                            "Bookmark with such name already exists. Please input a different name.");
+							ScrollableLogTable.this,
+					"Bookmark with such name already exists. Please input a different name.");
 				} else {
 					bookmarksList.addItem(pair(name , getSelectedRecord()));
 					return;
@@ -284,7 +311,7 @@ public class ScrollableLogTable extends JPanel {
 				String selectedBookmark = (String)cb.getSelectedItem();
 				if (selectedBookmark == null ) return;
 				try {
-					curPos = log.prev(attributes.getValue(Bookmarks.class).getValue(selectedBookmark));
+					endPos = log.prev(attributes.getValue(Bookmarks.class).getValue(selectedBookmark));
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

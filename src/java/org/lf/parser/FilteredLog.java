@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.lf.util.Filter;
 
+import com.sun.istack.internal.Nullable;
+
 
 public class FilteredLog implements Log {
 	private final Filter<Record> filter;
@@ -16,38 +18,41 @@ public class FilteredLog implements Log {
 	}
 
 	public Position next(Position pos) throws  IOException {
-		return seekForward(pos);
+		return seek(pos, true);
 	}
 
 	public Position prev(Position pos) throws IOException {
-		return seekBackward(pos);
+		return seek(pos, false);
 	}
 
-	private Position seekForward(Position pos) throws IOException {
-		while (true) {
-            pos = underlyingLog.next(pos);
-            if(pos.equals(underlyingLog.last()) || filter.accepts(readRecord(pos)))
-                return pos;
-        }	
-	}
 	
-	private Position seekBackward(Position pos) throws IOException {
-		Position temp = pos;
-		while (true){
-			if (pos.equals(underlyingLog.prev(pos)))
-				return temp;		
-			pos = underlyingLog.prev(pos);
-			if (filter.accepts(readRecord(pos)))
-				return pos;
-		}
+
+	@Nullable
+	private Position seek(Position pos, boolean isForward) throws IOException {
+		Position borderPos = isForward ? underlyingLog.last() : underlyingLog.first();
+		if (pos.equals(borderPos)) return null;
+		pos = isForward ? underlyingLog.next(pos) : underlyingLog.prev(pos);
+		while (true) {
+			if (filter.accepts(readRecord(pos))) return pos;
+			if (pos.equals(borderPos)) 	         return null;
+			pos = isForward ? underlyingLog.next(pos) : underlyingLog.prev(pos);
+		}	
 	}
 
 	public Position first() throws IOException {
-		return seekForward(underlyingLog.first());
+		Position pos = underlyingLog.first();
+		if (pos == null) return null; 
+		if (filter.accepts(readRecord(pos)))
+			return pos; 
+		return seek(pos, true);
 	}
 
 	public Position last() throws IOException {
-		return seekBackward(underlyingLog.last());
+		Position pos = underlyingLog.last();
+		if (pos == null) return null; 
+		if (filter.accepts(readRecord(pos)))
+			return pos; 
+		return seek(pos, false);
 	}
 
 	public Record readRecord(Position pos) throws IOException {

@@ -7,6 +7,7 @@ import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.Bookmarks;
+import org.lf.services.ProgramProperties;
 
 import com.sun.istack.internal.Nullable;
 
@@ -18,12 +19,12 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 
     @Nullable
 	public Entity applyTo(Entity[] args) {
-		JFileChooser fileOpen = new JFileChooser();
+		JFileChooser fileOpen = new JFileChooser(ProgramProperties.getWorkingDir());
         fileOpen.showOpenDialog(null);
 		File f = fileOpen.getSelectedFile();
-		if (f == null)
+		if (f == null || !f.isFile())
 			return null;
-
+		ProgramProperties.setWorkingDir(f.getParentFile());
 		try {
 			Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser());
 			Attributes atr = new Attributes();
