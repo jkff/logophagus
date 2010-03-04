@@ -1,29 +1,51 @@
 package org.lf.ui.components.plugins.scrollablelogtable;
 
+import java.awt.Color;
 import java.awt.Component;
 
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.lf.parser.Position;
 import org.lf.parser.Record;
 import org.lf.plugins.analysis.highlight.Highlighter;
 
 class LogTableCellRenderer extends DefaultTableCellRenderer {
 	private Highlighter highlighter;
+	private ScrollableLogViewModel model;
+	private Position bookmarkPosition;
 	
-	public LogTableCellRenderer(Highlighter highlighter) {
+	
+	public LogTableCellRenderer(Highlighter highlighter, ScrollableLogViewModel model) {
 		this.highlighter = highlighter;
+		this.model = model;
 	}
 
 	
 	public Component getTableCellRendererComponent(
 			JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
 	{
-		Record rec = ((LogTableModel)table.getModel()).getRecord(row);
-		Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		if (highlighter == null || rec == null) 
-			return cell;
-		cell.setBackground(highlighter.getHighlightColor(rec));		
+		Record rec = model.getRecord(row);
+		Position pos = model.getPosition(row);
+		JLabel cell = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		if (isSelected) return cell;
+		cell.setBackground(null);	
+		
+		if (pos != null && pos.equals(bookmarkPosition)) {
+				cell.setBackground(Color.CYAN);
+		}
+		
+		if (highlighter != null && rec != null) {
+			Color col = highlighter.getHighlightColor(rec);
+			if (col != null)
+				cell.setBackground(col);
+		}
+		
 		return cell;
+	}
+	
+	void setBookmarkPosition(Position pos) {
+		this.bookmarkPosition = pos;
 	}
 }

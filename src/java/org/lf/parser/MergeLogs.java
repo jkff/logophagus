@@ -29,7 +29,7 @@ public class MergeLogs implements Log {
         public int compare(IPR o1, IPR o2) {
         	return timeComparator.compare(
         			o1.third.get(timeFieldIndices[o1.first]),
-        			o1.third.get(timeFieldIndices[o2.first]));
+        			o2.third.get(timeFieldIndices[o2.first]));
         }
     };
 
@@ -101,9 +101,9 @@ public class MergeLogs implements Log {
         Iterator<IPR> i = copy.descendingIterator();
         IPR cur = i.next();
         i.remove();
-        Position nextPos = logs[cur.first].prev(cur.second);
-        IPR next = new IPR(cur.first, nextPos, logs[cur.first].readRecord(nextPos));
-        copy.add(next);
+        Position prevPos = logs[cur.first].prev(cur.second);
+        IPR prev = new IPR(cur.first, prevPos, logs[cur.first].readRecord(prevPos));
+        copy.add(prev);
         return new MergedPosition(copy);
 	}
 

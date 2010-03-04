@@ -7,6 +7,7 @@ import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
 
 import javax.swing.tree.*;
+
 import java.util.List;
 import java.util.Observable;
 
@@ -14,10 +15,13 @@ import static org.lf.util.CollectionFactory.newLinkedList;
 
 public class LogsHierarchy extends Observable{
 	private DefaultTreeModel treeModel;
-	private NodeData currentNode;
+	private TreePath lastNewPath;
+	private TreePath rootPath;
 
 	public LogsHierarchy() {
 		treeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
+		rootPath = new TreePath(treeModel.getRoot());
+		lastNewPath = rootPath;
 	}
 
 	public TreeModel getTreeModel() {
@@ -30,12 +34,14 @@ public class LogsHierarchy extends Observable{
 
 	public void addChildToNode(MutableTreeNode child, MutableTreeNode parent) {
 		treeModel.insertNodeInto(child, parent, parent.getChildCount());
+		lastNewPath = new TreePath(((DefaultMutableTreeNode)child).getPath());
 		setChanged();
 		notifyObservers();
 	}
 
 	public void removeNode(MutableTreeNode node) {
-		treeModel.removeNodeFromParent(node);		
+		treeModel.removeNodeFromParent(node);
+		lastNewPath = rootPath;
 		setChanged();
 		notifyObservers();
 	}
@@ -65,6 +71,10 @@ public class LogsHierarchy extends Observable{
 		} else {
 			addChildToRoot(childNode);
 		}
+	}
+	
+	public TreePath getLastNewPath() {
+		return lastNewPath;
 	}
 
     private List<Entity> getContentByPaths(TreePath[] selPaths) {

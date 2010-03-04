@@ -2,16 +2,27 @@ package org.lf.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -25,6 +36,7 @@ import org.lf.plugins.display.*;
 import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
 import org.lf.services.PluginException;
+import org.lf.services.ProgramProperties;
 import org.lf.ui.components.menu.LogophagusMenuBar;
 import org.lf.ui.components.popup.TreeRightClickPopup;
 import org.lf.ui.components.tree.LogsHierarchyView;
@@ -60,9 +72,14 @@ public class Logophagus extends JFrame {
 		splitPane.setDividerSize(5);
 		splitPane.setContinuousLayout(true);
 		splitPane.setRightComponent(getPluginPanel());
-		splitPane.setLeftComponent(getLogsHierarchyView());
+
+		JPanel treePanel = new JPanel(new BorderLayout());
+		treePanel.setBorder(BorderFactory.createEmptyBorder(12,12,12,4));
+		treePanel.add(new JScrollPane(getLogsHierarchyView()));
+		treePanel.setVisible(true);
+
+		splitPane.setLeftComponent(treePanel);
 		splitPane.setDividerLocation(250); 
-		splitPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 		this.setContentPane(splitPane);
 	}
 
@@ -86,6 +103,25 @@ public class Logophagus extends JFrame {
 		logsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 		logsTree.addMouseListener(new TreeMouseListener());
 		logsTree.addTreeSelectionListener(getPluginPanel());
+		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+		char sep = File.separatorChar;
+		String iconsPath = ProgramProperties.workingDir.getAbsolutePath()+sep +"src"+sep+"java"+sep+"org"+sep+"lf"+sep+"ui"+sep+"icons"+sep;
+		renderer.setOpenIcon(new ImageIcon(iconsPath +"folder_files.gif"));
+		renderer.setClosedIcon(new ImageIcon(iconsPath +"folder_files.gif"));
+		renderer.setLeafIcon(new ImageIcon(iconsPath +"file.gif"));
+		logsTree.setCellRenderer(renderer);
+		logsTree.setAutoscrolls(true);
+		logsTree.addContainerListener(new ContainerListener() {
+			@Override
+			public void componentRemoved(ContainerEvent arg0) {
+			}
+
+			@Override
+			public void componentAdded(ContainerEvent ce) {
+				logsTree.scrollPathToVisible(logsHierarchy.getLastNewPath());
+				logsTree.setSelectionPath(logsHierarchy.getLastNewPath());
+			}
+		});
 		return logsTree;
 	}
 
@@ -106,7 +142,13 @@ public class Logophagus extends JFrame {
 			System.out.println("Can't register plugin:" + e);
 			e.printStackTrace();
 		}
-		new Logophagus().pack();	
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				new Logophagus().pack();		
+			}
+		});
 	}
 
 	private class TreeMouseListener extends MouseAdapter {

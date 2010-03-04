@@ -2,6 +2,7 @@ package org.lf.plugins.analysis.splitbyfield;
 
 
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 
 import org.lf.parser.Log;

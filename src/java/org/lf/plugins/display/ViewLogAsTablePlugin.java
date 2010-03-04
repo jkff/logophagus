@@ -5,12 +5,12 @@ import javax.swing.JComponent;
 import org.lf.parser.Log;
 import org.lf.plugins.DisplayPlugin;
 import org.lf.plugins.Entity;
-import org.lf.ui.components.plugins.scrollablelogtable.ScrollableLogTable;
+import org.lf.ui.components.plugins.scrollablelogtable.ScrollableLogView;
 
 public class ViewLogAsTablePlugin implements DisplayPlugin {
 
 	public JComponent createView(Entity entity) {
-        return new ScrollableLogTable((Log) entity.data, entity.attributes);
+        return new ScrollableLogView((Log) entity.data, entity.attributes);
 	}
 
 	public Class getInputType() {

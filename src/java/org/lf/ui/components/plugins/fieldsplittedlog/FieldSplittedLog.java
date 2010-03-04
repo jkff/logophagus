@@ -2,11 +2,15 @@ package org.lf.ui.components.plugins.fieldsplittedlog;
 
 import org.lf.parser.FilteredLog;
 import org.lf.parser.Log;
+import org.lf.parser.Position;
 import org.lf.parser.Record;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.analysis.splitbyfield.LogAndField;
-import org.lf.ui.components.plugins.scrollablelogtable.ScrollableLogTable;
+import org.lf.ui.components.plugins.scrollablelogtable.ScrollableLogView;
+import org.lf.ui.util.GUIUtils;
 import org.lf.util.Filter;
+
+import java.io.IOException;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -18,22 +22,57 @@ import java.awt.event.MouseEvent;
 public class FieldSplittedLog extends JPanel {
 	private LogAndField logAndField;
 	private Attributes attributes;
-
+	private ProgressMonitor progressMonitor;
 	private FieldValuesListModel listModel = new FieldValuesListModel();
-	private JList fieldValues;
+	private MyList fieldValues;
 	private JSplitPane splitPane;
 	private JPanel defaultPanel = new JPanel(new BorderLayout());
+
+	class ValuesSearchTask extends SwingWorker<Void, Void> {
+		@Override
+		protected Void doInBackground() {
+			try {
+				Position cur = logAndField.log.first();
+				Position end = logAndField.log.last();
+				for (int i = 0; i < 5000; ++i) {
+					if (progressMonitor.isCanceled())
+						break;
+					Record rec = logAndField.log.readRecord(cur);
+					listModel.addFieldValue(rec.get(logAndField.field));
+					if (cur.equals(end)) break;
+					cur = logAndField.log.next(cur);
+					try {
+						Thread.currentThread().sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					progressMonitor.setProgress(i);
+				}
+				listModel.setMaxReadedPosition(cur);
+				listModel.addFieldValue("Other");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void done() {
+			super.done();
+			progressMonitor.setProgress(5000);
+			fieldValues.enableControls();
+		}
+	}
 
 	public FieldSplittedLog(LogAndField logAndField, final Attributes attributes) {
 		super(new BorderLayout());
 		this.logAndField = logAndField;
 		this.attributes = attributes;
 
-		fieldValues = new JList(listModel);
+		fieldValues = new MyList(listModel);
 		fieldValues.setCellRenderer(new FieldValuesCellRenderer());
 		fieldValues.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		fieldValues.addMouseListener(new ListMouseListener());
-		fieldValues.addListSelectionListener(new FieldSelectionListener());
 
 		JPanel listPanel = new JPanel();
 		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
@@ -41,17 +80,20 @@ public class FieldSplittedLog extends JPanel {
 		listPanel.add(new JLabel("Values of " + logAndField.field + " field:"));
 		listPanel.add(Box.createVerticalStrut(5));
 		listPanel.add(new JScrollPane(fieldValues));
-		listPanel.add(Box.createVerticalStrut(5));
 		defaultPanel.add(new JLabel("Select field value from right list to look at corresponding log"));
-
+		GUIUtils.makePreferredSize(listPanel);
+		GUIUtils.makePreferredSize(defaultPanel);
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setDividerSize(5);
 		splitPane.setContinuousLayout(true);
 		splitPane.setRightComponent(listPanel);
 		splitPane.setLeftComponent(defaultPanel);
-		splitPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
+		splitPane.setResizeWeight(0.7);
+		GUIUtils.makePreferredSize(splitPane);
 		this.add(splitPane);
-		listModel.fillModel(logAndField);
+		progressMonitor = new ProgressMonitor(this, "Reading", "Please wait", 0, 5000);
+		new ValuesSearchTask().execute();
+		this.setVisible(true);
 	}
 
 	public void setViewPanel(JPanel panel) {
@@ -102,7 +144,7 @@ public class FieldSplittedLog extends JPanel {
 							}
 						};
 						Log log = new FilteredLog(FieldSplittedLog.this.logAndField.log, filter);
-						panel = new ScrollableLogTable(log, attributes, listModel.getOtherPosition());
+						panel = new ScrollableLogView(log, attributes, listModel.getOtherPosition());
 					}
 				} else {
 					final int fieldIndex = FieldSplittedLog.this.logAndField.field;
@@ -119,11 +161,22 @@ public class FieldSplittedLog extends JPanel {
 						}
 					};
 					Log log = new FilteredLog(FieldSplittedLog.this.logAndField.log, filter);
-					panel = new ScrollableLogTable(log, attributes);
+					panel = new ScrollableLogView(log, attributes);
 				}
 				listModel.setView(fieldValue, panel);
 			}
 			setViewPanel(panel);
+		}
+	}
+
+	class MyList extends JList {
+		public MyList(ListModel model) {
+			super(model);
+		}
+		
+		void enableControls() {
+			this.addMouseListener(new ListMouseListener());
+			this.addListSelectionListener(new FieldSelectionListener());
 		}
 	}
 }

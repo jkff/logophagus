@@ -9,7 +9,7 @@ import org.lf.parser.Log;
 import org.lf.plugins.DisplayPlugin;
 import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.sidebyside.LogsPair;
-import org.lf.ui.components.plugins.scrollablelogtable.ScrollableLogTable;
+import org.lf.ui.components.plugins.scrollablelogtable.ScrollableLogView;
 
 public class ViewSideBySidePlugin implements DisplayPlugin {
 
@@ -17,8 +17,8 @@ public class ViewSideBySidePlugin implements DisplayPlugin {
         LogsPair p = (LogsPair) entity.data;
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 2));
-		panel.add(new ScrollableLogTable((Log)p.first.data, p.first.attributes));
-		panel.add(new ScrollableLogTable((Log)p.second.data, p.second.attributes));
+		panel.add(new ScrollableLogView((Log)p.first.data, p.first.attributes));
+		panel.add(new ScrollableLogView((Log)p.second.data, p.second.attributes));
 		return panel;
 	}
 

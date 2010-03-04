@@ -1,73 +1,59 @@
 package org.lf.ui.components.plugins.scrollablelogtable;
 
-import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 
-import org.lf.parser.Position;
-import org.lf.parser.Record;
-
-import com.sun.istack.internal.Nullable;
-
-import static org.lf.util.CollectionFactory.newList;
-
-class LogTableModel extends AbstractTableModel {
-	private List<Record> records = newList();
-	private List<Position> positions = newList();
-
-	private int columnsNumber;
-
-
-	@Nullable
-	synchronized public Record getRecord(int index) {
-		if (index >= records.size()) return null;
-		return records.get(index);
+class LogTableModel extends AbstractTableModel implements Observer {
+	private ScrollableLogViewModel underlyingModel;
+	public LogTableModel(ScrollableLogViewModel underlyingModel) {
+		this.underlyingModel = underlyingModel;
+		underlyingModel.addObserver(this);
 	}
 
-	synchronized public Position getPosition(int index) {
-		if (positions.size() <= index) return null;
-		return positions.get(index);
-	}
-
-	synchronized public void clear() {
-		records.clear();
-		positions.clear();
-		this.fireTableDataChanged();
-	}
-
-	synchronized public void add(int index, Record rec, Position pos) {
-		records.add(index, rec);
-		positions.add(index, pos);
-		if (columnsNumber < rec.size()) {
-			columnsNumber = rec.size();
-			this.fireTableStructureChanged();
-			return;
-		}
-		this.fireTableRowsInserted(index, index);
-	}
-
-	public LogTableModel( int columnsNumber) {
-		this.columnsNumber = columnsNumber;
-	}
-
+	@Override
 	public int getColumnCount() {
-		return columnsNumber;
+		return underlyingModel.getMaxRecordSize();
 	}
 
-	synchronized public int getRowCount() {
-		return records.size();
+	@Override
+	public int getRowCount() {
+		return underlyingModel.getRecordCount();
 	}
 
-	public String getColumnName(int col) {
-		return "Field "+ col;
-	}
-
-	synchronized public Object getValueAt(int row, int col) {
-		if (records.size() > row && records.get(row).size() > col){
-			return records.get(row).get(col);
+	@Override
+	public Object getValueAt(int row, int col) {
+		if (underlyingModel.getRecordCount() > row && underlyingModel.getRecord(row).size() > col){
+			return underlyingModel.getRecord(row).get(col);
 		}
 		return null;
 	}
-		
-}
 
+	@Override
+	public void update(Observable obj, final Object message) {
+		if (SwingUtilities.isEventDispatchThread()) {
+			if ("maxRecordSize".equals(message))
+				fireTableStructureChanged();
+			else
+				fireTableDataChanged();
+		} else {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					if ("maxRecordSize".equals(message))
+						fireTableStructureChanged();
+					else
+						fireTableDataChanged();
+				}
+			});
+		}
+	}
+
+	@Override
+	public Class<?> getColumnClass(int arg0) {
+		return String.class;
+	}
+	
+}
