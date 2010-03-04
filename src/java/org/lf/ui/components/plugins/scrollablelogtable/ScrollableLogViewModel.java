@@ -16,9 +16,10 @@ import org.lf.util.Pair;
 import com.sun.istack.internal.Nullable;
 
 public class ScrollableLogViewModel extends Observable {
-	private List<Pair<Record,Position>> recAndPos = newLinkedList();
-	private int regionSize;
-	private Log log;
+    // TODO Read "Java concurrency in practice" and insert proper synchronization
+	private final List<Pair<Record,Position>> recAndPos = newLinkedList();
+	private final int regionSize;
+	private final Log log;
 	private Thread navigatorThread;
 	private Position logBeginPos;
 	private Position logEndPos;
@@ -61,6 +62,7 @@ public class ScrollableLogViewModel extends Observable {
 				int reflectionCount = 0;
 				Position tempPos = fromWhere;
 
+                // TODO Make this comprehensible to everyone reading the code
 				for (int i = 0; i < recordsToRead; ++i) {
 					if (i == 0 && readFromWhere)
 						add(directionForward ? getRecordCount() : 0, pair(log.readRecord(tempPos), tempPos));
@@ -99,7 +101,6 @@ public class ScrollableLogViewModel extends Observable {
 		this.log = log;
 		this.regionSize = regionSize;
 		this.readingDone = true;
-		start();
 	}
 
 	@Nullable

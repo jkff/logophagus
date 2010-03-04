@@ -89,8 +89,12 @@ public class MergeLogs implements Log {
         IPR cur = i.next();
         i.remove();
         Position nextPos = logs[cur.first].next(cur.second);
-        IPR next = new IPR(cur.first, nextPos, logs[cur.first].readRecord(nextPos));
-        copy.add(next);
+        if(nextPos != null) {
+            IPR next = new IPR(cur.first, nextPos, logs[cur.first].readRecord(nextPos));
+            copy.add(next);
+        }
+        if(copy.isEmpty())
+            return null;
         return new MergedPosition(copy);
 	}
 
@@ -102,8 +106,12 @@ public class MergeLogs implements Log {
         IPR cur = i.next();
         i.remove();
         Position prevPos = logs[cur.first].prev(cur.second);
-        IPR prev = new IPR(cur.first, prevPos, logs[cur.first].readRecord(prevPos));
-        copy.add(prev);
+        if(prevPos != null) {
+            IPR prev = new IPR(cur.first, prevPos, logs[cur.first].readRecord(prevPos));
+            copy.add(prev);
+        }
+        if(copy.isEmpty())
+            return null;
         return new MergedPosition(copy);
 	}
 

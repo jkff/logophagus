@@ -16,17 +16,15 @@ class BookmarksComboBoxModel extends AbstractListModel implements MutableComboBo
 	public BookmarksComboBoxModel(Bookmarks bookmarks) {
 		this.bookmarks = bookmarks;
 	}
-	
+
 	@Override
 	public void addElement(Object value) {
-		Pair<String,Position> data = (Pair<String, Position>) value;
-		bookmarks.addBookmark(data.first, data.second);
-		fireContentsChanged(this, 0, getSize());
+        throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void insertElementAt(Object value, int index) {
-		addElement(value);
+        throw new UnsupportedOperationException();
 	}
 
 	@Override

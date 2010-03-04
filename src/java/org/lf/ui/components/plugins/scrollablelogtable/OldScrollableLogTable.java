@@ -274,7 +274,6 @@ public class OldScrollableLogTable extends JPanel {
 							OldScrollableLogTable.this,
 					"Bookmark with such name already exists. Please input a different name.");
 				} else {
-					bookmarksList.addItem(pair(name , getSelectedRecord()));
 					return;
 				}
 			}

@@ -29,24 +29,20 @@ public class FieldSplittedLog extends JPanel {
 	private JPanel defaultPanel = new JPanel(new BorderLayout());
 
 	class ValuesSearchTask extends SwingWorker<Void, Void> {
-		@Override
+        private static final int DEFAULT_RECORDS_TO_LOAD = 5000;
+
+        @Override
 		protected Void doInBackground() {
 			try {
 				Position cur = logAndField.log.first();
 				Position end = logAndField.log.last();
-				for (int i = 0; i < 5000; ++i) {
+				for (int i = 0; i < DEFAULT_RECORDS_TO_LOAD; ++i) {
 					if (progressMonitor.isCanceled())
 						break;
 					Record rec = logAndField.log.readRecord(cur);
 					listModel.addFieldValue(rec.get(logAndField.field));
 					if (cur.equals(end)) break;
 					cur = logAndField.log.next(cur);
-					try {
-						Thread.currentThread().sleep(100);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					progressMonitor.setProgress(i);
 				}
 				listModel.setMaxReadedPosition(cur);
@@ -60,7 +56,7 @@ public class FieldSplittedLog extends JPanel {
 		@Override
 		protected void done() {
 			super.done();
-			progressMonitor.setProgress(5000);
+			progressMonitor.setProgress(DEFAULT_RECORDS_TO_LOAD);
 			fieldValues.enableControls();
 		}
 	}
@@ -120,7 +116,7 @@ public class FieldSplittedLog extends JPanel {
 			if (e.getButton() != MouseEvent.BUTTON1)
 				return;
 			int selectedIndex = fieldValues.getSelectedIndex();
-			String fieldValue = (String) fieldValues.getSelectedValue();
+			final String fieldValue = (String) fieldValues.getSelectedValue();
 			JPanel panel = listModel.getView(fieldValue);
 			if (panel == null) {
 				//this section handles last list element
@@ -148,16 +144,13 @@ public class FieldSplittedLog extends JPanel {
 					}
 				} else {
 					final int fieldIndex = FieldSplittedLog.this.logAndField.field;
-					final String value1 = fieldValue;
 					Filter<Record> filter = new Filter<Record>() {
-						private String value = value1;
-
 						public String toString() {
-							return value;
+							return fieldValue;
 						}
 
 						public boolean accepts(Record t) {
-							return t.get(fieldIndex).equals(value);
+							return t.get(fieldIndex).equals(fieldValue);
 						}
 					};
 					Log log = new FilteredLog(FieldSplittedLog.this.logAndField.log, filter);

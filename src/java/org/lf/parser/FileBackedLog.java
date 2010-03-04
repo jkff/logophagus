@@ -64,7 +64,7 @@ public class FileBackedLog implements Log {
 		is.scrollTo(pp.offsetBytes);
 		long offset = parser.findNextRecord(is);
 		if (offset == 0) 
-			throw new IOException("Can't get next record position from position " + pos);
+			return null;
 		return new PhysicalPosition(pp.offsetBytes + offset);
 	}
 
@@ -74,7 +74,7 @@ public class FileBackedLog implements Log {
 		is.scrollTo(pp.offsetBytes);
 		long offset = parser.findPrevRecord(is);
 		if (offset == 0) 
-			throw new IOException("Can't get previous record position from position " + pos);
+			return null;
 		return new PhysicalPosition(pp.offsetBytes - offset);
 	}
 

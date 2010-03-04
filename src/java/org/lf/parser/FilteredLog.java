@@ -24,7 +24,7 @@ public class FilteredLog implements Log {
 		pos = isForward ? underlyingLog.next(pos) : underlyingLog.prev(pos);
 		while (true) {
 			if (filter.accepts(underlyingLog.readRecord(pos))) return pos;
-			if (pos.equals(borderPos)) 	         return null;
+			if (pos.equals(borderPos)) 	                       return null;
 			pos = isForward ? underlyingLog.next(pos) : underlyingLog.prev(pos);
 		}	
 	}
