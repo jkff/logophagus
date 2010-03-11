@@ -4,11 +4,20 @@ import java.util.*;
 
 import org.lf.parser.Position;
 import org.lf.plugins.Attribute;
+import org.lf.plugins.AttributeConcept;
+import org.lf.plugins.AttributeInstance;
 import org.lf.util.CollectionFactory;
 
 import static org.lf.util.CollectionFactory.newList;
 
-public class Bookmarks implements Attribute<Bookmarks> {
+class BookmarksConcept implements AttributeConcept<BookmarksConcept> {
+    @Override
+    public AttributeInstance<BookmarksConcept> join(AttributeInstance<BookmarksConcept>[] children) {
+        return new Bookmarks(...);
+        Bookmarks x = join(a,b,c);
+    }
+}
+public class Bookmarks implements AttributeInstance<BookmarksConcept> {
 	private Bookmarks parent;
 	private Map<String, Position> data = CollectionFactory.newLinkedHashMap();
 
@@ -42,6 +51,11 @@ public class Bookmarks implements Attribute<Bookmarks> {
 		data.put(name, pos);
 		return true;
 	}
+
+    @Override
+    public AttributeConcept<BookmarksConcept> getConcept() {
+        return new BookmarksConcept();
+    }
 
     public Bookmarks getParent() {
         return parent;

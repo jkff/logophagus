@@ -9,8 +9,14 @@ public interface Log {
 	
     public Field[] getFields();
 
+    /**
+     * Points to the first record in the log
+     */
 	public Position first() throws IOException;
 
+    /**
+     * Points to the last record in the log (not after it) 
+     */
 	public Position last() throws IOException;
 
     @Nullable

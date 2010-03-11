@@ -1,15 +1,28 @@
- - TODO comments in sources
- - TODO (in case merge turns out to be too slow because of priority queue copying in MergeLogs.next()) Use an immutable (purely functional) priority queue there. See, for example, Okasaki "Purely functional data structures" or take one from the internet
+ - TODO "Merge logs" plugin. Input: any number of logs (of any format); for each log, the time axis is indicated. 
+    See paper
+ - Read logs with user-specified format pattern (regex; 1 capturing group = 1 field ; list of field names)
 
- + TODO Scrolling with mouse wheel should work not only in the limits of the current loaded fragment.
- -+ TODO Home should select 1st record of the log, End should select the last one.
- + TODO Split by field values: combobox with field names instead of input textbox
- + TODO File open dialog should have state persistent across program launches (always start from the same folder at which it was closed last time). (java.util.Properties)
+14:35:56<TAB>DEBUG<TAB>Hello world
+
+format.txt:
+Time,Level,Message
+(\d\d:\d\d:\d\d)\t([^\t]+)\t(.*)
+
+ - Find some example large apache or IIS log, try using program on it
 
  - TODO Multiple inheritance for attributes (so that bookmarks and highlighters of merged logs show up in the merge result, too)
 
- - TODO "Merge logs" plugin. Input: any number of logs (of any format); for each log, the time axis is indicated. 
+ - TODO figure out how to get rid of scrollbar
+ + TODO Scrolling with mouse wheel should work not only in the limits of the current loaded fragment.
+ + TODO Split by field values: combobox with field names instead of input textbox
+    - TODO Fix combobox issue (nothing can be selected)
 
- - Read logs with user-specified format pattern (regex; 1 capturing group = 1 field ; list of field names)
+ - TODO (in case merge turns out to be too slow because of priority queue copying in MergeLogs.next()) Use an immutable (purely functional) priority queue there. See, for example, Okasaki "Purely functional data structures" or take one from the internet
 
- - Find some example large apache or IIS log, try using program on it
+
+
+
+interface Number {
+    static Number add(Number a,Number b);
+}
+

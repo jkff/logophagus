@@ -28,7 +28,7 @@ public class Attributes {
                     "Attribute of class " + newAttribute.getClass() + " already present");
 		data.put(newAttribute.getClass(), newAttribute);
 	}
-	
+	        
 	@Nullable
 	public <T extends Attribute> T getValue(Class<T> attributeClass){
 		if (data.containsKey(attributeClass)) { 

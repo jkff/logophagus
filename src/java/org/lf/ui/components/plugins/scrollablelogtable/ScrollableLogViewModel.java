@@ -15,7 +15,7 @@ import com.sun.istack.internal.Nullable;
 
 public class ScrollableLogViewModel extends Observable {
 	// TODO Read "Java concurrency in practice" and insert proper synchronization
-	private final RecordsContainerModel container;
+	private final CyclicBuffer<Pair<Record,Position>> recBuffer;
 	private final int regionSize;
 	private final Log log;
 	private Thread navigatorThread;
@@ -101,13 +101,13 @@ public class ScrollableLogViewModel extends Observable {
 		this.log = log;
 		this.regionSize = regionSize;
 		this.readingDone = true;
-		this.container = new RecordsContainerModel(regionSize);
+		this.recBuffer = new CyclicBuffer<Pair<Record, Position>>(regionSize);
 	}
 
 	@Nullable
 	public Record getRecord(int index) {
-		if (index >= container.size()) return null;
-		return container.getRecord(index);
+		if (index >= recBuffer.size()) return null;
+		return recBuffer.get(index).first;
 	}
 
 	synchronized void setReadingDone(boolean isDone) {
@@ -165,12 +165,12 @@ public class ScrollableLogViewModel extends Observable {
 
 	@Nullable
 	synchronized public Position getPosition(int index) {
-		if (index >= container.size()) return null;
-		return container.getPosition(index);
+		if (index >= recBuffer.size()) return null;
+		return recBuffer.get(index).second;
 	}
 
 	synchronized public int getRecordCount() {
-		return container.size();
+		return recBuffer.size();
 	}
 
 	synchronized public int getRegionSize() {
@@ -183,15 +183,15 @@ public class ScrollableLogViewModel extends Observable {
 
 	synchronized public boolean isAtBegin() {
 		if (!readingDone) return false;
-		if (container.size() == 0) return false;
-		if (container.getPosition(0).equals(logBeginPos) ) return true;
+		if (recBuffer.size() == 0) return false;
+		if (recBuffer.get(0).second.equals(logBeginPos) ) return true;
 		return false;
 	}
 
 	synchronized public boolean isAtEnd() {
 		if (!readingDone) return false;
-		if (container.size() == 0) return false;
-		if (container.getPosition(container.size() - 1).equals(logEndPos) ) return true;
+		if (recBuffer.size() == 0) return false;
+		if (recBuffer.get(recBuffer.size() - 1).second.equals(logEndPos) ) return true;
 		return false;
 	}
 
@@ -204,7 +204,7 @@ public class ScrollableLogViewModel extends Observable {
 			setChanged();
 			notifyObservers("CHANGE_RECORD_SIZE");
 		}
-		container.pushBegin(pair);
+		recBuffer.pushBegin(pair);
 		setChanged();
 		notifyObservers("ADD_BEGIN");
 	}
@@ -214,14 +214,14 @@ public class ScrollableLogViewModel extends Observable {
 			setChanged();
 			notifyObservers("CHANGE_RECORD_SIZE");
 		}
-		container.pushEnd(pair);
+		recBuffer.pushEnd(pair);
 		setChanged();
 		notifyObservers("ADD_END");
 	}
 
 
 	synchronized private void clear() {
-		container.clear();			
+		recBuffer.clear();
 		setChanged();
 		notifyObservers("CLEAR");
 	}

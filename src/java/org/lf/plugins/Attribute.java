@@ -1,12 +1,17 @@
 package org.lf.plugins;
 
 
-public interface Attribute<T extends Attribute<T>> {
-    public Attribute<T> getParent();
+public interface AttributeInstance<T extends AttributeConcept<T>> {
+    AttributeConcept<T> getConcept();
+    
+    public AttributeInstance<T> getParent();
     /**
      * Create an instance of the same attribute whose parent
      * equals to 'this'.
      */
-	public Attribute<T> createChild();
-	
+	public AttributeInstance<T> createChild();
+}
+
+public interface AttributeConcept<T extends AttributeConcept<T>> {
+    AttributeInstance<T> join(AttributeInstance<T>... children);
 }

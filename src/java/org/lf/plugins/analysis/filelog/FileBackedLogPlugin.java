@@ -29,9 +29,8 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 		
 		try {
 			ProgramProperties.save();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		try {
 			Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser());

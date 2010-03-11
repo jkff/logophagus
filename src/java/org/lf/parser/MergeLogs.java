@@ -6,11 +6,9 @@ import org.lf.util.Triple;
 import com.sun.swing.internal.plaf.synth.resources.synth;
 
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
+import static org.lf.util.CollectionFactory.newHashSet;
 import static org.lf.util.CollectionFactory.newList;
 
 public class MergeLogs implements Log {
@@ -87,11 +85,15 @@ public class MergeLogs implements Log {
 	public Position last() throws IOException {
         List<IPR> p = newList();
         for(int i = 0; i < logs.length; ++i) p.add(new IPR(i, logs[i].last(), logs[i].readRecord(logs[i].last())));
-		return new MergedPosition(fromList(p.subList(p.size()-1, p.size())));
+		return new MergedPosition(fromList(p));
 	}
 
 	@Override
 	synchronized public Position next(Position pos) throws IOException {
+        // Specification:
+        // readRecord(next(p)) is the earliest record in the union of all records
+        // in all logs, later than readRecord(p).
+
         MergedPosition p = (MergedPosition) pos;
         TreeSet<IPR> copy = new TreeSet<IPR>(p.queue);
         Iterator<IPR> i = copy.iterator();
@@ -102,6 +104,7 @@ public class MergeLogs implements Log {
             IPR next = new IPR(cur.first, nextPos, logs[cur.first].readRecord(nextPos));
             copy.add(next);
         }
+
         if(copy.isEmpty())
             return null;
         return new MergedPosition(copy);
@@ -126,7 +129,7 @@ public class MergeLogs implements Log {
         	Iterator<IPR> j = copy.iterator();
         	while (j.hasNext()) {
         		IPR curFromCopy = j.next();
-				if (curFromCopy.first == curFromPrev.first) { 
+				if (curFromCopy.first.equals(curFromPrev.first)) { 
 					j.remove();
 					copy.add(curFromPrev);
 					if (copy.first().equals(curFromPrev))

@@ -10,6 +10,8 @@ import org.lf.ui.util.GUIUtils;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 
 import java.util.Observable;
@@ -97,7 +99,13 @@ public class ScrollableLogView extends JPanel implements Observer {
 		this.table.setDefaultRenderer(String.class, cellRenderer);
 		this.table.setSelectionModel(tableSelectionModel);
 		this.table.addKeyListener(new TableKeyListener());
-		
+
+        tableSelectionModel.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                table.repaint();
+            }
+        });
+
 		scrollTable = new JScrollPane(this.table);
 		scrollTable.addMouseWheelListener( new ScrollBarMouseWheelListener());
 		BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
