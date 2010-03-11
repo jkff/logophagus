@@ -1,10 +1,11 @@
 package org.lf.plugins.analysis.splitbyfield;
 
 
+import javax.swing.Icon;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 
+import org.lf.parser.Field;
 import org.lf.parser.Log;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Entity;
@@ -24,12 +25,11 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
 
 	@Override
 	public Entity applyTo(Entity[] args) {
-		final String index = JOptionPane.showInputDialog(
-                null, "Enter field index", "Splitter setup", JOptionPane.QUESTION_MESSAGE);
-		if (index == null)
-			return null;
 		Log log = (Log) args[0].data;
-		LogAndField result = new LogAndField(log, Integer.parseInt(index));
+		Object field = JOptionPane.showInputDialog(null, "Select field", "Setup", JOptionPane.PLAIN_MESSAGE, null, log.getFields(), null);
+		if (field == null)
+			return null;
+		LogAndField result = new LogAndField(log, (Field)field);
 		return new Entity(args[0].attributes.createSuccessor(), result);
 	}
 
@@ -37,6 +37,12 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
 	@Override
 	public String getName() {
 		return "Split by field values";  
+	}
+
+	@Override
+	public Icon getIcon() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

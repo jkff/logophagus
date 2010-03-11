@@ -1,5 +1,6 @@
 package org.lf.plugins.analysis.filtersubstr;
 
+import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import org.lf.parser.Log;
@@ -50,6 +51,12 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
     public String getName() {
         return "Filter by substring";
     }
+
+	@Override
+	public Icon getIcon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 }

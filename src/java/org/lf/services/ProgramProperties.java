@@ -1,15 +1,51 @@
 package org.lf.services;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.InvalidPropertiesFormatException;
+import java.util.Properties;
 
 public class ProgramProperties {
-	public static File workingDir = new File ("."); 
+	public static String propertiesFileName = "logophagus.txt";
+	public static String workingDir = "WORKING_DIR";
+	public static Properties mainProperties = new Properties();
 	
-	public static File getWorkingDir() {
-		return new File(workingDir, "");
+	static {
+		String userHomePath = System.getProperty("user.home");
+		File file = new File(userHomePath, propertiesFileName);
+		InputStream stream;
+		try {
+			stream = new FileInputStream(file);
+			mainProperties.loadFromXML(stream);
+		} catch (FileNotFoundException e) {
+		} catch (InvalidPropertiesFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if (mainProperties.getProperty(workingDir) == null) {
+			mainProperties.setProperty(workingDir, System.getProperty("user.dir"));
+		}
 	}
 	
-	public static File setWorkingDir(File f) {
-		return workingDir = f;
+	public static File getWorkingDir() {
+		return new File(mainProperties.getProperty(workingDir));
+	}
+	
+	public static void setWorkingDir(File f) {
+		mainProperties.setProperty(workingDir, f.getAbsolutePath());
+	}
+	
+	public static void save() throws IOException {
+		String userHomePath = System.getProperty("user.home");
+		File file = new File(userHomePath,propertiesFileName);
+		OutputStream stream = new FileOutputStream(file);
+		mainProperties.storeToXML(stream, null);
 	}
 }

@@ -15,7 +15,7 @@ class LogTableModel extends AbstractTableModel implements Observer {
 
 	@Override
 	public int getColumnCount() {
-		return underlyingModel.getMaxRecordSize();
+		return underlyingModel.getRecordSize();
 	}
 
 	@Override
@@ -33,27 +33,26 @@ class LogTableModel extends AbstractTableModel implements Observer {
 
 	@Override
 	public void update(Observable obj, final Object message) {
-		if (SwingUtilities.isEventDispatchThread()) {
-			if ("maxRecordSize".equals(message))
-				fireTableStructureChanged();
-			else
-				fireTableDataChanged();
-		} else {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					if ("maxRecordSize".equals(message))
-						fireTableStructureChanged();
-					else
-						fireTableDataChanged();
-				}
-			});
-		}
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if ("CHANGE_RECORD_SIZE".equals(message))
+					fireTableStructureChanged();
+				else if ("ADD_END".equals(message)) {
+					fireTableRowsDeleted(0, 0);
+					fireTableRowsInserted(getRowCount()-1, getRowCount()-1);
+				} else if ("ADD_BEGIN".equals(message)) {
+					fireTableRowsInserted(0,0);
+					fireTableRowsDeleted(getRowCount()-1, getRowCount()-1);
+				} else 
+					fireTableDataChanged();
+			}
+		});
 	}
 
 	@Override
 	public Class<?> getColumnClass(int arg0) {
 		return String.class;
 	}
-	
+
 }

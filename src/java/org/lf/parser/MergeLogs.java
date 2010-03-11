@@ -3,6 +3,8 @@ package org.lf.parser;
 import org.lf.util.Comparators;
 import org.lf.util.Triple;
 
+import com.sun.swing.internal.plaf.synth.resources.synth;
+
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -27,9 +29,16 @@ public class MergeLogs implements Log {
     private Comparator<IPR> POS_COMPARATOR = new Comparator<IPR>() {
         @Override
         public int compare(IPR o1, IPR o2) {
-        	return timeComparator.compare(
+        	int res =  timeComparator.compare(
         			o1.third.get(timeFieldIndices[o1.first]),
         			o2.third.get(timeFieldIndices[o2.first]));
+        	if (res == 0) {
+        		if (o1.first > o2.first)
+        			res = 1;
+        		else 
+        			res = -1;
+        	}
+        	return res;
         }
     };
 
@@ -78,11 +87,11 @@ public class MergeLogs implements Log {
 	public Position last() throws IOException {
         List<IPR> p = newList();
         for(int i = 0; i < logs.length; ++i) p.add(new IPR(i, logs[i].last(), logs[i].readRecord(logs[i].last())));
-		return new MergedPosition(fromList(p));
+		return new MergedPosition(fromList(p.subList(p.size()-1, p.size())));
 	}
 
 	@Override
-	public Position next(Position pos) throws IOException {
+	synchronized public Position next(Position pos) throws IOException {
         MergedPosition p = (MergedPosition) pos;
         TreeSet<IPR> copy = new TreeSet<IPR>(p.queue);
         Iterator<IPR> i = copy.iterator();
@@ -99,20 +108,38 @@ public class MergeLogs implements Log {
 	}
 
 	@Override
-	public Position prev(Position pos) throws IOException {
+	synchronized public Position prev(Position pos) throws IOException {
         MergedPosition p = (MergedPosition) pos;
         TreeSet<IPR> copy = new TreeSet<IPR>(p.queue);
-        Iterator<IPR> i = copy.descendingIterator();
-        IPR cur = i.next();
-        i.remove();
-        Position prevPos = logs[cur.first].prev(cur.second);
-        if(prevPos != null) {
-            IPR prev = new IPR(cur.first, prevPos, logs[cur.first].readRecord(prevPos));
-            copy.add(prev);
+        TreeSet<IPR> sortedPrev = new TreeSet<IPR>(POS_COMPARATOR);
+        for (IPR ipr : copy) {
+        	Position prevPos = logs[ipr.first].prev(ipr.second);
+        	if (prevPos != null) {
+        		IPR prevIPR = new IPR(ipr.first, prevPos, logs[ipr.first].readRecord(prevPos));
+        		sortedPrev.add(prevIPR);
+        	}
+		}
+        
+        Iterator<IPR> i = sortedPrev.descendingIterator();
+        while (i.hasNext()) {
+        	IPR curFromPrev = i.next();
+        	Iterator<IPR> j = copy.iterator();
+        	while (j.hasNext()) {
+        		IPR curFromCopy = j.next();
+				if (curFromCopy.first == curFromPrev.first) { 
+					j.remove();
+					copy.add(curFromPrev);
+					if (copy.first().equals(curFromPrev))
+						return new MergedPosition(copy);
+					else {
+						copy = new TreeSet<IPR>(p.queue);
+						break;
+					}
+				}
+			};
         }
-        if(copy.isEmpty())
-            return null;
-        return new MergedPosition(copy);
+        
+        return null;
 	}
 
 	@Override
@@ -120,4 +147,13 @@ public class MergeLogs implements Log {
 		IPR p = ((MergedPosition) pos).queue.iterator().next();
         return p.third;
     }
+
+	@Override
+	public Field[] getFields() {
+		int max=0;
+		for (int i = 0; i < logs.length; ++i) {
+			if (logs[max].getFields().length < logs[i].getFields().length) max = i; 
+		}
+		return logs[max].getFields();
+	}
 }

@@ -12,6 +12,7 @@ import org.lf.services.ProgramProperties;
 import com.sun.istack.internal.Nullable;
 
 import javax.swing.*;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -25,6 +26,13 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 		if (f == null || !f.isFile())
 			return null;
 		ProgramProperties.setWorkingDir(f.getParentFile());
+		
+		try {
+			ProgramProperties.save();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser());
 			Attributes atr = new Attributes();
@@ -43,6 +51,12 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 	public Class getOutputType(Class[] inputTypes) {
 		if (inputTypes.length == 0) 
 			return Log.class;
+		return null;
+	}
+
+	@Override
+	public Icon getIcon() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

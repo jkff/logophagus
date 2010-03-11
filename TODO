@@ -1,10 +1,10 @@
  - TODO comments in sources
  - TODO (in case merge turns out to be too slow because of priority queue copying in MergeLogs.next()) Use an immutable (purely functional) priority queue there. See, for example, Okasaki "Purely functional data structures" or take one from the internet
 
- - TODO Scrolling with mouse wheel should work not only in the limits of the current loaded fragment.
- - TODO Home should select 1st record of the log, End should select the last one.
- - TODO Split by field values: combobox with field names instead of input textbox
- - TODO File open dialog should have state persistent across program launches (always start from the same folder at which it was closed last time). (java.util.Properties)
+ + TODO Scrolling with mouse wheel should work not only in the limits of the current loaded fragment.
+ -+ TODO Home should select 1st record of the log, End should select the last one.
+ + TODO Split by field values: combobox with field names instead of input textbox
+ + TODO File open dialog should have state persistent across program launches (always start from the same folder at which it was closed last time). (java.util.Properties)
 
  - TODO Multiple inheritance for attributes (so that bookmarks and highlighters of merged logs show up in the merge result, too)
 

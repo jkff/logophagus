@@ -11,6 +11,7 @@ import org.lf.plugins.analysis.highlight.RecordColorer;
 import com.sun.istack.internal.Nullable;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.util.regex.Pattern;
 
@@ -59,4 +60,10 @@ public class HighlightRegexPlugin implements AnalysisPlugin {
     public String getName() {
         return "Highlight records matching regex";
     }
+
+	@Override
+	public Icon getIcon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

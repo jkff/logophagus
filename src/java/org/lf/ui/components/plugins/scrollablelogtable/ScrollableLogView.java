@@ -15,233 +15,262 @@ import javax.swing.table.TableModel;
 import java.util.Observable;
 import java.util.Observer;
 
-import static org.lf.util.CollectionFactory.pair;
-
-
 public class ScrollableLogView extends JPanel implements Observer {
-    private JButton addBookmark;
-    private JComboBox bookmarksList;
+	private final JButton addBookmark;
+	private final JComboBox bookmarksList;
 
-    private JButton startButton;
-    private JButton endButton;
+	private final JButton startButton;
+	private final JButton endButton;
 
-    private JTable table;
-    private JProgressBar progressBar;
+	private final JTable table;
+	private final JScrollPane scrollTable;
+	private final JProgressBar progressBar;
 
-    private Attributes attributes;
+	private final Attributes attributes;
+	private final ListSelectionModel tableSelectionModel = new TableSelectionModel();
+	private final ScrollableLogViewModel logSegmentModel;
 
-    private final ScrollableLogViewModel logSegmentModel;
+	public ScrollableLogView(Log log, Attributes attributes) {
+		this(log, attributes, null);
+	}
 
-    public ScrollableLogView(Log log, Attributes attributes) {
-        this(log, attributes, null);
-    }
+	public ScrollableLogView(Log log, Attributes attributes, Position pos) {
+		this.attributes = attributes;
+		this.logSegmentModel = new ScrollableLogViewModel(log, 100);
+		this.logSegmentModel.start();
+		
+		LogTableModel tableModel = new LogTableModel(logSegmentModel);
+		LogTableCellRenderer cellRenderer = new LogTableCellRenderer(
+				attributes.getValue(Highlighter.class), logSegmentModel);
+		// Create UI
 
-    public ScrollableLogView(Log log, Attributes attributes, Position pos) {
-        this.attributes = attributes;
-        this.logSegmentModel = new ScrollableLogViewModel(log, 100);
-        this.logSegmentModel.start();
-        LogTableModel tableModel = new LogTableModel(logSegmentModel);
-        LogTableCellRenderer cellRenderer = new LogTableCellRenderer(
-                attributes.getValue(Highlighter.class), logSegmentModel);
-        // Create UI
+		this.bookmarksList = new JComboBox(new BookmarksComboBoxModel(attributes.getValue(Bookmarks.class)));
+		this.bookmarksList.setPrototypeDisplayValue("0123456789");
+		this.bookmarksList.addActionListener(new ComboBoxActionListener());
+		//update bookmarks before any actions
+		this.bookmarksList.addFocusListener(new BookmarkFocusListener());
+		GUIUtils.makePreferredSize(bookmarksList);
 
-        this.bookmarksList = new JComboBox(new BookmarksComboBoxModel(attributes.getValue(Bookmarks.class)));
-        this.bookmarksList.setPrototypeDisplayValue("0123456789");
-        this.bookmarksList.addActionListener(new ComboBoxActionListener());
-        //update bookmarks before any actions
-        this.bookmarksList.addFocusListener(new BookmarkFocusListener());
-        GUIUtils.makePreferredSize(bookmarksList);
-
-        this.addBookmark = new JButton("Add bookmark");
-        this.addBookmark.addActionListener(new AddBookmarkActionListener());
+		this.addBookmark = new JButton("Add bookmark");
+		this.addBookmark.addActionListener(new AddBookmarkActionListener());
 
 
-        this.startButton = new JButton("Start");
-        this.startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                if (!logSegmentModel.isReadingDone() || logSegmentModel.isAtBegin()) return;
-                logSegmentModel.start();
-            }
-        });
+		this.startButton = new JButton("Start");
+		this.startButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (!logSegmentModel.isReadingDone() || logSegmentModel.isAtBegin()) return;
+				logSegmentModel.start();
+			}
+		});
 
-        this.endButton = new JButton("End");
-        this.endButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!logSegmentModel.isReadingDone() || logSegmentModel.isAtEnd()) return;
-                logSegmentModel.end();
-            }
-        });
+		this.endButton = new JButton("End");
+		this.endButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!logSegmentModel.isReadingDone() || logSegmentModel.isAtEnd()) return;
+				logSegmentModel.end();
+			}
+		});
 
-        GUIUtils.createRecommendedButtonMargin(new JButton[]{startButton, endButton, addBookmark});
-        GUIUtils.makePreferredSize(startButton);
-        GUIUtils.makePreferredSize(endButton);
-        GUIUtils.makeSameWidth(new JComponent[]{startButton, endButton});
+		GUIUtils.createRecommendedButtonMargin(new JButton[]{startButton, endButton, addBookmark});
+		GUIUtils.makePreferredSize(startButton);
+		GUIUtils.makePreferredSize(endButton);
+		GUIUtils.makeSameWidth(new JComponent[]{startButton, endButton});
 
-        this.progressBar = new JProgressBar(0, 100);
-        this.progressBar.setValue(0);
-        this.progressBar.setStringPainted(true);
+		this.progressBar = new JProgressBar(0, 100);
+		this.progressBar.setValue(0);
+		this.progressBar.setStringPainted(true);
 
-        Box controlPanel = Box.createHorizontalBox();
-        controlPanel.add(startButton);
-        controlPanel.add(Box.createHorizontalStrut(5));
-        controlPanel.add(endButton);
-        controlPanel.add(Box.createHorizontalStrut(12));
-        controlPanel.add(addBookmark);
-        controlPanel.add(Box.createHorizontalStrut(5));
-        controlPanel.add(bookmarksList);
-        controlPanel.add(Box.createHorizontalGlue());
-        GUIUtils.fixMaxHeightSize(controlPanel);
+		Box controlPanel = Box.createHorizontalBox();
+		controlPanel.add(startButton);
+		controlPanel.add(Box.createHorizontalStrut(5));
+		controlPanel.add(endButton);
+		controlPanel.add(Box.createHorizontalStrut(12));
+		controlPanel.add(addBookmark);
+		controlPanel.add(Box.createHorizontalStrut(5));
+		controlPanel.add(bookmarksList);
+		controlPanel.add(Box.createHorizontalGlue());
+		GUIUtils.fixMaxHeightSize(controlPanel);
 
-        this.table = new JTable(tableModel);
-        this.table.setDefaultRenderer(String.class, cellRenderer);
+		this.table = new JTable(tableModel);
+		this.table.setDefaultRenderer(String.class, cellRenderer);
+		this.table.setSelectionModel(tableSelectionModel);
+		this.table.addKeyListener(new TableKeyListener());
+		
+		scrollTable = new JScrollPane(this.table);
+		scrollTable.addMouseWheelListener( new ScrollBarMouseWheelListener());
+		BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
+		this.setLayout(layout);
+		this.add(controlPanel);
+		this.add(Box.createVerticalStrut(12));
+		this.add(scrollTable);
+		this.add(Box.createVerticalStrut(12));
+		this.add(this.progressBar);
+		this.setVisible(true);
+		this.logSegmentModel.addObserver(this);
+		update(logSegmentModel, null);
+	}
 
-        this.table.addKeyListener(new TableKeyListener());
-        JScrollPane scrollTable = new JScrollPane(this.table);
+	public Position getSelectedRecord() {
+		if (table.getSelectedRow() == -1) return logSegmentModel.getPosition(0);
+		return logSegmentModel.getPosition(table.getSelectedRow());
+	}
 
-        BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
-        this.setLayout(layout);
-        this.add(controlPanel);
-        this.add(Box.createVerticalStrut(12));
-        this.add(scrollTable);
-        this.add(Box.createVerticalStrut(12));
-        this.add(this.progressBar);
-        this.setVisible(true);
-        this.logSegmentModel.addObserver(this);
-        update(logSegmentModel, null);
-    }
+	public TableModel getTableModel() {
+		return this.table.getModel();
+	}
 
-    public Position getSelectedRecord() {
-        if (table.getSelectedRow() == -1) return logSegmentModel.getPosition(0);
-        return logSegmentModel.getPosition(table.getSelectedRow());
-    }
+	@Override
+	public void update(Observable o, Object message) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				updateControls();
+				updateProgress();
+			}
+		});
+	}
 
-    public TableModel getTableModel() {
-        return this.table.getModel();
-    }
+	private void updateProgress() {
+		if (logSegmentModel.isReadingDone()) {
+			progressBar.setValue(100);
+			return;
+		}
+		int cur = logSegmentModel.getRecordCount();
+		int max = logSegmentModel.getRegionSize();
+		int progress = cur * 100 / max;
+		progressBar.setValue(progress);
+	}
 
-    @Override
-    public void update(Observable o, Object message) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                updateControls();
-                updateProgress();
-            }
-        });
-    }
+	private void updateControls() {
+		if (logSegmentModel.isReadingDone()) {
+			enableControls();
+			if (logSegmentModel.isAtBegin())
+				startButton.setEnabled(false);
+			if (logSegmentModel.isAtEnd())
+				endButton.setEnabled(false);
+		} else
+			disableControls();
+	}
 
-    private void updateProgress() {
-        if (logSegmentModel.isReadingDone()) {
-            progressBar.setValue(100);
-            return;
-        }
-        int cur = logSegmentModel.getRecordCount();
-        int max = logSegmentModel.getRegionSize();
-        int progress = cur * 100 / max;
-        progressBar.setValue(progress);
-    }
+	private void enableControls() {
+		startButton.setEnabled(true);
+		endButton.setEnabled(true);
+		addBookmark.setEnabled(true);
+		bookmarksList.setEnabled(true);
+	}
 
-    private void updateControls() {
-        if (logSegmentModel.isReadingDone()) {
-            enableControls();
-            if (logSegmentModel.isAtBegin())
-                startButton.setEnabled(false);
-            if (logSegmentModel.isAtEnd())
-                endButton.setEnabled(false);
-        } else
-            disableControls();
-    }
+	private void disableControls() {
+		startButton.setEnabled(false);
+		endButton.setEnabled(false);
+		addBookmark.setEnabled(false);
+		bookmarksList.setEnabled(false);
+	}
 
-    private void enableControls() {
-        startButton.setEnabled(true);
-        endButton.setEnabled(true);
-        addBookmark.setEnabled(true);
-        bookmarksList.setEnabled(true);
-    }
+	private int getCorrespondingVisualRow(Position pos) {
+		for(int row = 0; row < logSegmentModel.getRecordCount(); ++row) 
+			if (logSegmentModel.getPosition(row).equals(pos)) 
+				return row;
+		return -1;
+	}
+	
+	//controllers
+	class AddBookmarkActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			while (true) {
+				String name = JOptionPane.showInputDialog(
+						ScrollableLogView.this,
+						"Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE);
+				if (name == null) return;
 
-    private void disableControls() {
-        startButton.setEnabled(false);
-        endButton.setEnabled(false);
-        addBookmark.setEnabled(false);
-        bookmarksList.setEnabled(false);
-    }
+				if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
+					JOptionPane.showMessageDialog(
+							ScrollableLogView.this,
+							"Bookmark with such name already exists. Please input a different name.");
+				} else {
+					int row = table.getSelectedRow();
+					if (row == -1) row = 0;
+					attributes.getValue(Bookmarks.class).addBookmark(name, logSegmentModel.getPosition(row));
+					return;
+				}
+			}
+		}
 
-    //controllers
-    class AddBookmarkActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            while (true) {
-                String name = JOptionPane.showInputDialog(
-                        ScrollableLogView.this,
-                        "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE);
-                if (name == null) return;
+	}
 
-                if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
-                    JOptionPane.showMessageDialog(
-                            ScrollableLogView.this,
-                            "Bookmark with such name already exists. Please input a different name.");
-                } else {
-                    bookmarks.add(pair(name, getSelectedRecord()));
-                    return;
-                }
-            }
-        }
+	class ComboBoxActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (!logSegmentModel.isReadingDone()) return;
+			JComboBox cb = (JComboBox) e.getSource();
+			String selectedBookmark = (String) cb.getSelectedItem();
+			if (selectedBookmark == null) return;
+			Position pos = attributes.getValue(Bookmarks.class).getValue(selectedBookmark);
+			logSegmentModel.shiftTo(pos);
+			int row = getCorrespondingVisualRow(pos);
+			tableSelectionModel.setSelectionInterval(row, row);
+		}
+	}
 
-    }
+	class BookmarkFocusListener extends FocusAdapter {
+		@Override
+		public void focusGained(FocusEvent e) {
+			((BookmarksComboBoxModel) bookmarksList.getModel()).update();
+		}
+	}
 
-    class ComboBoxActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (!logSegmentModel.isReadingDone()) return;
-            JComboBox cb = (JComboBox) e.getSource();
-            String selectedBookmark = (String) cb.getSelectedItem();
-            if (selectedBookmark == null) return;
-            Position pos = attributes.getValue(Bookmarks.class).getValue(selectedBookmark);
-            logSegmentModel.shiftTo(pos);
-            int row = getCorrespondingVisualRow(pos);
-            table.getSelectionModel().setSelectionInterval(row, row);
-        }
-    }
+	class TableKeyListener extends KeyAdapter {
+		@Override
+		public void keyPressed(KeyEvent e) {
+			int curIndex = tableSelectionModel.getMaxSelectionIndex();
+			switch (e.getKeyCode()) {
+			case KeyEvent.VK_UP:
+				if (curIndex == 0 && !logSegmentModel.isAtBegin())
+					logSegmentModel.shiftUp();
+				break;
+			case KeyEvent.VK_PAGE_UP:
+				if (curIndex == 0 && !logSegmentModel.isAtBegin())
+					logSegmentModel.prev();
+				break;
+			case KeyEvent.VK_DOWN:
+				if (curIndex == (table.getRowCount() - 1) && !logSegmentModel.isAtEnd())
+					logSegmentModel.shiftDown();
+				break;
+			case KeyEvent.VK_PAGE_DOWN:
+				if (curIndex == (table.getRowCount() - 1) && !logSegmentModel.isAtEnd()) {
+					tableSelectionModel.setSelectionInterval(table.getRowCount()-1, table.getRowCount()-1);
+					logSegmentModel.next();
+				}
+				break;
+			case KeyEvent.VK_HOME:
+				tableSelectionModel.setSelectionInterval(0, 0);
+				if (!logSegmentModel.isAtBegin())
+					logSegmentModel.start();
+				break;
+			case KeyEvent.VK_END:
+				tableSelectionModel.setSelectionInterval(table.getRowCount()-1, table.getRowCount()-1);
+				if (!logSegmentModel.isAtEnd())
+					logSegmentModel.end();
+				break;
+			}
+		}
+	}
 
-    class BookmarkFocusListener extends FocusAdapter {
-        @Override
-        public void focusGained(FocusEvent e) {
-            ((BookmarksComboBoxModel) bookmarksList.getModel()).update();
-        }
-    }
-
-    class TableKeyListener extends KeyAdapter {
-        @Override
-        public void keyPressed(KeyEvent e) {
-            int curIndex = table.getSelectionModel().getMaxSelectionIndex();
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_UP:
-                    if (curIndex == 0 && !logSegmentModel.isAtBegin())
-                        logSegmentModel.shiftUp();
-                    break;
-                case KeyEvent.VK_PAGE_UP:
-                    if (curIndex == 0 && !logSegmentModel.isAtBegin())
-                        logSegmentModel.prev();
-                    break;
-                case KeyEvent.VK_DOWN:
-                    if (curIndex == (table.getRowCount() - 1) && !logSegmentModel.isAtEnd())
-                        logSegmentModel.shiftDown();
-                    break;
-                case KeyEvent.VK_PAGE_DOWN:
-                    if (curIndex == (table.getRowCount() - 1) && !logSegmentModel.isAtEnd())
-                        logSegmentModel.next();
-                    break;
-                case KeyEvent.VK_HOME:
-                    if (!logSegmentModel.isAtBegin())
-                        logSegmentModel.start();
-                    break;
-                case KeyEvent.VK_END:
-                    if (!logSegmentModel.isAtEnd())
-                        logSegmentModel.end();
-                    break;
-            }
-        }
-    }
+	class ScrollBarMouseWheelListener implements MouseWheelListener {
+		@Override
+		public void mouseWheelMoved(MouseWheelEvent event) {
+			int maxValue = scrollTable.getVerticalScrollBar().getModel().getMaximum();
+			int curValue = scrollTable.getVerticalScrollBar().getModel().getValue();
+			int extValue = scrollTable.getVerticalScrollBar().getModel().getExtent();
+			if (event.getWheelRotation() < 0) {
+				if (curValue == 0 && !logSegmentModel.isAtBegin()) 
+					logSegmentModel.shiftUp();
+			} else {
+				if (curValue + extValue == maxValue && !logSegmentModel.isAtEnd()) 
+					logSegmentModel.shiftDown();				
+			}
+		}
+	}
 }

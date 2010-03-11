@@ -1,5 +1,6 @@
 package org.lf.plugins.analysis.merge;
 
+import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 import org.lf.parser.Log;
@@ -42,6 +43,12 @@ public class MergeLogsPlugin implements AnalysisPlugin {
 			if (!Log.class.isAssignableFrom(clazz)) return null;
 		}		
 		return MergeLogs.class;
+	}
+
+	@Override
+	public Icon getIcon() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -1,32 +1,60 @@
 package org.lf.ui.components.plugins.scrollablelogtable;
 
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.SwingUtilities;
 
-public class TableSelectionModel extends DefaultListSelectionModel implements Observer{
-	private ScrollableLogViewModel model;
-
-	public TableSelectionModel(ScrollableLogViewModel model) {
+public class TableSelectionModel extends DefaultListSelectionModel {
+	private int cachedIndex;
+	
+	public TableSelectionModel() {
 		super();
-		this.model = model;
+		cachedIndex = 0;
 		setSelectionMode(SINGLE_SELECTION);
-		model.addObserver(this);
 	}
 
 	@Override
-	public void update(Observable o, Object arg) {
-		System.out.println("Update selection");
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				clearSelection();
-				setSelectionInterval(getMaxSelectionIndex(), getMaxSelectionIndex());
-				fireValueChanged(true);
-			}
-		});
+	public int getAnchorSelectionIndex() {
+		int index = super.getAnchorSelectionIndex();
+		if (index == -1) {
+			setAnchorSelectionIndex(cachedIndex);
+			return cachedIndex;
+		}
+		cachedIndex = index;
+		return index;
 	}
 
+	@Override
+	public int getLeadSelectionIndex() {
+		int index = super.getLeadSelectionIndex();
+		if (index == -1) {
+			setLeadSelectionIndex(cachedIndex);
+			return cachedIndex;
+		}
+		cachedIndex = index;
+		return index;
+	}
+
+	@Override
+	public int getMaxSelectionIndex() {
+		int index = super.getMaxSelectionIndex();
+		if (index == -1) {
+			setSelectionInterval(cachedIndex, cachedIndex);
+			return cachedIndex;
+		}
+		cachedIndex = index;
+		return index;
+	}
+
+	@Override
+	public int getMinSelectionIndex() {
+		int index = super.getMinSelectionIndex();
+		if (index == -1) {
+			setSelectionInterval(cachedIndex, cachedIndex);
+			return cachedIndex;
+		}
+		cachedIndex = index;
+		return index;
+	}
+
+	
 }

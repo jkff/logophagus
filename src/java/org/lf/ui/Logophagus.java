@@ -104,8 +104,8 @@ public class Logophagus extends JFrame {
 		logsTree.addMouseListener(new TreeMouseListener());
 		logsTree.addTreeSelectionListener(getPluginPanel());
 		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
-		char sep = File.separatorChar;
-		String iconsPath = ProgramProperties.workingDir.getAbsolutePath()+sep +"src"+sep+"java"+sep+"org"+sep+"lf"+sep+"ui"+sep+"icons"+sep;
+		String sep = System.getProperty("file.separator");
+		String iconsPath = System.getProperty("user.dir") +sep+"src"+sep+"java"+sep+"org"+sep+"lf"+sep+"ui"+sep+"icons"+sep;
 		renderer.setOpenIcon(new ImageIcon(iconsPath +"folder_files.gif"));
 		renderer.setClosedIcon(new ImageIcon(iconsPath +"folder_files.gif"));
 		renderer.setLeafIcon(new ImageIcon(iconsPath +"file.gif"));

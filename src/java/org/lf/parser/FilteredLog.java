@@ -74,4 +74,9 @@ public class FilteredLog implements Log {
 	public String toString(){
 		return underlyingLog.toString() + " => filter : " + filter.toString();
 	}
+
+	@Override
+	public Field[] getFields() {
+		return underlyingLog.getFields();
+	}
 }

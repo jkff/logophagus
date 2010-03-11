@@ -1,5 +1,7 @@
 package org.lf.plugins.analysis.sidebyside;
 
+import javax.swing.Icon;
+
 import org.lf.parser.Log;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
@@ -29,4 +31,10 @@ public class SideBySidePlugin implements AnalysisPlugin {
     public String getName() {
         return "Show logs side by side";
     }
+
+	@Override
+	public Icon getIcon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

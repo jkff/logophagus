@@ -1,5 +1,6 @@
 package org.lf.ui.components.plugins.fieldsplittedlog;
 
+import org.lf.parser.Field;
 import org.lf.parser.FilteredLog;
 import org.lf.parser.Log;
 import org.lf.parser.Position;
@@ -27,7 +28,8 @@ public class FieldSplittedLog extends JPanel {
 	private MyList fieldValues;
 	private JSplitPane splitPane;
 	private JPanel defaultPanel = new JPanel(new BorderLayout());
-
+	private int fieldIndex = 0;
+	
 	class ValuesSearchTask extends SwingWorker<Void, Void> {
         private static final int DEFAULT_RECORDS_TO_LOAD = 5000;
 
@@ -40,7 +42,7 @@ public class FieldSplittedLog extends JPanel {
 					if (progressMonitor.isCanceled())
 						break;
 					Record rec = logAndField.log.readRecord(cur);
-					listModel.addFieldValue(rec.get(logAndField.field));
+					listModel.addFieldValue(rec.get(fieldIndex));
 					if (cur.equals(end)) break;
 					cur = logAndField.log.next(cur);
 					progressMonitor.setProgress(i);
@@ -65,6 +67,11 @@ public class FieldSplittedLog extends JPanel {
 		super(new BorderLayout());
 		this.logAndField = logAndField;
 		this.attributes = attributes;
+		Field[] fields = logAndField.log.getFields();		
+		for (Field field : fields) {
+			if (field.equals(logAndField.field)) break;
+			++fieldIndex;
+		};
 
 		fieldValues = new MyList(listModel);
 		fieldValues.setCellRenderer(new FieldValuesCellRenderer());
@@ -87,7 +94,7 @@ public class FieldSplittedLog extends JPanel {
 		splitPane.setResizeWeight(0.7);
 		GUIUtils.makePreferredSize(splitPane);
 		this.add(splitPane);
-		progressMonitor = new ProgressMonitor(this, "Reading", "Please wait", 0, 5000);
+		progressMonitor = new ProgressMonitor(this, "Reading", "Please wait", 0, ValuesSearchTask.DEFAULT_RECORDS_TO_LOAD);
 		new ValuesSearchTask().execute();
 		this.setVisible(true);
 	}
@@ -125,7 +132,6 @@ public class FieldSplittedLog extends JPanel {
 						panel = new JPanel();
 						panel.add(new JLabel("There is no other field values"));
 					} else {
-						final int fieldIndex = FieldSplittedLog.this.logAndField.field;
 						Filter<Record> filter = new Filter<Record>() {
 							private List<String> exceptedValues = listModel.getValues();
 							public String toString() {
@@ -143,7 +149,6 @@ public class FieldSplittedLog extends JPanel {
 						panel = new ScrollableLogView(log, attributes, listModel.getOtherPosition());
 					}
 				} else {
-					final int fieldIndex = FieldSplittedLog.this.logAndField.field;
 					Filter<Record> filter = new Filter<Record>() {
 						public String toString() {
 							return fieldValue;

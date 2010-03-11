@@ -1,15 +1,17 @@
 package org.lf.parser;
 
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
+import com.sun.istack.internal.Nullable;
+
 public interface Log {
+	
     public Field[] getFields();
 
 	public Position first() throws IOException;
 
-	public Position afterLast();
+	public Position last() throws IOException;
 
     @Nullable
 	public Position next(Position pos) throws IOException;
