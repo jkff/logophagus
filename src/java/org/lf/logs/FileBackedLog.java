@@ -45,7 +45,7 @@ public class FileBackedLog implements Log {
         this.parser = in;
         this.file = new MappedFile(fileName);
         this.is = file.getInputStreamFrom(0L);
-        this.fields = new Field[0];
+        fillInFieldsFromRecord(readRecord(first()));
     }
 
     @Override
@@ -55,17 +55,13 @@ public class FileBackedLog implements Log {
 
     @Override
     public Position last() throws IOException {
-        long maxSize = file.length();
-        return prev(new PhysicalPosition(maxSize));
+        return prev(new PhysicalPosition(file.length()));
     }
 
     @Override
     synchronized public Record readRecord(Position pos) throws IOException {
-        PhysicalPosition pp = (PhysicalPosition) pos;
-        is.scrollTo(pp.offsetBytes);
-        Record rec = parser.readRecord(is);
-        validateFieldsFromRecord(rec);
-        return rec;
+        is.scrollTo(((PhysicalPosition) pos).offsetBytes);
+        return parser.readRecord(is);
     }
 
     @Override
@@ -94,24 +90,16 @@ public class FileBackedLog implements Log {
     }
 
     @Override
-    synchronized public Field[] getFields() {
-        try {
-            validateFieldsFromRecord(readRecord(first()));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public Field[] getFields() {
         return fields;
     }
 
-    private void validateFieldsFromRecord(Record rec) {
-        if (rec.size() <= fields.length) return;
-        List<Field> fieldsList = new LinkedList<Field>();
+    private void fillInFieldsFromRecord(Record rec) {
+        this.fields = new Field[rec.size()];
 
         for (int i=0; i<rec.size(); ++i) {
-            final int temp = i;
-            fieldsList.add(new Field() {
-
+            final int finalI = i;
+            fields[i] = new Field() {
                 @Override
                 public Type getType() {
                     return Type.TEXT;
@@ -119,11 +107,10 @@ public class FileBackedLog implements Log {
 
                 @Override
                 public String getName() {
-                    return "Field " + temp;
+                    return "Field " + finalI;
                 }
-            });
+            };
         }
-        fields = fieldsList.toArray(new Field[0]);
     }
 
 }

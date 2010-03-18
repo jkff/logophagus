@@ -1,18 +1,19 @@
 package org.lf.plugins.analysis;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.lf.plugins.AttributeConcept;
 import org.lf.plugins.AttributeInstance;
 
-public class BookmarksConcept implements AttributeConcept<BookmarksConcept> {
+public class BookmarksConcept implements AttributeConcept<BookmarksConcept, Bookmarks> {
     @Override
-    public AttributeInstance<BookmarksConcept> join(AttributeInstance<BookmarksConcept>[] children) {
+    public Bookmarks join(Collection<Bookmarks> parents) {
         Bookmarks result = new Bookmarks(null);
-        for (AttributeInstance<BookmarksConcept> attributeInstance : children) {
-            List<String> names = ((Bookmarks)attributeInstance).getNames();
+        for (Bookmarks b : parents) {
+            List<String> names = b.getNames();
             for (String name : names) {
-                result.addBookmark(name, ((Bookmarks)attributeInstance).getValue(name));
+                result.addBookmark(name, b.getValue(name));
             }
         }
         return result;

@@ -47,9 +47,9 @@ public class ScrollableLogViewModel extends Observable {
         public void run() {
             try {
                 if (logBeginPos == null)    logBeginPos = log.first();
-                if (logBeginPos == null)      return;
+                if (logBeginPos == null)    return;
                 if (logEndPos == null)      logEndPos = log.last();
-                if (fromWhere == null)        fromWhere = logBeginPos;
+                if (fromWhere == null)      fromWhere = logBeginPos;
 
                 if (recordsToRead == regionSize)    clear();
 

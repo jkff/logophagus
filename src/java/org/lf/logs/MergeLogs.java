@@ -21,8 +21,8 @@ public class MergeLogs implements Log {
     private Comparator<String> timeComparator;
 
     private class PosRec extends Pair<Position,Record> {
-        private PosRec(Position first, Record second) {
-            super(first, second);
+        private PosRec(Position pos, Record rec) {
+            super(pos, rec);
         }
 
         @Override
@@ -48,7 +48,7 @@ public class MergeLogs implements Log {
         @Override
         public String get(int index) {
             if (!getOur2origIndex().containsKey(index)) return null;
-            CurPrevIndex entity = pos.curSortedSet.first();
+            CurPrevIndex entity = pos.cpisAscCur.first();
             return entity.first.second.get(getOur2origIndex().get(index));
         }
 
@@ -59,7 +59,7 @@ public class MergeLogs implements Log {
 
             our2origIndex = newHashMap();
             
-            CurPrevIndex entity = pos.curSortedSet.first();
+            CurPrevIndex entity = pos.cpisAscCur.first();
             if (entity.third == 0) {
                 for (int i =0 ; i < entity.first.second.size() ; ++i ) {
                     our2origIndex.put(i, i);
@@ -75,7 +75,7 @@ public class MergeLogs implements Log {
                 for (int i =0 ; i < entity.first.second.size() ; ++i ) {
                     if (i < timeFieldIndices[entity.third])     our2origIndex.put(i + indexShift, i);
                     if (i == timeFieldIndices[entity.third])    continue;
-                    if (i > timeFieldIndices[entity.third])        our2origIndex.put(i + indexShift -1, i);
+                    if (i > timeFieldIndices[entity.third])     our2origIndex.put(i + indexShift - 1, i);
                 }
             }
             return our2origIndex;
@@ -101,55 +101,46 @@ public class MergeLogs implements Log {
         }
     }
 
-    private Comparator<CurPrevIndex> CUR_POS_COMPARATOR = new Comparator<CurPrevIndex>() {
+    private abstract class CPIComparator implements Comparator<CurPrevIndex> {
         @Override
         public int compare(CurPrevIndex o1, CurPrevIndex o2) {
-            if (o1.first == null && o2.first == null) return o1.third.compareTo(o2.third);
-            if (o1.first == null) return 1;
-            if (o2.first == null) return -1;
+            PosRec pr1 = getPosRec(o1), pr2 = getPosRec(o2);
+            if (pr1 == null && pr2 == null) return o1.third.compareTo(o2.third);
+            if (pr1 == null) return 1;
+            if (pr2 == null) return -1;
 
             int res =  timeComparator.compare(
-                    o1.first.second.get(timeFieldIndices[o1.third]),
-                    o2.first.second.get(timeFieldIndices[o2.third]));
+                    pr1.second.get(timeFieldIndices[o1.third]),
+                    pr2.second.get(timeFieldIndices[o2.third]));
             if (res == 0)
                 res = o1.third.compareTo(o2.third);
 
             return res;
         }
+        protected abstract PosRec getPosRec(CurPrevIndex cpi);
+    }
+    private Comparator<CurPrevIndex> COMPARE_CPI_ON_CUR = new CPIComparator() {
+        protected PosRec getPosRec(CurPrevIndex cpi) { return cpi.first; }
     };
-
-    private Comparator<CurPrevIndex> PREV_POS_COMPARATOR = new Comparator<CurPrevIndex>() {
-        @Override
-        public int compare(CurPrevIndex o1, CurPrevIndex o2) {
-            if (o1.second == null && o2.second == null) return o1.third.compareTo(o2.third);
-            if (o1.second == null) return 1;
-            if (o2.second == null) return -1;
-
-            int res =  timeComparator.compare(
-                    o1.second.second.get(timeFieldIndices[o1.third]),
-                    o2.second.second.get(timeFieldIndices[o2.third]));
-            if (res == 0)
-                res = o1.third.compareTo(o2.third);
-            return res;
-        }
+    private Comparator<CurPrevIndex> COMPARE_CPI_ON_PREV = new CPIComparator() {
+        protected PosRec getPosRec(CurPrevIndex cpi) { return cpi.second; }
     };
-
 
     private class MergedPosition implements Position {
-        TreeSet<CurPrevIndex> curSortedSet;
-        TreeSet<CurPrevIndex> prevSortedSet;
+        TreeSet<CurPrevIndex> cpisAscCur;
+        TreeSet<CurPrevIndex> cpisAscPrev;
 
-        private MergedPosition(TreeSet<CurPrevIndex> curSortedSet, TreeSet<CurPrevIndex> prevSortedSet) {
-            this.curSortedSet= curSortedSet;
-            this.prevSortedSet = prevSortedSet;
+        private MergedPosition(TreeSet<CurPrevIndex> cpisAscCur, TreeSet<CurPrevIndex> cpisAscPrev) {
+            this.cpisAscCur = cpisAscCur;
+            this.cpisAscPrev = cpisAscPrev;
         }
 
         @Override
         public boolean equals(Object obj) {
             return obj != null &&
             obj.getClass() == MergedPosition.class &&
-            ((MergedPosition)obj).curSortedSet.equals(this.curSortedSet) &&
-            ((MergedPosition)obj).prevSortedSet.equals(this.prevSortedSet);
+            ((MergedPosition)obj).cpisAscCur.equals(this.cpisAscCur) &&
+            ((MergedPosition)obj).cpisAscPrev.equals(this.cpisAscPrev);
         }
     }
 
@@ -185,9 +176,9 @@ public class MergeLogs implements Log {
         for(int i = 0; i < logs.length; ++i) {
             Position curPos = logs[i].first();
             PosRec cur = new PosRec(curPos, logs[i].readRecord(curPos));
-            p.add(new CurPrevIndex(cur, null , i));
+            p.add(new CurPrevIndex(cur, null, i));
         }
-        return new MergedPosition(fromList(p, CUR_POS_COMPARATOR), fromList(p, PREV_POS_COMPARATOR));
+        return new MergedPosition(fromList(p, COMPARE_CPI_ON_CUR), fromList(p, COMPARE_CPI_ON_PREV));
     }
 
     @Override
@@ -198,7 +189,7 @@ public class MergeLogs implements Log {
             PosRec prev = new PosRec(lastPos, logs[i].readRecord(lastPos));
             p.add(new CurPrevIndex(null, prev , i));
         }
-        return prev(new MergedPosition(fromList(p, CUR_POS_COMPARATOR), fromList(p, PREV_POS_COMPARATOR)));
+        return prev(new MergedPosition(fromList(p, COMPARE_CPI_ON_CUR), fromList(p, COMPARE_CPI_ON_PREV)));
     }
 
     @Override
@@ -208,8 +199,8 @@ public class MergeLogs implements Log {
         // in all logs, later than readRecord(p).
 
         MergedPosition p = (MergedPosition) pos;
-        TreeSet<CurPrevIndex> curSortedCopy = new TreeSet<CurPrevIndex>(p.curSortedSet);
-        TreeSet<CurPrevIndex> prevSortedCopy = new TreeSet<CurPrevIndex>(p.prevSortedSet);
+        TreeSet<CurPrevIndex> curSortedCopy = new TreeSet<CurPrevIndex>(p.cpisAscCur);
+        TreeSet<CurPrevIndex> prevSortedCopy = new TreeSet<CurPrevIndex>(p.cpisAscPrev);
 
         CurPrevIndex cur = curSortedCopy.first();
         curSortedCopy.remove(cur);
@@ -227,8 +218,8 @@ public class MergeLogs implements Log {
     @Override
     public Position prev(Position pos) throws IOException {
         MergedPosition p = (MergedPosition) pos;
-        TreeSet<CurPrevIndex> curSortedCopy = new TreeSet<CurPrevIndex>(p.curSortedSet);
-        TreeSet<CurPrevIndex> prevSortedCopy = new TreeSet<CurPrevIndex>(p.prevSortedSet);
+        TreeSet<CurPrevIndex> curSortedCopy = new TreeSet<CurPrevIndex>(p.cpisAscCur);
+        TreeSet<CurPrevIndex> prevSortedCopy = new TreeSet<CurPrevIndex>(p.cpisAscPrev);
 
         CurPrevIndex cur = prevSortedCopy.last();
         curSortedCopy.remove(cur);
@@ -254,10 +245,10 @@ public class MergeLogs implements Log {
         for (int i = 0; i < logs.length; ++i) {
             Field[] curFields = logs[i].getFields();
             for (int j = 0; j < curFields.length; ++j) {
-                if (i != 0 && timeFieldIndices[i].intValue() == j ) continue;
+                if (i != 0 && timeFieldIndices[i] == j ) continue;
                 res.add(curFields[j]);
             }
         }
-        return res.toArray(new Field[0]);
+        return res.toArray(new Field[res.size()]);
     }
 }

@@ -47,12 +47,12 @@ public class CSVParser implements Parser {
         int offset = 0;
         do {
             int i = stream.next();
+            offset++;
             if (i == -1) {
                 sink.recordBorder();
                 return offset;
             }
-            offset++;
-     
+
             char c = (char)i;
             SymbolType s =
                     (c == recordDelimeter) ? SymbolType.RECORD_DELIMITER :
@@ -131,10 +131,18 @@ public class CSVParser implements Parser {
     private class CSVRecord implements Record {
         private final List<String> fields;
 
-        private CSVRecord(List<String> fields) { this.fields = fields; }
+        private CSVRecord(List<String> fields) {
+            if(fields.size() == 1)
+                System.out.println("Oops");
+            this.fields = fields;
+        }
 
-        public String get(int index) { return fields.get(index); }
-        public int    size()         { return fields.size();     }
+        public String get(int index) {
+            return fields.get(index);
+        }
+        public int    size()         { 
+            return fields.size();
+        }
     }
 
     private static class Nop implements Sink {

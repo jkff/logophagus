@@ -34,7 +34,7 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
             e.printStackTrace();
         }
         try {
-            Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser());//new RegexParser("\\s?(\\d+)\\s([a-z]+)\\s?"));
+            Log log = new FileBackedLog(f.getAbsolutePath(), new RegexParser("\\s?(\\d+)\\s([a-z]+)\\s?"));
             Attributes atr = new Attributes();
             atr.addAttribute(new Bookmarks(null));
             return new Entity(atr, log);

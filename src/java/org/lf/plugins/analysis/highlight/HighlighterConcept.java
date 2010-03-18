@@ -3,13 +3,13 @@ package org.lf.plugins.analysis.highlight;
 import org.lf.plugins.AttributeConcept;
 import org.lf.plugins.AttributeInstance;
 
-public class HighlighterConcept implements AttributeConcept<HighlighterConcept>{
+import java.util.Collection;
+import java.util.List;
 
+public class HighlighterConcept implements AttributeConcept<HighlighterConcept, Highlighter> {
     @Override
-    public AttributeInstance<HighlighterConcept> join(
-            AttributeInstance<HighlighterConcept>[] children) {
-        // TODO Auto-generated method stub
-        return null;
+    public Highlighter join(Collection<Highlighter> parents) {
+        return new Highlighter(parents);
     }
 
 }

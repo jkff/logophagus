@@ -9,7 +9,7 @@ import org.lf.util.CollectionFactory;
 
 import static org.lf.util.CollectionFactory.newList;
 
-public class Bookmarks implements AttributeInstance<BookmarksConcept> {
+public class Bookmarks implements AttributeInstance<BookmarksConcept,Bookmarks> {
     private Bookmarks parent;
     private Map<String, Position> data = CollectionFactory.newLinkedHashMap();
 
@@ -45,12 +45,8 @@ public class Bookmarks implements AttributeInstance<BookmarksConcept> {
     }
 
     @Override
-    public AttributeConcept<BookmarksConcept> getConcept() {
+    public BookmarksConcept getConcept() {
         return new BookmarksConcept();
-    }
-
-    public Bookmarks getParent() {
-        return parent;
     }
 
     @Override

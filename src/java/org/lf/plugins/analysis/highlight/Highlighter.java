@@ -7,13 +7,16 @@ import org.lf.plugins.AttributeInstance;
 import com.sun.istack.internal.Nullable;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
-public class Highlighter implements AttributeInstance<HighlighterConcept> {
-    private Highlighter parent;
+public class Highlighter implements AttributeInstance<HighlighterConcept,Highlighter> {
+    private Collection<Highlighter> parents;
     private RecordColorer colorer;
 
-    public Highlighter(Highlighter parent) {
-        this.parent = parent;
+    public Highlighter(Collection<Highlighter> parents) {
+        this.parents = parents;
     }
 
     public void setRecordColorer(RecordColorer rc) {
@@ -24,23 +27,20 @@ public class Highlighter implements AttributeInstance<HighlighterConcept> {
     public Color getHighlightColor(Record rec) {
         if (colorer != null && colorer.getColor(rec) != null)
             return colorer.getColor(rec);
-        if (parent == null)
-            return null;
-        return parent.getHighlightColor(rec);
-    }
-
-    @Override
-    public Highlighter getParent() {
-        return parent;
+        for(Highlighter p : parents) {
+            Color c = p.getHighlightColor(rec);
+            if(c != null) return c;
+        }
+        return null;
     }
 
     @Override
     public Highlighter createChild() {
-        return new Highlighter(this);
+        return new Highlighter(Arrays.asList(this));
     }
 
     @Override
-    public AttributeConcept<HighlighterConcept> getConcept() {
+    public HighlighterConcept getConcept() {
         return new HighlighterConcept();
     }
 

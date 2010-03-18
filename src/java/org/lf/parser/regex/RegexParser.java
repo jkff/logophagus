@@ -12,8 +12,7 @@ import org.lf.parser.ScrollableInputStream;
 import org.lf.parser.CharStream;
 import org.lf.util.Pair;
 import static org.lf.util.CollectionFactory.pair;
-import static org.lf.util.CollectionFactory.newList;;
-
+import static org.lf.util.CollectionFactory.newList;
 
 public class RegexParser implements Parser {
     private final Pattern pattern;
@@ -48,10 +47,10 @@ public class RegexParser implements Parser {
         Matcher matcher;
         do {
             int c = cs.next();
-            if (c == -1 ) return pair(0L, null);
+            if (c == -1)   return pair(0L, null);
             ++offset;
-            if (isForward)     record.append((char)c);
-            else             record.insert(0, (char)c);
+            if (isForward) record.append((char)c);
+            else           record.insert(0, (char)c);
             matcher = pattern.matcher(record);
         } while (!matcher.matches());
 
