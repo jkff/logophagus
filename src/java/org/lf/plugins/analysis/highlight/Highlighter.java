@@ -1,18 +1,14 @@
 package org.lf.plugins.analysis.highlight;
 
-import org.lf.parser.Record;
-import org.lf.plugins.Attribute;
+import org.lf.logs.Record;
+import org.lf.plugins.AttributeConcept;
+import org.lf.plugins.AttributeInstance;
 
 import com.sun.istack.internal.Nullable;
 
 import java.awt.*;
 
-/**
- * User: jkff
- * Date: Dec 18, 2009
- * Time: 6:35:47 PM
- */
-public class Highlighter implements Attribute<Highlighter> {
+public class Highlighter implements AttributeInstance<HighlighterConcept> {
 	private Highlighter parent;
 	private RecordColorer colorer;
 
@@ -41,6 +37,11 @@ public class Highlighter implements Attribute<Highlighter> {
     @Override
 	public Highlighter createChild() {
 		return new Highlighter(this);
+	}
+
+	@Override
+	public AttributeConcept<HighlighterConcept> getConcept() {
+		return new HighlighterConcept();
 	}
 
 }

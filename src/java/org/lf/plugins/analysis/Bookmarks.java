@@ -3,20 +3,12 @@ package org.lf.plugins.analysis;
 import java.util.*;
 
 import org.lf.parser.Position;
-import org.lf.plugins.Attribute;
 import org.lf.plugins.AttributeConcept;
 import org.lf.plugins.AttributeInstance;
 import org.lf.util.CollectionFactory;
 
 import static org.lf.util.CollectionFactory.newList;
 
-class BookmarksConcept implements AttributeConcept<BookmarksConcept> {
-    @Override
-    public AttributeInstance<BookmarksConcept> join(AttributeInstance<BookmarksConcept>[] children) {
-        return new Bookmarks(...);
-        Bookmarks x = join(a,b,c);
-    }
-}
 public class Bookmarks implements AttributeInstance<BookmarksConcept> {
 	private Bookmarks parent;
 	private Map<String, Position> data = CollectionFactory.newLinkedHashMap();

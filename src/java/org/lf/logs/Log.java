@@ -1,7 +1,9 @@
-package org.lf.parser;
+package org.lf.logs;
 
 
 import java.io.IOException;
+
+import org.lf.parser.Position;
 
 import com.sun.istack.internal.Nullable;
 

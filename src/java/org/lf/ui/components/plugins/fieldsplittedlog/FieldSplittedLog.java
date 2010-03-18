@@ -1,10 +1,10 @@
 package org.lf.ui.components.plugins.fieldsplittedlog;
 
-import org.lf.parser.Field;
-import org.lf.parser.FilteredLog;
-import org.lf.parser.Log;
+import org.lf.logs.Field;
+import org.lf.logs.FilteredLog;
+import org.lf.logs.Log;
+import org.lf.logs.Record;
 import org.lf.parser.Position;
-import org.lf.parser.Record;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.analysis.splitbyfield.LogAndField;
 import org.lf.ui.components.plugins.scrollablelogtable.ScrollableLogView;

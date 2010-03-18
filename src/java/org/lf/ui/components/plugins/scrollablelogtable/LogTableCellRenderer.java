@@ -7,8 +7,8 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import org.lf.logs.Record;
 import org.lf.parser.Position;
-import org.lf.parser.Record;
 import org.lf.plugins.analysis.highlight.Highlighter;
 
 class LogTableCellRenderer extends DefaultTableCellRenderer {

@@ -1,7 +1,7 @@
-package org.lf.parser.csv;
+package org.lf.parser;
 
 import java.io.IOException;
 
-interface CharStream {
+public interface CharStream {
     int next() throws IOException;
 }

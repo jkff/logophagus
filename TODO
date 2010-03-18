@@ -1,4 +1,4 @@
- - TODO "Merge logs" plugin. Input: any number of logs (of any format); for each log, the time axis is indicated. 
+ + TODO "Merge logs" plugin. Input: any number of logs (of any format); for each log, the time axis is indicated. 
     See paper
  - Read logs with user-specified format pattern (regex; 1 capturing group = 1 field ; list of field names)
 

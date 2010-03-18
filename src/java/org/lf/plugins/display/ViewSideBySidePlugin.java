@@ -5,7 +5,7 @@ import java.awt.GridLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import org.lf.parser.Log;
+import org.lf.logs.Log;
 import org.lf.plugins.DisplayPlugin;
 import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.sidebyside.LogsPair;

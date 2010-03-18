@@ -1,7 +1,10 @@
-package org.lf.parser;
+package org.lf.logs;
 
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
+import org.lf.parser.Parser;
+import org.lf.parser.Position;
+import org.lf.parser.ScrollableInputStream;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -12,20 +15,20 @@ public class FileBackedLog implements Log {
 	private final Parser parser;
 	private final ScrollableInputStream is;
 	private Field[] fields; 
-	               
+
 	private static class PhysicalPosition implements Position {
 		long offsetBytes;
 
 		@Override
 		public int hashCode() {
-            return (int)(offsetBytes ^ (offsetBytes >>> 32));
-        }
+			return (int)(offsetBytes ^ (offsetBytes >>> 32));
+		}
 
 		@Override
 		public boolean equals(Object obj) {
 			return obj != null &&
-                   obj.getClass() == PhysicalPosition.class &&
-				   ((PhysicalPosition)obj).offsetBytes == this.offsetBytes;
+			obj.getClass() == PhysicalPosition.class &&
+			((PhysicalPosition)obj).offsetBytes == this.offsetBytes;
 		}
 
 		PhysicalPosition(long offsetBytes) {
@@ -37,7 +40,7 @@ public class FileBackedLog implements Log {
 			return "Physical position " + offsetBytes;
 		}
 	}
-	
+
 	public FileBackedLog(String fileName, Parser in) throws IOException {
 		this.parser = in;
 		this.file = new MappedFile(fileName);
@@ -49,7 +52,7 @@ public class FileBackedLog implements Log {
 	public Position first() {
 		return new PhysicalPosition(0L);
 	}
-	
+
 	@Override
 	public Position last() throws IOException {
 		long maxSize = file.length();
@@ -64,7 +67,7 @@ public class FileBackedLog implements Log {
 		validateFieldsFromRecord(rec);
 		return rec;
 	}
-	
+
 	@Override
 	synchronized public Position next(Position pos) throws IOException {
 		PhysicalPosition pp = (PhysicalPosition) pos;
@@ -92,9 +95,15 @@ public class FileBackedLog implements Log {
 
 	@Override
 	synchronized public Field[] getFields() {
+		try {
+			validateFieldsFromRecord(readRecord(first()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return fields;
 	}
-	
+
 	private void validateFieldsFromRecord(Record rec) {
 		if (rec.size() <= fields.length) return;
 		List<Field> fieldsList = new LinkedList<Field>();
@@ -107,7 +116,7 @@ public class FileBackedLog implements Log {
 				public Type getType() {
 					return Type.TEXT;
 				}
-				
+
 				@Override
 				public String getName() {
 					return "Field " + temp;
@@ -116,5 +125,5 @@ public class FileBackedLog implements Log {
 		}
 		fields = fieldsList.toArray(new Field[0]);
 	}
-	
+
 }

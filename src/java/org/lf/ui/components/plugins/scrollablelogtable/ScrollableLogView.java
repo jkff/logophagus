@@ -1,6 +1,7 @@
 package org.lf.ui.components.plugins.scrollablelogtable;
 
 
+import org.lf.logs.Log;
 import org.lf.parser.*;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.analysis.Bookmarks;
@@ -176,12 +177,6 @@ public class ScrollableLogView extends JPanel implements Observer {
 		bookmarksList.setEnabled(false);
 	}
 
-	private int getCorrespondingVisualRow(Position pos) {
-		for(int row = 0; row < logSegmentModel.getRecordCount(); ++row) 
-			if (logSegmentModel.getPosition(row).equals(pos)) 
-				return row;
-		return -1;
-	}
 	
 	//controllers
 	class AddBookmarkActionListener implements ActionListener {
@@ -217,8 +212,10 @@ public class ScrollableLogView extends JPanel implements Observer {
 			if (selectedBookmark == null) return;
 			Position pos = attributes.getValue(Bookmarks.class).getValue(selectedBookmark);
 			logSegmentModel.shiftTo(pos);
-			int row = getCorrespondingVisualRow(pos);
-			tableSelectionModel.setSelectionInterval(row, row);
+			//TODO think about better solution
+			//int row = getCorrespondingVisualRow(pos);
+			//table.setRowSelectionInterval(row, row);
+			//scrollTable.repaint();
 		}
 	}
 

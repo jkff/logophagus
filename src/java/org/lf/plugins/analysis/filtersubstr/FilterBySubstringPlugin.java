@@ -3,9 +3,9 @@ package org.lf.plugins.analysis.filtersubstr;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
-import org.lf.parser.Log;
-import org.lf.parser.FilteredLog;
-import org.lf.parser.Record;
+import org.lf.logs.FilteredLog;
+import org.lf.logs.Log;
+import org.lf.logs.Record;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Entity;
 import org.lf.util.Filter;

@@ -2,6 +2,8 @@ package org.lf.parser;
 
 import java.io.IOException;
 
+import org.lf.logs.Record;
+
 public interface Parser {
 	Record readRecord(ScrollableInputStream is) throws IOException;
 

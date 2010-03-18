@@ -3,12 +3,11 @@ package org.lf.plugins.analysis.merge;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
-import org.lf.parser.Log;
-import org.lf.parser.MergeLogs;
+import org.lf.logs.Log;
+import org.lf.logs.MergeLogs;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
-import org.lf.plugins.analysis.Bookmarks;
 
 public class MergeLogsPlugin implements AnalysisPlugin {
 
@@ -25,9 +24,12 @@ public class MergeLogsPlugin implements AnalysisPlugin {
 			logs[i] = (Log) args[i].data; 
 			fields[i] = Integer.parseInt(index);			
 		}
-		Attributes atr = new Attributes();
-		atr.addAttribute(new Bookmarks(null));
-		return new Entity(atr,
+		Attributes[] allAttributes = new Attributes[args.length];
+		for (int i=0; i < args.length; ++i) {
+			allAttributes[i] = args[i].attributes;
+		}
+
+		return new Entity(Attributes.join(allAttributes),
 				new MergeLogs(logs, fields));
 	}
 

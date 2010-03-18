@@ -1,7 +1,8 @@
 package org.lf.plugins.analysis.splitbyfield;
 
-import org.lf.parser.Field;
-import org.lf.parser.Log;
+import org.lf.logs.Field;
+import org.lf.logs.Log;
+
 
 public class LogAndField {
 	public final Log log;

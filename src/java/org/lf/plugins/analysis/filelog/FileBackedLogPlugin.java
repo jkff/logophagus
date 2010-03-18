@@ -1,8 +1,9 @@
 package org.lf.plugins.analysis.filelog;
 
-import org.lf.parser.FileBackedLog;
-import org.lf.parser.Log;
+import org.lf.logs.FileBackedLog;
+import org.lf.logs.Log;
 import org.lf.parser.csv.CSVParser;
+import org.lf.parser.regex.RegexParser;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
@@ -33,7 +34,7 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 			e.printStackTrace();
 		}
 		try {
-			Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser());
+			Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser());//new RegexParser("\\s?(\\d+)\\s([a-z]+)\\s?"));
 			Attributes atr = new Attributes();
 			atr.addAttribute(new Bookmarks(null));
 			return new Entity(atr, log);

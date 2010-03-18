@@ -12,6 +12,3 @@ public interface AttributeInstance<T extends AttributeConcept<T>> {
 	public AttributeInstance<T> createChild();
 }
 
-public interface AttributeConcept<T extends AttributeConcept<T>> {
-    AttributeInstance<T> join(AttributeInstance<T>... children);
-}

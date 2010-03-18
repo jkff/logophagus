@@ -1,4 +1,4 @@
-package org.lf.parser;
+package org.lf.logs;
 
 public abstract class Field {
 	

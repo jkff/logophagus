@@ -5,8 +5,8 @@ import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 
-import org.lf.parser.Field;
-import org.lf.parser.Log;
+import org.lf.logs.Field;
+import org.lf.logs.Log;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.splitbyfield.LogAndField;

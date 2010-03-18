@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.util.Observable;
 
 
-import org.lf.parser.Log;
+import org.lf.logs.Log;
+import org.lf.logs.Record;
 import org.lf.parser.Position;
-import org.lf.parser.Record;
 import org.lf.util.Pair;
 
 import com.sun.istack.internal.Nullable;
@@ -195,6 +195,9 @@ public class ScrollableLogViewModel extends Observable {
 		return false;
 	}
 
+	Log getLog() {
+		return this.log;
+	}
 	int getRecordSize() {
 		return log.getFields().length;
 	}
@@ -226,6 +229,6 @@ public class ScrollableLogViewModel extends Observable {
 		notifyObservers("CLEAR");
 	}
 
-
+	
 
 }

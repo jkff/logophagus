@@ -3,9 +3,10 @@ package org.lf.parser.csv;
 import java.io.IOException;
 import java.util.*;
 
+import org.lf.logs.Record;
 import org.lf.parser.Parser;
-import org.lf.parser.Record;
 import org.lf.parser.ScrollableInputStream;
+import org.lf.parser.CharStream;
 
 import static org.lf.util.CollectionFactory.newList;
 

@@ -142,8 +142,8 @@ public class Logophagus extends JFrame {
 			System.out.println("Can't register plugin:" + e);
 			e.printStackTrace();
 		}
-		SwingUtilities.invokeLater(new Runnable() {
 
+		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				new Logophagus().pack();		
