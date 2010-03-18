@@ -11,41 +11,41 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 public class ProgramProperties {
-	public static String propertiesFileName = "logophagus.txt";
-	public static String workingDir = "WORKING_DIR";
-	public static Properties mainProperties = new Properties();
-	
-	static {
-		String userHomePath = System.getProperty("user.home");
-		File file = new File(userHomePath, propertiesFileName);
-		InputStream stream;
-		try {
-			stream = new FileInputStream(file);
-			mainProperties.loadFromXML(stream);
-		} catch (FileNotFoundException e) {
-		} catch (InvalidPropertiesFormatException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		if (mainProperties.getProperty(workingDir) == null) {
-			mainProperties.setProperty(workingDir, System.getProperty("user.dir"));
-		}
-	}
-	
-	public static File getWorkingDir() {
-		return new File(mainProperties.getProperty(workingDir));
-	}
-	
-	public static void setWorkingDir(File f) {
-		mainProperties.setProperty(workingDir, f.getAbsolutePath());
-	}
-	
-	public static void save() throws IOException {
-		String userHomePath = System.getProperty("user.home");
-		File file = new File(userHomePath,propertiesFileName);
-		OutputStream stream = new FileOutputStream(file);
-		mainProperties.storeToXML(stream, null);
-	}
+    public static String propertiesFileName = "logophagus.txt";
+    public static String workingDir = "WORKING_DIR";
+    public static Properties mainProperties = new Properties();
+
+    static {
+        String userHomePath = System.getProperty("user.home");
+        File file = new File(userHomePath, propertiesFileName);
+        InputStream stream;
+        try {
+            stream = new FileInputStream(file);
+            mainProperties.loadFromXML(stream);
+        } catch (FileNotFoundException e) {
+        } catch (InvalidPropertiesFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (mainProperties.getProperty(workingDir) == null) {
+            mainProperties.setProperty(workingDir, System.getProperty("user.dir"));
+        }
+    }
+
+    public static File getWorkingDir() {
+        return new File(mainProperties.getProperty(workingDir));
+    }
+
+    public static void setWorkingDir(File f) {
+        mainProperties.setProperty(workingDir, f.getAbsolutePath());
+    }
+
+    public static void save() throws IOException {
+        String userHomePath = System.getProperty("user.home");
+        File file = new File(userHomePath,propertiesFileName);
+        OutputStream stream = new FileOutputStream(file);
+        mainProperties.storeToXML(stream, null);
+    }
 }

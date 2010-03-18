@@ -9,12 +9,12 @@ import org.lf.ui.components.plugins.scrollablelogtable.ScrollableLogView;
 
 public class ViewLogAsTablePlugin implements DisplayPlugin {
 
-	public JComponent createView(Entity entity) {
+    public JComponent createView(Entity entity) {
         return new ScrollableLogView((Log) entity.data, entity.attributes);
-	}
+    }
 
-	public Class getInputType() {
-		return Log.class;
-	}
+    public Class getInputType() {
+        return Log.class;
+    }
 
 }

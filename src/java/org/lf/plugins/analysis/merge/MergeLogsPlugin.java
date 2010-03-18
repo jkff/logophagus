@@ -11,46 +11,46 @@ import org.lf.plugins.Entity;
 
 public class MergeLogsPlugin implements AnalysisPlugin {
 
-	@Override
-	public Entity applyTo(Entity[] args) {
-		Log[] logs = new Log[args.length];
-		Integer[] fields = new Integer[args.length];
-		
-		for (int i = 0; i < args.length; ++i ) {
-			final String index = JOptionPane.showInputDialog(null, "Enter field index of log (\"" + args[i].data + "\") for merging with other logs", "Merge setup", JOptionPane.QUESTION_MESSAGE );
-			if (index == null)
-				return null;
+    @Override
+    public Entity applyTo(Entity[] args) {
+        Log[] logs = new Log[args.length];
+        Integer[] fields = new Integer[args.length];
 
-			logs[i] = (Log) args[i].data; 
-			fields[i] = Integer.parseInt(index);			
-		}
-		Attributes[] allAttributes = new Attributes[args.length];
-		for (int i=0; i < args.length; ++i) {
-			allAttributes[i] = args[i].attributes;
-		}
+        for (int i = 0; i < args.length; ++i ) {
+            final String index = JOptionPane.showInputDialog(null, "Enter field index of log (\"" + args[i].data + "\") for merging with other logs", "Merge setup", JOptionPane.QUESTION_MESSAGE );
+            if (index == null)
+                return null;
 
-		return new Entity(Attributes.join(allAttributes),
-				new MergeLogs(logs, fields));
-	}
+            logs[i] = (Log) args[i].data;
+            fields[i] = Integer.parseInt(index);
+        }
+        Attributes[] allAttributes = new Attributes[args.length];
+        for (int i=0; i < args.length; ++i) {
+            allAttributes[i] = args[i].attributes;
+        }
 
-	@Override
-	public String getName() {
-		return "Merge logs";
-	}
+        return new Entity(Attributes.join(allAttributes),
+                new MergeLogs(logs, fields));
+    }
 
-	@Override
-	public Class getOutputType(Class[] inputTypes) {
-		if( inputTypes.length <= 1) return null;
-		for (Class clazz : inputTypes) {
-			if (!Log.class.isAssignableFrom(clazz)) return null;
-		}		
-		return MergeLogs.class;
-	}
+    @Override
+    public String getName() {
+        return "Merge logs";
+    }
 
-	@Override
-	public Icon getIcon() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Class getOutputType(Class[] inputTypes) {
+        if( inputTypes.length <= 1) return null;
+        for (Class clazz : inputTypes) {
+            if (!Log.class.isAssignableFrom(clazz)) return null;
+        }
+        return MergeLogs.class;
+    }
+
+    @Override
+    public Icon getIcon() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

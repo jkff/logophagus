@@ -8,13 +8,13 @@ import javax.swing.JFrame;
 
 public class FieldSelectDialog extends JDialog {
 
-	public FieldSelectDialog() {
-		super((JFrame)null, "Setup", true);
-		this.add(new JComboBox());
-		this.add(new JButton("Ok"));
-		this.add(new JButton("Cancel"));
-		
-	}
-	
+    public FieldSelectDialog() {
+        super((JFrame)null, "Setup", true);
+        this.add(new JComboBox());
+        this.add(new JButton("Ok"));
+        this.add(new JButton("Cancel"));
+
+    }
+
 
 }

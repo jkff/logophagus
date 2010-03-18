@@ -27,15 +27,15 @@ public class CSVParser implements Parser {
         this.escapeCharacter = escapeCharacter;
     }
 
-	public long findNextRecord(ScrollableInputStream is) throws IOException {
+    public long findNextRecord(ScrollableInputStream is) throws IOException {
         return findBorder(forward(is), new Forward(), new Nop());
     }
 
     public long findPrevRecord(ScrollableInputStream is) throws IOException {
-		if (is.scrollBack(1) == 0)
-			return 0;
+        if (is.scrollBack(1) == 0)
+            return 0;
         return findBorder(backward(is), new Backward(), new Nop());
-	}
+    }
     
     
     private long findBorder(
@@ -47,11 +47,11 @@ public class CSVParser implements Parser {
         int offset = 0;
         do {
             int i = stream.next();
-            offset++;            	
-            if (i == -1) { 
-            	sink.recordBorder();
-            	return offset;
+            if (i == -1) {
+                sink.recordBorder();
+                return offset;
             }
+            offset++;
      
             char c = (char)i;
             SymbolType s =
@@ -72,7 +72,7 @@ public class CSVParser implements Parser {
             case RECORD_BORDER:     sink.recordBorder();break;
             
             default:                                    break;
-			}
+            }
         } while (state != State.RECORD_BORDER);
         
         return offset;
@@ -81,7 +81,7 @@ public class CSVParser implements Parser {
     private interface Sink {
         void onChar(char c);
         void recordBorder();
-		void fieldBreak();
+        void fieldBreak();
         void error();
     }
 
@@ -104,10 +104,10 @@ public class CSVParser implements Parser {
         };
     }
 
-	public Record readRecord(ScrollableInputStream is) throws IOException {
+    public Record readRecord(ScrollableInputStream is) throws IOException {
         final List<String> fields = newList();
 
-		findBorder(forward(is), new Forward(),
+        findBorder(forward(is), new Forward(),
                 new Sink() {
                     private StringBuilder sb = new StringBuilder();
 
@@ -122,25 +122,25 @@ public class CSVParser implements Parser {
 
                     public void recordBorder() {
                         fields.add(sb.toString());
-					}
+                    }
                 });
 
         return new CSVRecord(fields);
-	}
-	
-	private class CSVRecord implements Record {
-		private final List<String> fields;
+    }
+
+    private class CSVRecord implements Record {
+        private final List<String> fields;
 
         private CSVRecord(List<String> fields) { this.fields = fields; }
 
         public String get(int index) { return fields.get(index); }
         public int    size()         { return fields.size();     }
-	}
+    }
 
     private static class Nop implements Sink {
         public void onChar(char c) { }
         public void fieldBreak() { }
         public void error() { }
-		public void recordBorder() {}
+        public void recordBorder() {}
     }
 }

@@ -14,10 +14,10 @@ import com.sun.istack.internal.Nullable;
 
 public class FilterBySubstringPlugin implements AnalysisPlugin {
     @Nullable
-	public Class getOutputType(Class[] inputTypes) {
-    	if (inputTypes.length == 1 && Log.class.isAssignableFrom(inputTypes[0])) 
-			return Log.class;
-		return null;
+    public Class getOutputType(Class[] inputTypes) {
+        if (inputTypes.length == 1 && Log.class.isAssignableFrom(inputTypes[0]))
+            return Log.class;
+        return null;
     }
 
     public Entity applyTo(Entity[] args) {
@@ -26,7 +26,7 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
         String substring = JOptionPane.showInputDialog(null,
                 "Enter substring for filter", "Filter setup", JOptionPane.QUESTION_MESSAGE);
         if (substring == null)
-        	return null;
+            return null;
         final String sub = substring;
         Filter<Record> filter = new Filter<Record>() {
             private String substring = sub;
@@ -52,11 +52,11 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
         return "Filter by substring";
     }
 
-	@Override
-	public Icon getIcon() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Icon getIcon() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 
 }

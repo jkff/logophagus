@@ -20,44 +20,44 @@ import java.io.IOException;
 public class FileBackedLogPlugin implements AnalysisPlugin {
 
     @Nullable
-	public Entity applyTo(Entity[] args) {
-		JFileChooser fileOpen = new JFileChooser(ProgramProperties.getWorkingDir());
+    public Entity applyTo(Entity[] args) {
+        JFileChooser fileOpen = new JFileChooser(ProgramProperties.getWorkingDir());
         fileOpen.showOpenDialog(null);
-		File f = fileOpen.getSelectedFile();
-		if (f == null || !f.isFile())
-			return null;
-		ProgramProperties.setWorkingDir(f.getParentFile());
-		
-		try {
-			ProgramProperties.save();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser());//new RegexParser("\\s?(\\d+)\\s([a-z]+)\\s?"));
-			Attributes atr = new Attributes();
-			atr.addAttribute(new Bookmarks(null));
-			return new Entity(atr, log);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+        File f = fileOpen.getSelectedFile();
+        if (f == null || !f.isFile())
+            return null;
+        ProgramProperties.setWorkingDir(f.getParentFile());
 
-	public String getName() {
-		return "Open log from file";
-	}
+        try {
+            ProgramProperties.save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser());//new RegexParser("\\s?(\\d+)\\s([a-z]+)\\s?"));
+            Attributes atr = new Attributes();
+            atr.addAttribute(new Bookmarks(null));
+            return new Entity(atr, log);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-	public Class getOutputType(Class[] inputTypes) {
-		if (inputTypes.length == 0) 
-			return Log.class;
-		return null;
-	}
+    public String getName() {
+        return "Open log from file";
+    }
 
-	@Override
-	public Icon getIcon() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public Class getOutputType(Class[] inputTypes) {
+        if (inputTypes.length == 0)
+            return Log.class;
+        return null;
+    }
+
+    @Override
+    public Icon getIcon() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

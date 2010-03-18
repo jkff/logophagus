@@ -23,7 +23,7 @@ class FieldValuesListModel extends AbstractListModel {
     }
 
     List<String> getValues() {
-    	return values.subList(0, values.size() -1);
+        return values.subList(0, values.size() -1);
     }
     
     void addFieldValue(String fieldValue) {
@@ -35,7 +35,7 @@ class FieldValuesListModel extends AbstractListModel {
     }
     
     void setMaxReadedPosition(Position pos) {
-    	otherPosition = pos;
+        otherPosition = pos;
     }
 
     void setView(String fieldValue, JPanel view) {

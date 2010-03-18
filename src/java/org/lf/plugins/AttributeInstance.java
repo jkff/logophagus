@@ -9,6 +9,6 @@ public interface AttributeInstance<T extends AttributeConcept<T>> {
      * Create an instance of the same attribute whose parent
      * equals to 'this'.
      */
-	public AttributeInstance<T> createChild();
+    public AttributeInstance<T> createChild();
 }
 

@@ -9,14 +9,14 @@ import org.lf.ui.components.plugins.fieldsplittedlog.FieldSplittedLog;
 
 public class ViewFieldSplittedLogPlugin implements DisplayPlugin {
 
-	@Override
-	public JComponent createView(Entity entity) {		
-		return new FieldSplittedLog((LogAndField)entity.data, entity.attributes);
-	}
+    @Override
+    public JComponent createView(Entity entity) {
+        return new FieldSplittedLog((LogAndField)entity.data, entity.attributes);
+    }
 
-	@Override
-	public Class getInputType() {
-		return LogAndField.class;
-	}
+    @Override
+    public Class getInputType() {
+        return LogAndField.class;
+    }
 
 }

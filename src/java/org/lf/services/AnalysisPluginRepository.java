@@ -21,13 +21,13 @@ public class AnalysisPluginRepository {
     }
 
     public static List<AnalysisPlugin> getApplicablePlugins(Entity[] args) {
-    	List<Class> pluginArgsList = new LinkedList<Class>();
-    	for (Entity entity : args) {
-    		pluginArgsList.add(entity.data.getClass());
-		}
-    	
-		Class[] pluginArgsArray = pluginArgsList.toArray(new Class[0]);
-		
+        List<Class> pluginArgsList = new LinkedList<Class>();
+        for (Entity entity : args) {
+            pluginArgsList.add(entity.data.getClass());
+        }
+
+        Class[] pluginArgsArray = pluginArgsList.toArray(new Class[0]);
+
         List<AnalysisPlugin> res = newList();
         for (AnalysisPlugin plugin : analysisPlugins) {
             if(plugin.getOutputType(pluginArgsArray) != null)

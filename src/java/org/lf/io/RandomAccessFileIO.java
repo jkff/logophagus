@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.lf.parser.ScrollableInputStream;
 
 public interface RandomAccessFileIO {
-	String getFileName();
-	ScrollableInputStream getInputStreamFrom(long offset) throws IOException;
-	long length() throws IOException;
+    String getFileName();
+    ScrollableInputStream getInputStreamFrom(long offset) throws IOException;
+    long length() throws IOException;
 }
