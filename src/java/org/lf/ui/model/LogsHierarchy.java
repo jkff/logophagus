@@ -14,9 +14,9 @@ import java.util.Observable;
 import static org.lf.util.CollectionFactory.newLinkedList;
 
 public class LogsHierarchy extends Observable{
-    private DefaultTreeModel treeModel;
+    private final DefaultTreeModel treeModel;
+    private final TreePath rootPath;
     private TreePath lastNewPath;
-    private TreePath rootPath;
 
     public LogsHierarchy() {
         treeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
@@ -65,7 +65,7 @@ public class LogsHierarchy extends Observable{
 
         List<DisplayPlugin> availabaleDisplays = DisplayPluginRepository.getApplicablePlugins(res.data);
         MutableTreeNode childNode = new DefaultMutableTreeNode(
-                new NodeData(res, availabaleDisplays.get(0).createView(res))); 
+                new NodeData(res, availabaleDisplays.get(0).createView(res), plugin.getIcon())); 
         if (data.size() == 1) {
             addChildToNode(childNode, (MutableTreeNode)(selPaths[0].getLastPathComponent()));
         } else {

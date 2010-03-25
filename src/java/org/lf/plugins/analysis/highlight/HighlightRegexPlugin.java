@@ -7,6 +7,7 @@ import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.highlight.Highlighter;
 import org.lf.plugins.analysis.highlight.RecordColorer;
+import org.lf.services.ProgramProperties;
 
 import com.sun.istack.internal.Nullable;
 
@@ -28,7 +29,7 @@ public class HighlightRegexPlugin implements AnalysisPlugin {
         Log log = (Log) args[0].data;
 
         final String regex = JOptionPane.showInputDialog(
-                null, "Enter a regular expression to highlight", "Filter setup",
+                null, "Enter a regular expression to highlight", "Highlight setup",
                 JOptionPane.QUESTION_MESSAGE);
         if (regex == null)
             return null;
@@ -48,7 +49,7 @@ public class HighlightRegexPlugin implements AnalysisPlugin {
             @Override
             public Color getColor(Record r) {
                 for (int i = 0; i < r.size(); ++i) {
-                    if (p.matcher(r.get(i)).find()) return Color.RED;
+                    if (r.getField(i).getValue() != null && p.matcher((String)r.getField(i).getValue()).find()) return Color.RED;
                 }
                 return null;
             }
@@ -63,7 +64,6 @@ public class HighlightRegexPlugin implements AnalysisPlugin {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        return null;
+    	return new ImageIcon(ProgramProperties.iconsPath +"colorized.gif");
     }
 }

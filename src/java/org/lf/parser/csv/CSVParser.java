@@ -3,10 +3,14 @@ package org.lf.parser.csv;
 import java.io.IOException;
 import java.util.*;
 
+import org.lf.logs.Field;
 import org.lf.logs.Record;
+import org.lf.logs.Field.Type;
+import org.lf.parser.LogFormat;
 import org.lf.parser.Parser;
 import org.lf.parser.ScrollableInputStream;
 import org.lf.parser.CharStream;
+import org.lf.parser.Sink;
 
 import static org.lf.util.CollectionFactory.newList;
 
@@ -15,16 +19,18 @@ public class CSVParser implements Parser {
     private final char fieldDelimeter;
     private final char quoteCharacter;
     private final char escapeCharacter;
-
-    public CSVParser() {
-        this('\n', ',', '"', '\\');
+    private final LogFormat logFormat;
+    
+    public CSVParser(LogFormat logFormat) {
+        this(logFormat,'\n', ',', '"', '\\');
     }
 
-    public CSVParser(char recordDelimeter, char fieldDelimeter, char quoteCharacter, char escapeCharacter) {
+    public CSVParser(LogFormat logFormat, char recordDelimeter, char fieldDelimeter, char quoteCharacter, char escapeCharacter) {
         this.recordDelimeter = recordDelimeter;
         this.fieldDelimeter = fieldDelimeter;
         this.quoteCharacter = quoteCharacter;
         this.escapeCharacter = escapeCharacter;
+        this.logFormat = logFormat;
     }
 
     public long findNextRecord(ScrollableInputStream is) throws IOException {
@@ -47,11 +53,11 @@ public class CSVParser implements Parser {
         int offset = 0;
         do {
             int i = stream.next();
-            offset++;
             if (i == -1) {
                 sink.recordBorder();
                 return offset;
             }
+            offset++;
 
             char c = (char)i;
             SymbolType s =
@@ -78,12 +84,6 @@ public class CSVParser implements Parser {
         return offset;
     }
 
-    private interface Sink {
-        void onChar(char c);
-        void recordBorder();
-        void fieldBreak();
-        void error();
-    }
 
     private CharStream forward(final ScrollableInputStream is) {
         return new CharStream() {
@@ -129,26 +129,76 @@ public class CSVParser implements Parser {
     }
 
     private class CSVRecord implements Record {
-        private final List<String> fields;
+        private final List<Field> fields = newList();
 
-        private CSVRecord(List<String> fields) {
-            if(fields.size() == 1)
-                System.out.println("Oops");
-            this.fields = fields;
+        private CSVRecord(List<String> strFields) {
+        	boolean matchesFormat = fields.size() == logFormat.getFieldCount();
+        	
+        	for (int i = 0; i < fields.size(); i++) {
+        		fields.add(new CSVField(matchesFormat ? logFormat.getFieldName(i) : "Field "+ i,
+        				strFields.get(i), 
+        				Type.TEXT, 
+        				i));
+			}
         }
 
-        public String get(int index) {
-            return fields.get(index);
-        }
-        public int    size()         { 
+        @Override
+        public int size() { 
             return fields.size();
         }
+
+		@Override
+		public Field getField(int index) {
+			return fields.get(index);
+		}
+
+		@Override
+		public Field[] getFields() {
+			return fields.toArray(new Field[0]);
+		}
     }
 
-    private static class Nop implements Sink {
-        public void onChar(char c) { }
-        public void fieldBreak() { }
-        public void error() { }
-        public void recordBorder() {}
+    private static class CSVField extends Field {
+		private final int index;
+		private final String name;
+		private final Type type;
+		private final Object value;
+
+		private CSVField(String name, Object value, Type type, int index ) {
+			this.name = name;
+			this.value = value;
+			this.type = type;
+			this.index = index;
+		}
+
+		@Override
+		public int getIndexInRecord() {
+			return index;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public Type getType() {
+			return type;
+		}
+
+		@Override
+		public Object getValue() {
+			return value;
+		}
+    	
     }
+    
+    private static class Nop extends Sink {
+        public void onChar(char c) { }
+    }
+
+	@Override
+	public LogFormat getLogFormat() {
+		return logFormat;
+	}
 }

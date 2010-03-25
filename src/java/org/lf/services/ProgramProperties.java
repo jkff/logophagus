@@ -11,11 +11,14 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 public class ProgramProperties {
-    public static String propertiesFileName = "logophagus.txt";
-    public static String workingDir = "WORKING_DIR";
-    public static Properties mainProperties = new Properties();
-
+    public static final String propertiesFileName = "logophagus.txt";
+    public static final String workingDir = "WORKING_DIR";
+    public static final Properties mainProperties = new Properties();
+    public static final String iconsPath;
+   
     static {
+    	String sep = System.getProperty("file.separator");
+    	iconsPath = System.getProperty("user.dir") +sep+ "src"+sep+"java"+sep+"org"+sep+"lf"+sep+"ui"+sep+"icons"+sep;
         String userHomePath = System.getProperty("user.home");
         File file = new File(userHomePath, propertiesFileName);
         InputStream stream;

@@ -1,12 +1,14 @@
 package org.lf.plugins.analysis.sidebyside;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import org.lf.logs.Log;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.sidebyside.LogsPair;
+import org.lf.services.ProgramProperties;
 
 import com.sun.istack.internal.Nullable;
 
@@ -34,7 +36,6 @@ public class SideBySidePlugin implements AnalysisPlugin {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        return null;
+    	return new ImageIcon(ProgramProperties.iconsPath +"folder_files.gif");
     }
 }

@@ -21,4 +21,6 @@ public interface Parser {
      * in 'is'.
      */
     long findPrevRecord(ScrollableInputStream is) throws IOException;
+    
+    LogFormat getLogFormat();
 }

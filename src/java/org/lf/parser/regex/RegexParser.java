@@ -2,114 +2,168 @@ package org.lf.parser.regex;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.lf.logs.Field;
 import org.lf.logs.Record;
+import org.lf.logs.Field.Type;
+import org.lf.parser.LogFormat;
 import org.lf.parser.Parser;
 import org.lf.parser.ScrollableInputStream;
 import org.lf.parser.CharStream;
-import org.lf.util.Pair;
-import static org.lf.util.CollectionFactory.pair;
+import org.lf.parser.Sink;
 import static org.lf.util.CollectionFactory.newList;
 
 public class RegexParser implements Parser {
-    private final Pattern pattern;
+	private final Pattern pattern;
+	private final char recordDelimeter;
+	private final LogFormat logFormat;
+	
 
-    public RegexParser(String regex) {
-        this.pattern = Pattern.compile(regex);
-    }
+	public RegexParser(String regex, String[] fields, char recordDelimeter, LogFormat logFormat) {
+		this.pattern = Pattern.compile(regex);
+		this.recordDelimeter = recordDelimeter;
+		this.logFormat = logFormat;
+	}
 
-    @Override
-    public long findNextRecord(ScrollableInputStream is) throws IOException {
-        return  matchInCharStream(forward(is), true).first;
-    }
+	@Override
+	public long findNextRecord(ScrollableInputStream is) throws IOException {
+		return getRecordFromCharStream(forward(is), new Sink() {
+			@Override
+			public void onChar(char c) {}
+		});
+	}
 
-    @Override
-    public long findPrevRecord(ScrollableInputStream is) throws IOException {
-        if (is.scrollBack(1) == 0)
-            return 0;
-        return matchInCharStream(backward(is), false).first;
-    }
+	@Override
+	public long findPrevRecord(ScrollableInputStream is) throws IOException {
+		if (is.scrollBack(1) == 0)
+			return 0;
+		return getRecordFromCharStream(backward(is), new Sink() {
+			@Override
+			public void onChar(char c) {}
+		});
+	}
 
 
 
-    @Override
-    public Record readRecord(ScrollableInputStream is) throws IOException {
-        Pair<Long,MatchResult> matchRes =matchInCharStream(forward(is), true);
-        return new MatcherRecord(matchRes.second);
-    }
+	@Override
+	public Record readRecord(ScrollableInputStream is) throws IOException {
+		final StringBuilder record = new StringBuilder();
 
-    private Pair<Long,MatchResult> matchInCharStream(CharStream cs, boolean isForward) throws IOException {
-        StringBuilder record = new StringBuilder();
-        long offset = 0;
-        Matcher matcher;
-        do {
-            int c = cs.next();
-            if (c == -1)   return pair(0L, null);
-            ++offset;
-            if (isForward) record.append((char)c);
-            else           record.insert(0, (char)c);
-            matcher = pattern.matcher(record);
-        } while (!matcher.matches());
+		getRecordFromCharStream(forward(is), new Sink() {
+			@Override
+			public void onChar(char c) {
+				record.append(c);
+			}
+		});
+		return new MatcherRecord(record.toString());
+	}
 
-        MatchResult mayBeResult = matcher.toMatchResult();
-        //continue greedy search
-        while (true) {
-            int c = cs.next();
-            if (c == -1 ) break;
-            if (isForward)     record.append((char)c);
-            else             record.insert(0, (char)c);
-            matcher = pattern.matcher(record);
-            if (!matcher.matches()) break;
-            mayBeResult = matcher.toMatchResult();
-            ++offset;
-        }
+	private long getRecordFromCharStream(CharStream cs, Sink sink) throws IOException {
+		long offset = 0;
+		int c;
+		do {
+			c = cs.next();
+			if (c == -1) return offset;
+			++offset;
+			sink.onChar((char)c);
+		} while ((char)c != recordDelimeter);
+		return offset;
+	}
 
-        return pair(offset, mayBeResult);
-    }
+	private CharStream forward(final ScrollableInputStream is) {
+		return new CharStream() {
+			public int next() throws IOException {
+				return is.read();
+			}
+		};
+	}
 
-    private CharStream forward(final ScrollableInputStream is) {
-        return new CharStream() {
-            public int next() throws IOException {
-                return is.read();
-            }
-        };
-    }
+	private CharStream backward(final ScrollableInputStream is) {
+		return new CharStream() {
+			public int next() throws IOException {
+				if (is.scrollBack(1) == 0)
+					return -1;
+				int res = is.read();
+				is.scrollBack(1);
+				return res;
+			}
+		};
+	}
 
-    private CharStream backward(final ScrollableInputStream is) {
-        return new CharStream() {
-            public int next() throws IOException {
-                if (is.scrollBack(1) == 0)
-                    return -1;
-                int res = is.read();
-                is.scrollBack(1);
-                return res;
-            }
-        };
-    }
+	private class MatcherRecord implements Record {
+		private final List<Field> fields;
 
-    private class MatcherRecord implements Record {
-        private final List<String> fields;
+		private MatcherRecord(String rawRecord) {
+			fields = newList();
+			Matcher m = pattern.matcher(rawRecord);
+			//if there is no group besides zero group then use this group(hole record) as only one field
+			if (!m.matches()) 
+				fields.add(new MatcherField(rawRecord, "Failed to match", Type.TEXT, 0));
+			else {
+				//zero group is not included in groupCount() method result
+				for(int i = 1; i <= m.groupCount(); ++i) {
+					fields.add(new MatcherField(m.group(i), logFormat.getFieldName(i -1), Type.TEXT, i -1));
+				}
+			}
+		}
 
-        private MatcherRecord(MatchResult matchResult) {
-            fields = newList();
+		@Override
+		public Field getField(int index) {
+			return fields.get(index);
+		}
 
-            //there should be minimum one group(one field)
-            int fieldGroup = 1;
-            fields.add(matchResult.group(fieldGroup));
-            //zero group is not included in groupCount() result
-            for(int i = 2; i <= matchResult.groupCount(); ++i) {
-                if (matchResult.end(fieldGroup) < matchResult.start(i)) {
-                    fields.add(matchResult.group(i));
-                    fieldGroup = i;
-                }
-            }
-        }
+		@Override
+		public Field[] getFields() {
+			return fields.toArray(new Field[0]);
+		}
 
-        public String get(int index) { return fields.get(index); }
-        public int    size()         { return fields.size();     }
-    }
+		@Override
+		public int size() {
+			return fields.size();
+		}
+	}
+
+	private static class MatcherField extends Field {
+		private final Object value;
+		private final String name;
+		private final int index;
+		private final Type type;
+		
+		public MatcherField(Object value,  String name, Type type, int index) {
+			this.value = value;
+			this.name = name;
+			this.type = type;
+			this.index = index;
+			
+		}
+		
+		@Override
+		public int getIndexInRecord() {
+			return index;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public Type getType() {
+			return type;
+		}
+
+		@Override
+		public Object getValue() {
+			return value;
+		}
+		
+	}
+	
+	@Override
+	public LogFormat getLogFormat() {
+		return logFormat;
+	}
 
 }

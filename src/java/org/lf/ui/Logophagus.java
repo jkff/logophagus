@@ -1,16 +1,17 @@
 package org.lf.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ContainerAdapter;
 import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -20,9 +21,11 @@ import javax.swing.JSplitPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -42,6 +45,8 @@ import org.lf.ui.components.popup.TreeRightClickPopup;
 import org.lf.ui.components.tree.LogsHierarchyView;
 import org.lf.ui.components.pluginPanel.PluginPanel;
 import org.lf.ui.model.LogsHierarchy;
+import org.lf.ui.model.NodeData;;
+
 
 public class Logophagus extends JFrame {
     private LogsHierarchy logsHierarchy;
@@ -103,23 +108,18 @@ public class Logophagus extends JFrame {
         logsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
         logsTree.addMouseListener(new TreeMouseListener());
         logsTree.addTreeSelectionListener(getPluginPanel());
-        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
-        String sep = System.getProperty("file.separator");
-        String iconsPath = System.getProperty("user.dir") +sep+"src"+sep+"java"+sep+"org"+sep+"lf"+sep+"ui"+sep+"icons"+sep;
-        renderer.setOpenIcon(new ImageIcon(iconsPath +"folder_files.gif"));
-        renderer.setClosedIcon(new ImageIcon(iconsPath +"folder_files.gif"));
-        renderer.setLeafIcon(new ImageIcon(iconsPath +"file.gif"));
+        TreeCellRenderer renderer = new MyTreeCellRenderer();
+        
+//        renderer.setOpenIcon(new ImageIcon(ProgramProperties.iconsPath +"folder_files.gif"));
+//        renderer.setClosedIcon(new ImageIcon(ProgramProperties.iconsPath +"folder_files.gif"));
+//        renderer.setLeafIcon(new ImageIcon(ProgramProperties.iconsPath +"file.gif"));
         logsTree.setCellRenderer(renderer);
         logsTree.setAutoscrolls(true);
-        logsTree.addContainerListener(new ContainerListener() {
-            @Override
-            public void componentRemoved(ContainerEvent arg0) {
-            }
-
-            @Override
+        logsTree.addContainerListener(new ContainerAdapter() {
+        	@Override
             public void componentAdded(ContainerEvent ce) {
-                logsTree.scrollPathToVisible(logsHierarchy.getLastNewPath());
                 logsTree.setSelectionPath(logsHierarchy.getLastNewPath());
+                logsTree.scrollPathToVisible(logsHierarchy.getLastNewPath());
             }
         });
         return logsTree;
@@ -178,4 +178,18 @@ public class Logophagus extends JFrame {
         }
     }
 
+    private class MyTreeCellRenderer extends DefaultTreeCellRenderer {
+
+		@Override
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+				boolean leaf, int row, boolean hasFocus) {
+			NodeData nodeValue = (NodeData)((DefaultMutableTreeNode)value).getUserObject();
+			JLabel label = (JLabel)super.getTreeCellRendererComponent(tree, value, sel,expanded,leaf,row,hasFocus);
+			if (nodeValue != null)
+				label.setIcon(nodeValue.icon);
+			return label;
+		}
+    	
+    }
+    
 }

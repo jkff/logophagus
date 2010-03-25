@@ -3,7 +3,6 @@ package org.lf.plugins.analysis;
 import java.util.*;
 
 import org.lf.parser.Position;
-import org.lf.plugins.AttributeConcept;
 import org.lf.plugins.AttributeInstance;
 import org.lf.util.CollectionFactory;
 

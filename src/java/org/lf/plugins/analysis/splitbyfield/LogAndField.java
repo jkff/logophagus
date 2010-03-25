@@ -1,19 +1,18 @@
 package org.lf.plugins.analysis.splitbyfield;
 
-import org.lf.logs.Field;
 import org.lf.logs.Log;
 
 
 public class LogAndField {
     public final Log log;
-    public final Field field;
+    public final int fieldIndex;
 
-    public LogAndField(Log log, Field field) {
+    public LogAndField(Log log, int fieldIndex) {
         this.log = log;
-        this.field = field;
+        this.fieldIndex = fieldIndex;
     }
 
     public String toString(){
-        return log.toString() + " => split by field " + field;
+        return log.toString() + " => split by " + fieldIndex + " field" ;
     }
 }

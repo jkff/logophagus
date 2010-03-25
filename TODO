@@ -1,11 +1,12 @@
- + TODO "Merge logs" plugin. Input: any number of logs (of any format); for each log, the time axis is indicated. 
-    See paper
-   - TODO Fix remaining instabilities
- - Read logs with user-specified format pattern (regex; 1 capturing group = 1 field ; list of field names)
- - TODO Make RegexParser line-based
- - TODO Make RegexParser skip lines that do not match regex, or perhaps show them "as is"
- - TODO Support field names
- - TODO Simplify MatcherRecord: use non-capturing groups
+ + TODO "Merge logs" plugin. Input: any number of logs (of any format); for each log, the time axis is indicated.     See paper
+   + TODO Fix remaining instabilities
+   ? how to make positions from bookmarks to cache corresponding merged positions
+   ? is it ok to allow exception in constructor or use lazy init instead
+ + Read logs with user-specified format pattern (regex; 1 capturing group = 1 field ; list of field names)
+ + TODO Make RegexParser line-based
+ + TODO Make RegexParser skip lines that do not match regex, or perhaps show them "as is"
+ + TODO Support field names
+ + TODO Simplify MatcherRecord: use non-capturing groups
 
 14:35:56<TAB>DEBUG<TAB>Hello world
 
@@ -15,11 +16,11 @@ Time,Level,Message
 
  - Find some example large apache or IIS log, try using program on it
 
- - TODO Multiple inheritance for attributes (so that bookmarks and highlighters of merged logs show up in the merge result, too)
+ + TODO Multiple inheritance for attributes (so that bookmarks and highlighters of merged logs show up in the merge result, too)
 
  - TODO figure out how to get rid of scrollbar
  - TODO Split by field values: combobox with field names instead of input textbox
-    - TODO Fix combobox issue (nothing can be selected)
+    + TODO Fix combobox issue (nothing can be selected)
 
  - TODO (in case merge turns out to be too slow because of priority queue copying in MergeLogs.next()) Use an immutable (purely functional) priority queue there. See, for example, Okasaki "Purely functional data structures" or take one from the internet
 

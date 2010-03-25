@@ -8,20 +8,29 @@ public abstract class Field {
         DATE,
         TIME
     }
-
-    public abstract String getName();
     public abstract Type getType();
+    public abstract String getName();
+    public abstract int getIndexInRecord();
+    public abstract Object getValue();
 
     @Override
     public String toString() {
-        return getName();
+        return (String)getValue();
     }
-
+    
+    @Override
+    public int hashCode() {
+    	return getValue().hashCode();
+    	
+    }
+    
     @Override
     public boolean equals(Object other) {
-        return  other.getClass().equals(Field.class)         &&
+        return  other != null								&&
+        		other.getClass().equals(Field.class)        &&
                 ((Field)other).getName().equals(getName())  &&
-                ((Field)other).getType().equals(getType())      ;
+                ((Field)other).getType().equals(getType())  &&
+                ((Field)other).getValue().equals(getValue());
     }
 
 

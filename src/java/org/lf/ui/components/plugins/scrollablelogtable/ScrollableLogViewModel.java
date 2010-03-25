@@ -53,9 +53,22 @@ public class ScrollableLogViewModel extends Observable {
 
                 if (recordsToRead == regionSize)    clear();
 
+//                if (readFromWhere && fromWhere.getCorrespondingLog() != log) {
+//                	Position temp = log.next(fromWhere);
+//                	if (temp != null) { 
+//                		fromWhere = log.prev(temp);
+//                	} else { 
+//                		temp = log.prev(fromWhere);
+//                		if (temp == null)
+//                			return;
+//                		fromWhere = log.next(temp);
+//                	}
+//                }
+                
                 int reflectionCount = 0;
                 Position tempPos = fromWhere;
-
+                
+                
                 // TODO Make this comprehensible to everyone reading the code
                 for (int i = 0; i < recordsToRead; ++i) {
                     if (i == 0 && readFromWhere)
@@ -79,7 +92,6 @@ public class ScrollableLogViewModel extends Observable {
                     }
 
                     tempPos = directionForward ? log.next(tempPos) : log.prev(tempPos);
-                    //TODO look why this can be
                     if (tempPos == null ||  (i == recordsToRead - 1 && readFromWhere))
                         break;
                     if (directionForward)
@@ -88,9 +100,11 @@ public class ScrollableLogViewModel extends Observable {
                         pushBegin(pair(log.readRecord(tempPos), tempPos));
                 }
 
-                setReadingDone(true);
+                
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+            	setReadingDone(true);
             }
         }
 
@@ -198,8 +212,9 @@ public class ScrollableLogViewModel extends Observable {
     Log getLog() {
         return this.log;
     }
+    
     int getRecordSize() {
-        return log.getFields().length;
+        return log.getLogFormat().getFieldCount();
     }
 
     synchronized private void pushBegin(Pair<Record, Position> pair) {

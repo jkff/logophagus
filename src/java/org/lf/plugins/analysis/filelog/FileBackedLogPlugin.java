@@ -2,6 +2,7 @@ package org.lf.plugins.analysis.filelog;
 
 import org.lf.logs.FileBackedLog;
 import org.lf.logs.Log;
+import org.lf.parser.LogFormat;
 import org.lf.parser.csv.CSVParser;
 import org.lf.parser.regex.RegexParser;
 import org.lf.plugins.AnalysisPlugin;
@@ -22,9 +23,11 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
     @Nullable
     public Entity applyTo(Entity[] args) {
         JFileChooser fileOpen = new JFileChooser(ProgramProperties.getWorkingDir());
-        fileOpen.showOpenDialog(null);
+        int state = fileOpen.showOpenDialog(null);
+        if (state != JFileChooser.APPROVE_OPTION) 
+        	return null;
         File f = fileOpen.getSelectedFile();
-        if (f == null || !f.isFile())
+        if (!f.isFile())
             return null;
         ProgramProperties.setWorkingDir(f.getParentFile());
 
@@ -33,8 +36,34 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
+        LogFormat logFormat = new LogFormat() {
+        	private final String names[] = new String[]{"int", "text"};//, "A" ,"B" ,"C"};
+			@Override
+			public String[] getFieldNames() {
+				return names;
+			}
+			
+			@Override
+			public String getFieldName(int fieldIndex) {
+				return names[fieldIndex];
+			}
+			
+			@Override
+			public int getFieldIndex(String fieldName) {
+				return 0;
+			}
+			
+			@Override
+			public int getFieldCount() {
+				return names.length;
+			}
+		};
+		
         try {
-            Log log = new FileBackedLog(f.getAbsolutePath(), new RegexParser("\\s?(\\d+)\\s([a-z]+)\\s?"));
+            Log log = new FileBackedLog(f.getAbsolutePath(), new RegexParser( "(\\d+)\\s+(\\w+)\\s*" ,new String[]{"int ", "text"} ,'\n', logFormat));
+//            Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser( logFormat));
+
             Attributes atr = new Attributes();
             atr.addAttribute(new Bookmarks(null));
             return new Entity(atr, log);
@@ -56,8 +85,7 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        return null;
+    	return new ImageIcon(ProgramProperties.iconsPath +"log.gif");
     }
 
 }

@@ -2,14 +2,15 @@ package org.lf.plugins.analysis.splitbyfield;
 
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 
-import org.lf.logs.Field;
 import org.lf.logs.Log;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.splitbyfield.LogAndField;
+import org.lf.services.ProgramProperties;
 
 import com.sun.istack.internal.Nullable;
 
@@ -27,11 +28,23 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
     public Entity applyTo(Entity[] args) {
         Log log = (Log) args[0].data;
         Object field = JOptionPane.showInputDialog(
-                null, "Select field", "Setup", JOptionPane.PLAIN_MESSAGE, null,
-                log.getFields(), log.getFields()[0]);
+                null,
+                "Select field", 
+                "Setup", 
+                JOptionPane.PLAIN_MESSAGE, 
+                null,
+                log.getLogFormat().getFieldNames(), 
+                null);
         if (field == null)
             return null;
-        LogAndField result = new LogAndField(log, (Field)field);
+        
+        int index;
+        
+        for(index = 0; index < log.getLogFormat().getFieldCount() ; ++index) {
+			if (log.getLogFormat().getFieldName(index).equals(field)) break;
+		}
+        
+        LogAndField result = new LogAndField(log, index);
         return new Entity(args[0].attributes.createSuccessor(), result);
     }
 
@@ -43,8 +56,7 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        return null;
+    	return new ImageIcon(ProgramProperties.iconsPath +"folder_files.gif");
     }
 
 

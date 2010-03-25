@@ -12,7 +12,10 @@ import org.lf.ui.util.GUIUtils;
 import org.lf.util.Filter;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -30,7 +33,7 @@ public class FieldSplittedLog extends JPanel {
     private JPanel defaultPanel = new JPanel(new BorderLayout());
     private int fieldIndex = 0;
 
-    class ValuesSearchTask extends SwingWorker<Void, Void> {
+    private class ValuesSearchTask extends SwingWorker<Void, Void> {
         private static final int DEFAULT_RECORDS_TO_LOAD = 5000;
 
         @Override
@@ -41,14 +44,37 @@ public class FieldSplittedLog extends JPanel {
                 for (int i = 0; i < DEFAULT_RECORDS_TO_LOAD; ++i) {
                     if (progressMonitor.isCanceled())
                         break;
+                    try {
+						Thread.currentThread().sleep(1);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
                     Record rec = logAndField.log.readRecord(cur);
-                    listModel.addFieldValue(rec.get(fieldIndex));
+                    listModel.addFieldValue(rec.getField(fieldIndex));
                     if (cur.equals(end)) break;
                     cur = logAndField.log.next(cur);
                     progressMonitor.setProgress(i);
                 }
                 listModel.setMaxReadedPosition(cur);
-                listModel.addFieldValue("Other");
+                listModel.addFieldValue(new Field() {
+					@Override
+					public int getIndexInRecord() {
+						return fieldIndex;
+					}
+					@Override
+					public String getName() {
+						return "Other...";
+					}
+					@Override
+					public Type getType() {
+						return Type.TEXT;
+					}
+					@Override
+					public Object getValue() {
+						return "Other...";
+					}
+                });
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -60,19 +86,21 @@ public class FieldSplittedLog extends JPanel {
             super.done();
             progressMonitor.setProgress(DEFAULT_RECORDS_TO_LOAD);
             fieldValues.enableControls();
+            
         }
+
+		@Override
+		protected void process(List<Void> arg0) {
+			FieldSplittedLog.this.splitPane.getRightComponent().validate();
+		}
     }
 
     public FieldSplittedLog(LogAndField logAndField, final Attributes attributes) {
         super(new BorderLayout());
         this.logAndField = logAndField;
         this.attributes = attributes;
-        Field[] fields = logAndField.log.getFields();
-        for (Field field : fields) {
-            if (field.equals(logAndField.field)) break;
-            ++fieldIndex;
-        };
-
+        this.fieldIndex = logAndField.fieldIndex;
+        
         fieldValues = new MyList(listModel);
         fieldValues.setCellRenderer(new FieldValuesCellRenderer());
         fieldValues.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -80,32 +108,36 @@ public class FieldSplittedLog extends JPanel {
         JPanel listPanel = new JPanel();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
         listPanel.add(Box.createVerticalStrut(5));
-        listPanel.add(new JLabel("Values of " + logAndField.field + " field:"));
+        listPanel.add(new JLabel("Values of " + logAndField.fieldIndex + " field:"));
         listPanel.add(Box.createVerticalStrut(5));
         listPanel.add(new JScrollPane(fieldValues));
         defaultPanel.add(new JLabel("Select field value from right list to look at corresponding log"));
-        GUIUtils.makePreferredSize(listPanel);
-        GUIUtils.makePreferredSize(defaultPanel);
+        
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setDividerSize(5);
         splitPane.setContinuousLayout(true);
         splitPane.setRightComponent(listPanel);
         splitPane.setLeftComponent(defaultPanel);
         splitPane.setResizeWeight(0.7);
+        
+        GUIUtils.makePreferredSize(listPanel);
+        GUIUtils.makePreferredSize(defaultPanel);
         GUIUtils.makePreferredSize(splitPane);
+        
         this.add(splitPane);
         progressMonitor = new ProgressMonitor(this, "Reading", "Please wait", 0, ValuesSearchTask.DEFAULT_RECORDS_TO_LOAD);
         new ValuesSearchTask().execute();
-        this.setVisible(true);
+        
     }
 
-    public void setViewPanel(JPanel panel) {
+    void setViewPanel(JPanel panel) {
         splitPane.setLeftComponent(panel);
-        splitPane.updateUI();
+        panel.setVisible(true);
+        splitPane.validate();
     }
 
 
-    class FieldSelectionListener implements ListSelectionListener {
+    private class MyListSelectionListener implements ListSelectionListener {
         @Override
         public void valueChanged(ListSelectionEvent e) {
             int selected = ((JList) e.getSource()).getSelectedIndex();
@@ -118,13 +150,13 @@ public class FieldSplittedLog extends JPanel {
         }
     }
 
-    class ListMouseListener extends MouseAdapter {
+    private class ListMouseListener extends MouseAdapter {
         public void mousePressed(final MouseEvent e) {
             if (e.getButton() != MouseEvent.BUTTON1)
                 return;
             int selectedIndex = fieldValues.getSelectedIndex();
-            final String fieldValue = (String) fieldValues.getSelectedValue();
-            JPanel panel = listModel.getView(fieldValue);
+            final Field field = (Field) fieldValues.getSelectedValue();
+            JPanel panel = listModel.getView(field);
             if (panel == null) {
                 //this section handles last list element
                 if (selectedIndex == listModel.getSize() - 1) {
@@ -133,16 +165,13 @@ public class FieldSplittedLog extends JPanel {
                         panel.add(new JLabel("There is no other field values"));
                     } else {
                         Filter<Record> filter = new Filter<Record>() {
-                            private List<String> exceptedValues = listModel.getValues();
+                            private Set<Field> exceptedValues = new HashSet<Field>(listModel.getValues());
                             public String toString() {
                                 return "Except " + exceptedValues;
                             }
 
-                            public boolean accepts(Record t) {
-                                for (String cur : exceptedValues) {
-                                    if (t.get(fieldIndex).equals(cur)) return false;
-                                }
-                                return true;
+                            public boolean accepts(Record r) {
+                                return !exceptedValues.contains(r.getField(fieldIndex));
                             }
                         };
                         Log log = new FilteredLog(FieldSplittedLog.this.logAndField.log, filter);
@@ -151,17 +180,17 @@ public class FieldSplittedLog extends JPanel {
                 } else {
                     Filter<Record> filter = new Filter<Record>() {
                         public String toString() {
-                            return fieldValue;
+                            return (String)field.getValue();
                         }
 
-                        public boolean accepts(Record t) {
-                            return t.get(fieldIndex).equals(fieldValue);
+                        public boolean accepts(Record r) {
+                            return r.getField(fieldIndex).equals(field);
                         }
                     };
                     Log log = new FilteredLog(FieldSplittedLog.this.logAndField.log, filter);
                     panel = new ScrollableLogView(log, attributes);
                 }
-                listModel.setView(fieldValue, panel);
+                listModel.setView(field, panel);
             }
             setViewPanel(panel);
         }
@@ -174,7 +203,7 @@ public class FieldSplittedLog extends JPanel {
 
         void enableControls() {
             this.addMouseListener(new ListMouseListener());
-            this.addListSelectionListener(new FieldSelectionListener());
+            this.addListSelectionListener(new MyListSelectionListener());
         }
     }
 }

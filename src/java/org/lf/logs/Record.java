@@ -1,7 +1,12 @@
 package org.lf.logs;
 
+import com.sun.istack.internal.Nullable;
 
+//each Record consists from Fields
 public interface Record {
     public int size();
-    public String get(int index);
+    @Nullable
+    public Field getField(int index);
+    public Field[] getFields();
+    
 }

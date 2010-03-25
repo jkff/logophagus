@@ -1,6 +1,7 @@
 package org.lf.plugins.analysis.filtersubstr;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.lf.logs.FilteredLog;
@@ -8,6 +9,7 @@ import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Entity;
+import org.lf.services.ProgramProperties;
 import org.lf.util.Filter;
 
 import com.sun.istack.internal.Nullable;
@@ -35,9 +37,10 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
                 return substring;
             }
 
-            public boolean accepts(Record t) {
-                for (int i = 0; i < t.size(); ++i) {
-                    if (t.get(i).contains(substring))
+            public boolean accepts(Record r) {
+                for (int i = 0; i < r.size(); ++i) {
+                	Object fieldVal = r.getField(i).getValue();
+                    if (fieldVal != null && ((String)fieldVal).contains(substring))
                         return true;
                 }
                 return false;
@@ -54,8 +57,7 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        return null;
+    	return new ImageIcon(ProgramProperties.iconsPath +"filter.gif");
     }
 
 

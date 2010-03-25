@@ -11,7 +11,7 @@ import org.lf.logs.Log;
 
 class LogTableModel extends AbstractTableModel implements Observer {
     private ScrollableLogViewModel underlyingModel;
-    private Field[] fields;
+    private String[] fields;
     public LogTableModel(ScrollableLogViewModel underlyingModel) {
         this.underlyingModel = underlyingModel;
         underlyingModel.addObserver(this);
@@ -30,7 +30,7 @@ class LogTableModel extends AbstractTableModel implements Observer {
     @Override
     public Object getValueAt(int row, int col) {
         if (underlyingModel.getRecordCount() > row && underlyingModel.getRecord(row).size() > col){
-            return underlyingModel.getRecord(row).get(col);
+            return underlyingModel.getRecord(row).getField(col).getValue();
         }
         return null;
     }
@@ -63,9 +63,9 @@ class LogTableModel extends AbstractTableModel implements Observer {
     public String getColumnName(int column) {
         if (fields == null) {
             Log log = underlyingModel.getLog();
-            fields = log.getFields();
+            fields = log.getLogFormat().getFieldNames();
         }
-        return fields[column].getName();
+        return fields[column];
     }
 
 }

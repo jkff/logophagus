@@ -2,7 +2,7 @@ package org.lf.plugins;
 
 import com.sun.istack.internal.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 
 public interface AnalysisPlugin {

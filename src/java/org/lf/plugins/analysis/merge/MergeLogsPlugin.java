@@ -1,6 +1,7 @@
 package org.lf.plugins.analysis.merge;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.lf.logs.Log;
@@ -8,6 +9,7 @@ import org.lf.logs.MergeLogs;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
+import org.lf.services.ProgramProperties;
 
 public class MergeLogsPlugin implements AnalysisPlugin {
 
@@ -49,8 +51,7 @@ public class MergeLogsPlugin implements AnalysisPlugin {
 
     @Override
     public Icon getIcon() {
-        // TODO Auto-generated method stub
-        return null;
+    	return new ImageIcon(ProgramProperties.iconsPath +"multi.gif");
     }
 
 }

@@ -100,7 +100,6 @@ public class ScrollableLogView extends JPanel implements Observer {
         this.table.setDefaultRenderer(String.class, cellRenderer);
         this.table.setSelectionModel(tableSelectionModel);
         this.table.addKeyListener(new TableKeyListener());
-
         tableSelectionModel.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 table.repaint();
