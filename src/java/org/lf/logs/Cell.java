@@ -1,7 +1,6 @@
 package org.lf.logs;
 
-public abstract class Field {
-
+public abstract class Cell {
     public enum Type{
         TEXT,
         NUMBER,
@@ -15,22 +14,21 @@ public abstract class Field {
 
     @Override
     public String toString() {
-        return (String)getValue();
+        return getValue().toString();
     }
     
     @Override
     public int hashCode() {
     	return getValue().hashCode();
-    	
     }
     
     @Override
     public boolean equals(Object other) {
         return  other != null								&&
-        		other.getClass().equals(Field.class)        &&
-                ((Field)other).getName().equals(getName())  &&
-                ((Field)other).getType().equals(getType())  &&
-                ((Field)other).getValue().equals(getValue());
+        		other.getClass().equals(Cell.class)        &&
+                ((Cell)other).getName().equals(getName())  &&
+                ((Cell)other).getType().equals(getType())  &&
+                ((Cell)other).getValue().equals(getValue());
     }
 
 

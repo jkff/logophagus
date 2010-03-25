@@ -1,6 +1,6 @@
 package org.lf.ui.components.plugins.fieldsplittedlog;
 
-import org.lf.logs.Field;
+import org.lf.logs.Cell;
 import org.lf.logs.FilteredLog;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
@@ -57,7 +57,7 @@ public class FieldSplittedLog extends JPanel {
                     progressMonitor.setProgress(i);
                 }
                 listModel.setMaxReadedPosition(cur);
-                listModel.addFieldValue(new Field() {
+                listModel.addFieldValue(new Cell() {
 					@Override
 					public int getIndexInRecord() {
 						return fieldIndex;
@@ -155,8 +155,8 @@ public class FieldSplittedLog extends JPanel {
             if (e.getButton() != MouseEvent.BUTTON1)
                 return;
             int selectedIndex = fieldValues.getSelectedIndex();
-            final Field field = (Field) fieldValues.getSelectedValue();
-            JPanel panel = listModel.getView(field);
+            final Cell cell = (Cell) fieldValues.getSelectedValue();
+            JPanel panel = listModel.getView(cell);
             if (panel == null) {
                 //this section handles last list element
                 if (selectedIndex == listModel.getSize() - 1) {
@@ -165,7 +165,7 @@ public class FieldSplittedLog extends JPanel {
                         panel.add(new JLabel("There is no other field values"));
                     } else {
                         Filter<Record> filter = new Filter<Record>() {
-                            private Set<Field> exceptedValues = new HashSet<Field>(listModel.getValues());
+                            private Set<Cell> exceptedValues = new HashSet<Cell>(listModel.getValues());
                             public String toString() {
                                 return "Except " + exceptedValues;
                             }
@@ -180,17 +180,17 @@ public class FieldSplittedLog extends JPanel {
                 } else {
                     Filter<Record> filter = new Filter<Record>() {
                         public String toString() {
-                            return (String)field.getValue();
+                            return (String) cell.getValue();
                         }
 
                         public boolean accepts(Record r) {
-                            return r.getField(fieldIndex).equals(field);
+                            return r.getField(fieldIndex).equals(cell);
                         }
                     };
                     Log log = new FilteredLog(FieldSplittedLog.this.logAndField.log, filter);
                     panel = new ScrollableLogView(log, attributes);
                 }
-                listModel.setView(field, panel);
+                listModel.setView(cell, panel);
             }
             setViewPanel(panel);
         }

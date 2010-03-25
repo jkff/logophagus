@@ -1,12 +1,14 @@
  + TODO "Merge logs" plugin. Input: any number of logs (of any format); for each log, the time axis is indicated.     See paper
-   + TODO Fix remaining instabilities
-   ? how to make positions from bookmarks to cache corresponding merged positions
-   ? is it ok to allow exception in constructor or use lazy init instead
+   - TODO Fix remaining instabilities
  + Read logs with user-specified format pattern (regex; 1 capturing group = 1 field ; list of field names)
- + TODO Make RegexParser line-based
- + TODO Make RegexParser skip lines that do not match regex, or perhaps show them "as is"
- + TODO Support field names
- + TODO Simplify MatcherRecord: use non-capturing groups
+ - TODO Make RegexParser skip lines that do not match regex, or perhaps show them "as is"
+    - Either skip them, or use the implementation of mixed-format logs and show "as is" but they should be of a different 'format' than those that matched.
+
+ - TODO Cell/Field; type should be a property of a field (column), not of a cell.
+ - TODO Mixed-format logs and single-format logs
+    Questions:
+        - How to render a mixed-format log?
+        - What operations are permitted on it?
 
 14:35:56<TAB>DEBUG<TAB>Hello world
 
@@ -16,7 +18,17 @@ Time,Level,Message
 
  - Find some example large apache or IIS log, try using program on it
 
- + TODO Multiple inheritance for attributes (so that bookmarks and highlighters of merged logs show up in the merge result, too)
+ - TODO Steal features from logvis (decreasing order of priority):
+  - Select by field (like split but with checkboxes)
+  - Colorize by field + colorized scrollbar
+  - Format parser (but only for single-line entries?)
+  - Composite actions (IActionLibrary)
+  - Fat cell contents for large cells
+  - Horizontal scrolling for long lines
+  - Save/load bookmarks
+  - Diff (how to implement streaming diff?)
+  - Plugin manager
+  - Multi-views with >2 logs and simultaneous scrolling
 
  - TODO figure out how to get rid of scrollbar
  - TODO Split by field values: combobox with field names instead of input textbox

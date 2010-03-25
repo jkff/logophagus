@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.lf.logs.Field;
+import org.lf.logs.Cell;
 import org.lf.logs.Record;
-import org.lf.logs.Field.Type;
+import org.lf.logs.Cell.Type;
 import org.lf.parser.*;
 import org.lf.parser.LogMetadata;
 
@@ -90,45 +90,45 @@ public class RegexParser implements Parser {
 	}
 
 	private class MatcherRecord implements Record {
-		private final List<Field> fields;
+		private final List<Cell> cells;
 
 		private MatcherRecord(String rawRecord) {
-			fields = newList();
+			cells = newList();
 			Matcher m = pattern.matcher(rawRecord);
 			//if there is no group besides zero group then use this group(hole record) as only one field
 			if (!m.matches()) 
-				fields.add(new MatcherField(rawRecord, "Failed to match", Type.TEXT, 0));
+				cells.add(new MatcherCell(rawRecord, "Failed to match", Type.TEXT, 0));
 			else {
 				//zero group is not included in groupCount() method result
 				for(int i = 1; i <= m.groupCount(); ++i) {
-					fields.add(new MatcherField(m.group(i), logMetadata.getFieldName(i -1), Type.TEXT, i -1));
+					cells.add(new MatcherCell(m.group(i), logMetadata.getFieldName(i -1), Type.TEXT, i -1));
 				}
 			}
 		}
 
 		@Override
-		public Field getField(int index) {
-			return fields.get(index);
+		public Cell getField(int index) {
+			return cells.get(index);
 		}
 
 		@Override
-		public Field[] getFields() {
-			return fields.toArray(new Field[0]);
+		public Cell[] getCells() {
+			return cells.toArray(new Cell[0]);
 		}
 
 		@Override
 		public int size() {
-			return fields.size();
+			return cells.size();
 		}
 	}
 
-	private static class MatcherField extends Field {
+	private static class MatcherCell extends Cell {
 		private final Object value;
 		private final String name;
 		private final int index;
 		private final Type type;
 		
-		public MatcherField(Object value,  String name, Type type, int index) {
+		public MatcherCell(Object value,  String name, Type type, int index) {
 			this.value = value;
 			this.name = name;
 			this.type = type;

@@ -9,6 +9,7 @@ import org.lf.logs.MergeLogs;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
+import org.lf.plugins.analysis.Bookmarks;
 import org.lf.services.ProgramProperties;
 
 public class MergeLogsPlugin implements AnalysisPlugin {
@@ -28,7 +29,11 @@ public class MergeLogsPlugin implements AnalysisPlugin {
         }
         Attributes[] allAttributes = new Attributes[args.length];
         for (int i=0; i < args.length; ++i) {
-            allAttributes[i] = args[i].attributes;
+            Attributes as = args[i].attributes;
+            Bookmarks b = as.getValue(Bookmarks.class);
+            TODO Convert the position of 'b'
+            TODO Same for filters
+            allAttributes[i] = as;
         }
 
         return new Entity(Attributes.join(allAttributes),

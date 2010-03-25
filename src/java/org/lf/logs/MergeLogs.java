@@ -1,6 +1,6 @@
 package org.lf.logs;
 
-import org.lf.logs.Field.Type;
+import org.lf.logs.Cell.Type;
 import org.lf.parser.LogMetadata;
 import org.lf.parser.Position;
 import org.lf.util.Comparators;
@@ -46,13 +46,13 @@ public class MergeLogs implements Log {
 	}
 
 
-	private class MergedField extends Field {
+	private class MergedCell extends Cell {
 		private final int index;
 		private final String name;
 		private final Type type;
 		private final Object value;
 
-		private MergedField(String name, Object value, Type type, int index) {
+		private MergedCell(String name, Object value, Type type, int index) {
 			this.index = index;
 			this.name = name;
 			this.value = value;
@@ -90,12 +90,12 @@ public class MergeLogs implements Log {
 		}
 
 		@Override
-		public Field getField(int index) {
+		public Cell getField(int index) {
 			if (index >= size()) return null;
-			if (!getOur2origIndex().containsKey(index)) return new MergedField("null", null, Type.TEXT, index);
+			if (!getOur2origIndex().containsKey(index)) return new MergedCell("null", null, Type.TEXT, index);
 			CurPrevIndex entity = pos.cpisAscCur.first();
-			Field originalField = entity.first.second.getField(getOur2origIndex().get(index));;
-			return new MergedField(originalField.getName(), originalField.getValue(), originalField.getType(), index); 
+			Cell originalCell = entity.first.second.getCells()[getOur2origIndex().get(index)];
+			return new MergedCell(originalCell.getName(), originalCell.getValue(), originalCell.getType(), index);
 		}
 
 		//map<key,value> : key is the index of merged record , value is the index of underlying record
@@ -139,12 +139,12 @@ public class MergeLogs implements Log {
 		}
 
 		@Override
-		public Field[] getFields() {
-			Field[] fields = new Field[size()];
+		public Cell[] getCells() {
+			Cell[] cells = new Cell[size()];
 			for(int i = 0 ; i < size(); ++i) {
-				fields[i] = getField(i);
+				cells[i] = getField(i);
 			}
-			return fields;
+			return cells;
 		}
 
 	}
@@ -159,39 +159,31 @@ public class MergeLogs implements Log {
 		@Override
 		public int compare(CurPrevIndex o1, CurPrevIndex o2) {
 			PosRec pr1 = getPosRec(o1), pr2 = getPosRec(o2);
-			Integer nullsCompare = getNullsCompareResult(pr1, pr2);
-			
-			if (nullsCompare != null) return nullsCompare; 
+            if(pr1 == null || pr2 == null)
+                return compareNullable(pr1,pr2);
 			
 			int res =  timeComparator.compare(
 					(String)pr1.second.getField(timeFieldIndices[o1.third]).getValue(),
 					(String)pr2.second.getField(timeFieldIndices[o1.third]).getValue());
 			if (res == 0)
-				res = getEqualPosRecComparator(o1, o2);
+				res = o1.third.compareTo(o2.third);
 
 			return res;
 		}
 		protected abstract PosRec getPosRec(CurPrevIndex cpi);
 
-		protected abstract Integer getNullsCompareResult(PosRec pr1, PosRec pr2);
-		protected abstract int getEqualPosRecComparator(CurPrevIndex o1, CurPrevIndex o2);
-
+		protected abstract int compareNullable(PosRec pr1, PosRec pr2);
 	}
 	
 	private Comparator<CurPrevIndex> COMPARE_CPI_ON_CUR = new CPIComparator() {
 		protected PosRec getPosRec(CurPrevIndex cpi) { return cpi.first; }
 
 		@Override
-		public Integer getNullsCompareResult(PosRec pr1, PosRec pr2) {
+		public int compareNullable(PosRec pr1, PosRec pr2) {
 			if (pr1 == null && pr2 == null) return 0;
 			if (pr1 == null) return 1;
 			if (pr2 == null) return -1;
-			return null;
-		}
-
-		@Override
-		public int getEqualPosRecComparator(CurPrevIndex o1, CurPrevIndex o2) {
-			return o1.third.compareTo(o2.third);
+			throw new IllegalArgumentException("Expected one of the two PosRec's to be null");
 		}
 	};
 	
@@ -199,16 +191,11 @@ public class MergeLogs implements Log {
 		protected PosRec getPosRec(CurPrevIndex cpi) { return cpi.second; }
 
 		@Override
-		public Integer getNullsCompareResult(PosRec pr1, PosRec pr2) {
+		public int compareNullable(PosRec pr1, PosRec pr2) {
 			if (pr1 == null && pr2 == null) return 0;
 			if (pr1 == null) return -1;
 			if (pr2 == null) return 1;
-			return null;
-		}
-
-		@Override
-		public int getEqualPosRecComparator(CurPrevIndex o1, CurPrevIndex o2) {
-			return -o1.third.compareTo(o2.third);
+			throw new IllegalArgumentException("Expected one of the two PosRec's to be null");
 		}
 	};
 
@@ -239,12 +226,16 @@ public class MergeLogs implements Log {
 		this(logs, fields, Comparators.<String>naturalOrder());
 	}
 
-	public MergeLogs(Log[] logs, Integer[] fields, Comparator<String> timeComparator) {
+	public MergeLogs(Log[] logs, Integer[] fields, Comparator<String> timeComparator) throws IOException {
 		this.logs = logs;
 		this.logsBorders = null;
 		this.timeFieldIndices = fields;
 		this.timeComparator = timeComparator;
 
+        logsBorders = new Pair[logs.length];
+        for (int i = 0; i < logs.length; ++i) {
+            logsBorders[i] = new Pair<Position, Position>(logs[i].first(), logs[i].last());
+        }
 	}
 
 	@Override
@@ -404,14 +395,7 @@ public class MergeLogs implements Log {
 		return curPos;
 	}
 
-	synchronized private Pair<Position, Position> getLogBorders(int index) throws IOException {
-		if (logsBorders != null) return logsBorders[index];
-		
-		logsBorders = new Pair[logs.length];
-		for (int i = 0; i < logs.length; ++i) {
-			logsBorders[i] = new Pair<Position, Position>(logs[i].first(), logs[i].last());			
-		}
-
+	private Pair<Position, Position> getLogBorders(int index) throws IOException {
 		return logsBorders[index];
 	}
 }

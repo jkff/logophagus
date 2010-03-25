@@ -3,9 +3,9 @@ package org.lf.parser.csv;
 import java.io.IOException;
 import java.util.*;
 
-import org.lf.logs.Field;
+import org.lf.logs.Cell;
 import org.lf.logs.Record;
-import org.lf.logs.Field.Type;
+import org.lf.logs.Cell.Type;
 import org.lf.parser.*;
 import org.lf.parser.LogMetadata;
 
@@ -126,13 +126,13 @@ public class CSVParser implements Parser {
     }
 
     private class CSVRecord implements Record {
-        private final List<Field> fields = newList();
+        private final List<Cell> cells = newList();
 
         private CSVRecord(List<String> strFields) {
-        	boolean matchesFormat = fields.size() == logMetadata.getFieldCount();
+        	boolean matchesFormat = cells.size() == logMetadata.getFieldCount();
         	
-        	for (int i = 0; i < fields.size(); i++) {
-        		fields.add(new CSVField(matchesFormat ? logMetadata.getFieldName(i) : "Field "+ i,
+        	for (int i = 0; i < cells.size(); i++) {
+        		cells.add(new CSVCell(matchesFormat ? logMetadata.getFieldName(i) : "Field "+ i,
         				strFields.get(i), 
         				Type.TEXT, 
         				i));
@@ -141,27 +141,27 @@ public class CSVParser implements Parser {
 
         @Override
         public int size() { 
-            return fields.size();
+            return cells.size();
         }
 
 		@Override
-		public Field getField(int index) {
-			return fields.get(index);
+		public Cell getField(int index) {
+			return cells.get(index);
 		}
 
 		@Override
-		public Field[] getFields() {
-			return fields.toArray(new Field[0]);
+		public Cell[] getCells() {
+			return cells.toArray(new Cell[0]);
 		}
     }
 
-    private static class CSVField extends Field {
+    private static class CSVCell extends Cell {
 		private final int index;
 		private final String name;
 		private final Type type;
 		private final Object value;
 
-		private CSVField(String name, Object value, Type type, int index ) {
+		private CSVCell(String name, Object value, Type type, int index ) {
 			this.name = name;
 			this.value = value;
 			this.type = type;
