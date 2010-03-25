@@ -6,7 +6,6 @@ import java.util.Observer;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 
-import org.lf.logs.Field;
 import org.lf.logs.Log;
 
 class LogTableModel extends AbstractTableModel implements Observer {
@@ -63,7 +62,7 @@ class LogTableModel extends AbstractTableModel implements Observer {
     public String getColumnName(int column) {
         if (fields == null) {
             Log log = underlyingModel.getLog();
-            fields = log.getLogFormat().getFieldNames();
+            fields = log.getMetadata().getFieldNames();
         }
         return fields[column];
     }

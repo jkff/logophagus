@@ -2,7 +2,7 @@ package org.lf.logs;
 
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
-import org.lf.parser.LogFormat;
+import org.lf.parser.LogMetadata;
 import org.lf.parser.Parser;
 import org.lf.parser.Position;
 import org.lf.parser.ScrollableInputStream;
@@ -92,8 +92,8 @@ public class FileBackedLog implements Log {
     }
 
 	@Override
-	public LogFormat getLogFormat() {
-		return parser.getLogFormat();
+	public LogMetadata getMetadata() {
+		return parser.getLogMetadata();
 	}
 
 }

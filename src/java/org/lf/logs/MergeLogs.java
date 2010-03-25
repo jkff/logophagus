@@ -1,7 +1,7 @@
 package org.lf.logs;
 
 import org.lf.logs.Field.Type;
-import org.lf.parser.LogFormat;
+import org.lf.parser.LogMetadata;
 import org.lf.parser.Position;
 import org.lf.util.Comparators;
 import org.lf.util.Pair;
@@ -113,7 +113,7 @@ public class MergeLogs implements Log {
 			} else {
 				int lengthSum = 0;
 				for (int i = 0 ; i < entity.third; ++i) {
-					int recordLength = logs[i].getLogFormat().getFieldCount();
+					int recordLength = logs[i].getMetadata().getFieldCount();
 					lengthSum += recordLength;
 				}
 				our2origIndex.put(timeFieldIndices[0], timeFieldIndices[entity.third]);
@@ -131,7 +131,7 @@ public class MergeLogs implements Log {
 		public int size() {
 			if  (size != 0) return size;
 			for (Log log : logs) {
-				size += log.getLogFormat().getFieldCount();
+				size += log.getMetadata().getFieldCount();
 			}
 			//one common field in every log
 			size -= logs.length - 1;
@@ -340,17 +340,17 @@ public class MergeLogs implements Log {
 	}
 
 	@Override
-	public LogFormat getLogFormat() {
+	public LogMetadata getMetadata() {
 		final List<String> res = newLinkedList();
 		for (int i = 0; i < logs.length; ++i) {
-			String[] fieldNames = logs[i].getLogFormat().getFieldNames();
+			String[] fieldNames = logs[i].getMetadata().getFieldNames();
 			for (int j = 0; j < fieldNames.length; ++j) {
 				if (i != 0 && timeFieldIndices[i] == j ) continue;
 				res.add(fieldNames[j]);
 			}
 		}
 		
-		return new LogFormat() {
+		return new LogMetadata() {
 			
 			@Override
 			public String[] getFieldNames() {

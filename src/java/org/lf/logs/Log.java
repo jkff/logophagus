@@ -3,14 +3,14 @@ package org.lf.logs;
 
 import java.io.IOException;
 
-import org.lf.parser.LogFormat;
+import org.lf.parser.LogMetadata;
 import org.lf.parser.Position;
 
 import com.sun.istack.internal.Nullable;
 
 public interface Log {
 
-    public LogFormat getLogFormat();
+    public LogMetadata getMetadata();
 
     /**
      * Points to the first record in the log

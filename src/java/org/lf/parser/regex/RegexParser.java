@@ -8,23 +8,20 @@ import java.util.regex.Pattern;
 import org.lf.logs.Field;
 import org.lf.logs.Record;
 import org.lf.logs.Field.Type;
-import org.lf.parser.LogFormat;
-import org.lf.parser.Parser;
-import org.lf.parser.ScrollableInputStream;
-import org.lf.parser.CharStream;
-import org.lf.parser.Sink;
+import org.lf.parser.*;
+import org.lf.parser.LogMetadata;
+
 import static org.lf.util.CollectionFactory.newList;
 
 public class RegexParser implements Parser {
 	private final Pattern pattern;
 	private final char recordDelimeter;
-	private final LogFormat logFormat;
-	
+	private final LogMetadata logMetadata;
 
-	public RegexParser(String regex, String[] fields, char recordDelimeter, LogFormat logFormat) {
+	public RegexParser(String regex, char recordDelimeter, LogMetadata logMetadata) {
 		this.pattern = Pattern.compile(regex);
 		this.recordDelimeter = recordDelimeter;
-		this.logFormat = logFormat;
+		this.logMetadata = logMetadata;
 	}
 
 	@Override
@@ -104,7 +101,7 @@ public class RegexParser implements Parser {
 			else {
 				//zero group is not included in groupCount() method result
 				for(int i = 1; i <= m.groupCount(); ++i) {
-					fields.add(new MatcherField(m.group(i), logFormat.getFieldName(i -1), Type.TEXT, i -1));
+					fields.add(new MatcherField(m.group(i), logMetadata.getFieldName(i -1), Type.TEXT, i -1));
 				}
 			}
 		}
@@ -162,8 +159,8 @@ public class RegexParser implements Parser {
 	}
 	
 	@Override
-	public LogFormat getLogFormat() {
-		return logFormat;
+	public LogMetadata getLogMetadata() {
+		return logMetadata;
 	}
 
 }

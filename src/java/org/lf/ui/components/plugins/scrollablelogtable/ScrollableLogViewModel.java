@@ -214,7 +214,7 @@ public class ScrollableLogViewModel extends Observable {
     }
     
     int getRecordSize() {
-        return log.getLogFormat().getFieldCount();
+        return log.getMetadata().getFieldCount();
     }
 
     synchronized private void pushBegin(Pair<Record, Position> pair) {

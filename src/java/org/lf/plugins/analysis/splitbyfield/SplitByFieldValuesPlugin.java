@@ -33,15 +33,15 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
                 "Setup", 
                 JOptionPane.PLAIN_MESSAGE, 
                 null,
-                log.getLogFormat().getFieldNames(), 
+                log.getMetadata().getFieldNames(),
                 null);
         if (field == null)
             return null;
         
         int index;
         
-        for(index = 0; index < log.getLogFormat().getFieldCount() ; ++index) {
-			if (log.getLogFormat().getFieldName(index).equals(field)) break;
+        for(index = 0; index < log.getMetadata().getFieldCount() ; ++index) {
+			if (log.getMetadata().getFieldName(index).equals(field)) break;
 		}
         
         LogAndField result = new LogAndField(log, index);

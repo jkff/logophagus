@@ -2,8 +2,7 @@ package org.lf.plugins.analysis.filelog;
 
 import org.lf.logs.FileBackedLog;
 import org.lf.logs.Log;
-import org.lf.parser.LogFormat;
-import org.lf.parser.csv.CSVParser;
+import org.lf.parser.LogMetadata;
 import org.lf.parser.regex.RegexParser;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
@@ -37,8 +36,8 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
             e.printStackTrace();
         }
         
-        LogFormat logFormat = new LogFormat() {
-        	private final String names[] = new String[]{"int", "text"};//, "A" ,"B" ,"C"};
+        LogMetadata logMetadata = new LogMetadata() {
+        	private final String names[] = new String[]{"int", "text"};
 			@Override
 			public String[] getFieldNames() {
 				return names;
@@ -61,8 +60,7 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 		};
 		
         try {
-            Log log = new FileBackedLog(f.getAbsolutePath(), new RegexParser( "(\\d+)\\s+(\\w+)\\s*" ,new String[]{"int ", "text"} ,'\n', logFormat));
-//            Log log = new FileBackedLog(f.getAbsolutePath(), new CSVParser( logFormat));
+            Log log = new FileBackedLog(f.getAbsolutePath(), new RegexParser( "(\\d+)\\s+(\\w+)\\s*" , '\n', logMetadata));
 
             Attributes atr = new Attributes();
             atr.addAttribute(new Bookmarks(null));

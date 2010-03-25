@@ -6,11 +6,8 @@ import java.util.*;
 import org.lf.logs.Field;
 import org.lf.logs.Record;
 import org.lf.logs.Field.Type;
-import org.lf.parser.LogFormat;
-import org.lf.parser.Parser;
-import org.lf.parser.ScrollableInputStream;
-import org.lf.parser.CharStream;
-import org.lf.parser.Sink;
+import org.lf.parser.*;
+import org.lf.parser.LogMetadata;
 
 import static org.lf.util.CollectionFactory.newList;
 
@@ -19,18 +16,18 @@ public class CSVParser implements Parser {
     private final char fieldDelimeter;
     private final char quoteCharacter;
     private final char escapeCharacter;
-    private final LogFormat logFormat;
+    private final LogMetadata logMetadata;
     
-    public CSVParser(LogFormat logFormat) {
-        this(logFormat,'\n', ',', '"', '\\');
+    public CSVParser(LogMetadata logMetadata) {
+        this(logMetadata,'\n', ',', '"', '\\');
     }
 
-    public CSVParser(LogFormat logFormat, char recordDelimeter, char fieldDelimeter, char quoteCharacter, char escapeCharacter) {
+    public CSVParser(LogMetadata logMetadata, char recordDelimeter, char fieldDelimeter, char quoteCharacter, char escapeCharacter) {
         this.recordDelimeter = recordDelimeter;
         this.fieldDelimeter = fieldDelimeter;
         this.quoteCharacter = quoteCharacter;
         this.escapeCharacter = escapeCharacter;
-        this.logFormat = logFormat;
+        this.logMetadata = logMetadata;
     }
 
     public long findNextRecord(ScrollableInputStream is) throws IOException {
@@ -132,10 +129,10 @@ public class CSVParser implements Parser {
         private final List<Field> fields = newList();
 
         private CSVRecord(List<String> strFields) {
-        	boolean matchesFormat = fields.size() == logFormat.getFieldCount();
+        	boolean matchesFormat = fields.size() == logMetadata.getFieldCount();
         	
         	for (int i = 0; i < fields.size(); i++) {
-        		fields.add(new CSVField(matchesFormat ? logFormat.getFieldName(i) : "Field "+ i,
+        		fields.add(new CSVField(matchesFormat ? logMetadata.getFieldName(i) : "Field "+ i,
         				strFields.get(i), 
         				Type.TEXT, 
         				i));
@@ -198,7 +195,7 @@ public class CSVParser implements Parser {
     }
 
 	@Override
-	public LogFormat getLogFormat() {
-		return logFormat;
+	public LogMetadata getLogMetadata() {
+		return logMetadata;
 	}
 }
