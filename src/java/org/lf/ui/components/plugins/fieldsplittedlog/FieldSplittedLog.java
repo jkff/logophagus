@@ -51,7 +51,7 @@ public class FieldSplittedLog extends JPanel {
 						e.printStackTrace();
 					}
                     Record rec = logAndField.log.readRecord(cur);
-                    listModel.addFieldValue(rec.getField(fieldIndex));
+                    listModel.addFieldValue(rec.getCells()[fieldIndex]);
                     if (cur.equals(end)) break;
                     cur = logAndField.log.next(cur);
                     progressMonitor.setProgress(i);
@@ -171,7 +171,7 @@ public class FieldSplittedLog extends JPanel {
                             }
 
                             public boolean accepts(Record r) {
-                                return !exceptedValues.contains(r.getField(fieldIndex));
+                                return !exceptedValues.contains(r.getCells()[fieldIndex]);
                             }
                         };
                         Log log = new FilteredLog(FieldSplittedLog.this.logAndField.log, filter);
@@ -184,7 +184,7 @@ public class FieldSplittedLog extends JPanel {
                         }
 
                         public boolean accepts(Record r) {
-                            return r.getField(fieldIndex).equals(cell);
+                            return r.getCells()[fieldIndex].equals(cell);
                         }
                     };
                     Log log = new FilteredLog(FieldSplittedLog.this.logAndField.log, filter);

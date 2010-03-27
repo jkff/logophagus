@@ -90,35 +90,26 @@ public class RegexParser implements Parser {
 	}
 
 	private class MatcherRecord implements Record {
-		private final List<Cell> cells;
+		private final Cell[] cells;
 
 		private MatcherRecord(String rawRecord) {
-			cells = newList();
+            List<Cell> cellsList = newList();
 			Matcher m = pattern.matcher(rawRecord);
 			//if there is no group besides zero group then use this group(hole record) as only one field
 			if (!m.matches()) 
-				cells.add(new MatcherCell(rawRecord, "Failed to match", Type.TEXT, 0));
+				cellsList.add(new MatcherCell(rawRecord, "Failed to match", Type.TEXT, 0));
 			else {
 				//zero group is not included in groupCount() method result
 				for(int i = 1; i <= m.groupCount(); ++i) {
-					cells.add(new MatcherCell(m.group(i), logMetadata.getFieldName(i -1), Type.TEXT, i -1));
+					cellsList.add(new MatcherCell(m.group(i), logMetadata.getFieldName(i -1), Type.TEXT, i -1));
 				}
 			}
-		}
-
-		@Override
-		public Cell getField(int index) {
-			return cells.get(index);
+            cells = cellsList.toArray(new Cell[0]);
 		}
 
 		@Override
 		public Cell[] getCells() {
-			return cells.toArray(new Cell[0]);
-		}
-
-		@Override
-		public int size() {
-			return cells.size();
+			return cells;
 		}
 	}
 

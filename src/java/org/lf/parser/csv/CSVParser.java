@@ -126,32 +126,23 @@ public class CSVParser implements Parser {
     }
 
     private class CSVRecord implements Record {
-        private final List<Cell> cells = newList();
+        private final Cell[] cells;
 
         private CSVRecord(List<String> strFields) {
-        	boolean matchesFormat = cells.size() == logMetadata.getFieldCount();
-        	
-        	for (int i = 0; i < cells.size(); i++) {
-        		cells.add(new CSVCell(matchesFormat ? logMetadata.getFieldName(i) : "Field "+ i,
+        	boolean matchesFormat = strFields.size() == logMetadata.getFieldCount();
+            this.cells = new Cell[strFields.size()];
+
+        	for (int i = 0; i < cells.length; i++) {
+        		cells[i] = new CSVCell(matchesFormat ? logMetadata.getFieldName(i) : "Field "+ i,
         				strFields.get(i), 
         				Type.TEXT, 
-        				i));
+        				i);
 			}
         }
 
-        @Override
-        public int size() { 
-            return cells.size();
-        }
-
-		@Override
-		public Cell getField(int index) {
-			return cells.get(index);
-		}
-
 		@Override
 		public Cell[] getCells() {
-			return cells.toArray(new Cell[0]);
+			return cells;
 		}
     }
 

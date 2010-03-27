@@ -218,7 +218,7 @@ public class ScrollableLogViewModel extends Observable {
     }
 
     synchronized private void pushBegin(Pair<Record, Position> pair) {
-        if (pair.first.size() > getRecordSize()) {
+        if (pair.first.getCells().length > getRecordSize()) {
             setChanged();
             notifyObservers("CHANGE_RECORD_SIZE");
         }
@@ -228,7 +228,7 @@ public class ScrollableLogViewModel extends Observable {
     }
 
     synchronized private void pushEnd(Pair<Record, Position> pair) {
-        if (pair.first.size() > getRecordSize()) {
+        if (pair.first.getCells().length > getRecordSize()) {
             setChanged();
             notifyObservers("CHANGE_RECORD_SIZE");
         }

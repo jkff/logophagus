@@ -45,8 +45,11 @@ public class FileBackedLog implements Log {
     }
 
     public FileBackedLog(String fileName, Parser in) throws IOException {
+        this(new MappedFile(fileName), in);
+    }
+    public FileBackedLog(RandomAccessFileIO io, Parser in) throws IOException {
         this.parser = in;
-        this.file = new MappedFile(fileName);
+        this.file = io;
         this.is = file.getInputStreamFrom(0L);
     }
 

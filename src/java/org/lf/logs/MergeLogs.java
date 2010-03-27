@@ -89,15 +89,6 @@ public class MergeLogs implements Log {
 			this.pos = pos;
 		}
 
-		@Override
-		public Cell getField(int index) {
-			if (index >= size()) return null;
-			if (!getOur2origIndex().containsKey(index)) return new MergedCell("null", null, Type.TEXT, index);
-			CurPrevIndex entity = pos.cpisAscCur.first();
-			Cell originalCell = entity.first.second.getCells()[getOur2origIndex().get(index)];
-			return new MergedCell(originalCell.getName(), originalCell.getValue(), originalCell.getType(), index);
-		}
-
 		//map<key,value> : key is the index of merged record , value is the index of underlying record
 		private Map<Integer, Integer> getOur2origIndex() {
 			if (our2origIndex != null)
@@ -107,7 +98,7 @@ public class MergeLogs implements Log {
 
 			CurPrevIndex entity = pos.cpisAscCur.first();
 			if (entity.third == 0) {
-				for (int i =0 ; i < entity.first.second.size() ; ++i ) {
+				for (int i =0 ; i < entity.first.second.getCells().length ; ++i ) {
 					our2origIndex.put(i, i);
 				}
 			} else {
@@ -118,24 +109,13 @@ public class MergeLogs implements Log {
 				}
 				our2origIndex.put(timeFieldIndices[0], timeFieldIndices[entity.third]);
 				int indexShift = lengthSum - entity.third + 1;
-				for (int i =0 ; i < entity.first.second.size() ; ++i ) {
+				for (int i =0 ; i < entity.first.second.getCells().length ; ++i ) {
 					if (i < timeFieldIndices[entity.third])     our2origIndex.put(i + indexShift, i);
 					if (i == timeFieldIndices[entity.third])    continue;
 					if (i > timeFieldIndices[entity.third])     our2origIndex.put(i + indexShift - 1, i);
 				}
 			}
 			return our2origIndex;
-		}
-
-		@Override
-		public int size() {
-			if  (size != 0) return size;
-			for (Log log : logs) {
-				size += log.getMetadata().getFieldCount();
-			}
-			//one common field in every log
-			size -= logs.length - 1;
-			return size;
 		}
 
 		@Override
@@ -146,6 +126,24 @@ public class MergeLogs implements Log {
 			}
 			return cells;
 		}
+
+        private int size() {
+            if  (size != 0) return size;
+            for (Log log : logs) {
+                size += log.getMetadata().getFieldCount();
+            }
+            //one common field in every log
+            size -= logs.length - 1;
+            return size;
+        }
+
+        private Cell getField(int index) {
+            if (index >= size()) return null;
+            if (!getOur2origIndex().containsKey(index)) return new MergedCell("null", null, Type.TEXT, index);
+            CurPrevIndex entity = pos.cpisAscCur.first();
+            Cell originalCell = entity.first.second.getCells()[getOur2origIndex().get(index)];
+            return new MergedCell(originalCell.getName(), originalCell.getValue(), originalCell.getType(), index);
+        }
 
 	}
 
@@ -163,8 +161,8 @@ public class MergeLogs implements Log {
                 return compareNullable(pr1,pr2);
 			
 			int res =  timeComparator.compare(
-					(String)pr1.second.getField(timeFieldIndices[o1.third]).getValue(),
-					(String)pr2.second.getField(timeFieldIndices[o1.third]).getValue());
+					(String)pr1.second.getCells()[timeFieldIndices[o1.third]].getValue(),
+					(String)pr2.second.getCells()[timeFieldIndices[o1.third]].getValue());
 			if (res == 0)
 				res = o1.third.compareTo(o2.third);
 
@@ -222,7 +220,7 @@ public class MergeLogs implements Log {
 		}
 	}
 
-	public MergeLogs(Log[] logs, Integer[] fields) {
+	public MergeLogs(Log[] logs, Integer[] fields) throws IOException {
 		this(logs, fields, Comparators.<String>naturalOrder());
 	}
 

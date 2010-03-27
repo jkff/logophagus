@@ -12,6 +12,8 @@ import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.Bookmarks;
 import org.lf.services.ProgramProperties;
 
+import java.io.IOException;
+
 public class MergeLogsPlugin implements AnalysisPlugin {
 
     @Override
@@ -31,13 +33,15 @@ public class MergeLogsPlugin implements AnalysisPlugin {
         for (int i=0; i < args.length; ++i) {
             Attributes as = args[i].attributes;
             Bookmarks b = as.getValue(Bookmarks.class);
-            TODO Convert the position of 'b'
-            TODO Same for filters
             allAttributes[i] = as;
         }
 
-        return new Entity(Attributes.join(allAttributes),
-                new MergeLogs(logs, fields));
+        try {
+            return new Entity(Attributes.join(allAttributes), new MergeLogs(logs, fields));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

@@ -1,10 +1,12 @@
 package org.lf.plugins.analysis.filelog;
 
+import org.lf.io.MappedFile;
+import org.lf.io.RandomAccessFileIO;
+import org.lf.io.compressed.*;
 import org.lf.logs.FileBackedLog;
 import org.lf.logs.Log;
 import org.lf.parser.LogMetadata;
 import org.lf.parser.csv.CSVParser;
-import org.lf.parser.regex.RegexParser;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
@@ -12,11 +14,16 @@ import org.lf.plugins.analysis.Bookmarks;
 import org.lf.services.ProgramProperties;
 
 import com.sun.istack.internal.Nullable;
+import org.lf.ui.util.ProgressDialog;
+import sun.awt.VerticalBagLayout;
 
 import javax.swing.*;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FileBackedLogPlugin implements AnalysisPlugin {
 
@@ -39,32 +46,51 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
         
         LogMetadata logMetadata = new LogMetadata() {
         	private final String names[] = new String[]{"int", "text"};
-			@Override
-			public String[] getFieldNames() {
-				return names;
-			}
-			
-			@Override
-			public String getFieldName(int fieldIndex) {
-				return names[fieldIndex];
-			}
-			
-			@Override
-			public int getFieldIndex(String fieldName) {
-				return 0;
-			}
-			
-			@Override
-			public int getFieldCount() {
-				return names.length;
-			}
-		};
+			@Override public String[] getFieldNames()                 { return names; }
+            @Override public String   getFieldName(int fieldIndex)    { return names[fieldIndex]; }
+            @Override public int      getFieldIndex(String fieldName) { return 0; }
+            @Override public int      getFieldCount()                 { return names.length; }
+        };
 		
         try {
-            Log log = new FileBackedLog(f.getAbsolutePath(),
-                    new CSVParser(logMetadata)
+            RandomAccessFileIO io;
+            if(f.getName().endsWith(".gz") || f.getName().endsWith("zip")) {
+                Codec codec = f.getName().endsWith(".gz") ? new GZipCodec() : new ZipCodec();
+                final CompressedRandomAccessIO cio = new CompressedRandomAccessIO(f.getAbsolutePath(), 1 << 20, 100, codec);
+                final ProgressDialog d = new ProgressDialog(
+                        Frame.getFrames()[0],
+                        "Re-packing compressed file for random access",
+                        "Temp files are saved in " + System.getProperty("java.io.tmpdir") + " and will be deleted on exit" ,
+                        Dialog.ModalityType.APPLICATION_MODAL);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            cio.init(new ProgressListener() {
+                                public boolean reportProgress(final double donePart) {
+                                    d.setProgress(donePart);
+                                    if(donePart == 1.0)
+                                        d.setVisible(false);
+                                    boolean isCanceled = d.isCanceled();
+                                    if(isCanceled)
+                                        d.setVisible(false);
+                                    return !isCanceled;
+                                }
+                            });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+                d.setVisible(true);
+                if(d.isCanceled())
+                    return null;
+                io = cio;
+            } else {
+                io = new MappedFile(f.getAbsolutePath());
+            }
+            Log log = new FileBackedLog(io, new CSVParser(logMetadata));
 //                    new RegexParser( "(\\d+)\\s+(\\w+)\\s*" , '\n', logMetadata)
-            );
 
             Attributes atr = new Attributes();
             atr.addAttribute(new Bookmarks(null));
