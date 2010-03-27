@@ -8,6 +8,10 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This file is a nearly identical reimplementation of 'zran.c'
+ * from the examples to zlib 1.2.3. 
+ */
 class ZRan {
     private static final int SPAN = 1048576;
     private static final int WINSIZE = 32768;
