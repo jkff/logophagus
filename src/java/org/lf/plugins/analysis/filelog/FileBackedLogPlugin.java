@@ -2,7 +2,7 @@ package org.lf.plugins.analysis.filelog;
 
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
-import org.lf.io.compressed.*;
+import org.lf.io.GzipRandomAccessIO;
 import org.lf.logs.FileBackedLog;
 import org.lf.logs.Log;
 import org.lf.parser.LogMetadata;
@@ -15,15 +15,13 @@ import org.lf.services.ProgramProperties;
 
 import com.sun.istack.internal.Nullable;
 import org.lf.ui.util.ProgressDialog;
-import sun.awt.VerticalBagLayout;
+import org.lf.util.ProgressListener;
 
 import javax.swing.*;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FileBackedLogPlugin implements AnalysisPlugin {
 
@@ -55,19 +53,18 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
         try {
             RandomAccessFileIO io;
             if(f.getName().endsWith(".gz") || f.getName().endsWith("zip")) {
-                Codec codec = f.getName().endsWith(".gz") ? new GZipCodec() : new ZipCodec();
-                final CompressedRandomAccessIO cio = new CompressedRandomAccessIO(f.getAbsolutePath(), 1 << 20, 100, codec);
+                final GzipRandomAccessIO cio = new GzipRandomAccessIO(f.getAbsolutePath(), 1 << 20, 100);
                 final ProgressDialog d = new ProgressDialog(
                         Frame.getFrames()[0],
-                        "Re-packing compressed file for random access",
-                        "Temp files are saved in " + System.getProperty("java.io.tmpdir") + " and will be deleted on exit" ,
+                        "Indexing compressed file for random access", "",
                         Dialog.ModalityType.APPLICATION_MODAL);
+                d.setSize(400, 100);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            cio.init(new ProgressListener() {
-                                public boolean reportProgress(final double donePart) {
+                            cio.init(new ProgressListener<Double>() {
+                                public boolean reportProgress(final Double donePart) {
                                     d.setProgress(donePart);
                                     if(donePart == 1.0)
                                         d.setVisible(false);

@@ -120,7 +120,8 @@ public class ScrollableLogViewModel extends Observable {
 
     @Nullable
     public Record getRecord(int index) {
-        if (index >= recBuffer.size()) return null;
+        if (index >= recBuffer.size())
+            return null;
         return recBuffer.get(index).first;
     }
 

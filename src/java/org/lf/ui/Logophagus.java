@@ -1,51 +1,31 @@
 package org.lf.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.event.ContainerAdapter;
-import java.awt.event.ContainerEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTree;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
-
 import org.lf.plugins.analysis.filelog.FileBackedLogPlugin;
 import org.lf.plugins.analysis.filtersubstr.FilterBySubstringPlugin;
 import org.lf.plugins.analysis.highlight.HighlightRegexPlugin;
 import org.lf.plugins.analysis.merge.MergeLogsPlugin;
 import org.lf.plugins.analysis.sidebyside.SideBySidePlugin;
 import org.lf.plugins.analysis.splitbyfield.SplitByFieldValuesPlugin;
-import org.lf.plugins.display.*;
+import org.lf.plugins.display.ViewFieldSplittedLogPlugin;
+import org.lf.plugins.display.ViewLogAsTablePlugin;
+import org.lf.plugins.display.ViewSideBySidePlugin;
 import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
 import org.lf.services.PluginException;
-import org.lf.services.ProgramProperties;
 import org.lf.ui.components.menu.LogophagusMenuBar;
+import org.lf.ui.components.pluginPanel.PluginPanel;
 import org.lf.ui.components.popup.TreeRightClickPopup;
 import org.lf.ui.components.tree.LogsHierarchyView;
-import org.lf.ui.components.pluginPanel.PluginPanel;
 import org.lf.ui.model.LogsHierarchy;
-import org.lf.ui.model.NodeData;;
+import org.lf.ui.model.NodeData;
+
+import javax.swing.*;
+import javax.swing.tree.*;
+import java.awt.*;
+import java.awt.event.ContainerAdapter;
+import java.awt.event.ContainerEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 
 public class Logophagus extends JFrame {
