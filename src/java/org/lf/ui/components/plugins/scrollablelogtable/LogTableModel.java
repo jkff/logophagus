@@ -8,7 +8,6 @@ import javax.swing.table.AbstractTableModel;
 
 import org.lf.logs.Cell;
 import org.lf.logs.Log;
-import org.lf.logs.Record;
 
 class LogTableModel extends AbstractTableModel implements Observer {
     private ScrollableLogViewModel underlyingModel;
@@ -30,14 +29,11 @@ class LogTableModel extends AbstractTableModel implements Observer {
 
     @Override
     public Object getValueAt(int row, int col) {
-<<<<<<< local
-        if (underlyingModel.getRecordCount() > row && underlyingModel.getRecord(row).getCells().length > col){
-            return underlyingModel.getRecord(row).getCells()[col].getValue();
-=======
-        Cell[] cells = underlyingModel.getRecord(row).getCells();
-        if (underlyingModel.getRecordCount() > row && cells.length > col){
-            return cells[col].getValue();
->>>>>>> other
+        if (row < underlyingModel.getRecordCount()) {
+        	Cell[] cells = underlyingModel.getRecord(row).getCells();
+        	if (col < cells.length) {
+        		return cells[col].getValue();
+        	}
         }
         return null;
     }

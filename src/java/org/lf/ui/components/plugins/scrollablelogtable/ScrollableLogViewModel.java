@@ -23,91 +23,91 @@ public class ScrollableLogViewModel extends Observable {
     private Position logEndPos;
     private boolean readingDone;
 
-    private class Navigator extends Thread {
-        private boolean directionForward;
-        private Position fromWhere;
-        private int recordsToRead;
-        private boolean readFromWhere;
-
-        public Navigator() {
-            this.directionForward = true;
-            this.fromWhere = logBeginPos;
-            this.recordsToRead = regionSize;
-            this.readFromWhere = true;
+    private abstract class Navigator extends Thread {
+        //adds records to model. startPos record included
+        final int addRecordsToModel(Position startPos ,int recordsCount, boolean isForward) throws IOException {
+        	Position temp = startPos;
+        	int counter = 1;
+        	for ( ; counter <= recordsCount; ++counter ) {
+        		if (isForward) {
+        			pushEnd(pair(log.readRecord(temp), temp));
+        			if (logEndPos.equals(temp))
+        				break;
+        			temp =  log.next(temp);	
+        		} else {
+        			pushBegin(pair(log.readRecord(temp), temp));
+        			if (logBeginPos.equals(temp))
+        				break;
+        			temp =  log.prev(temp);	
+        		}
+        	}
+        	return counter; 
         }
+    }
 
-        public Navigator(boolean directionForward, Position fromWhere, int recordsToRead, boolean readFromWhere) {
-            this.directionForward = directionForward;
+    
+    private class RelativePosNavigator extends Navigator {
+        private final boolean isForward;
+        private final Position fromWhere;
+        private final int recordsToRead;
+        
+        public RelativePosNavigator(Position fromWhere, boolean isForward, int recordsToRead) {
             this.fromWhere = fromWhere;
+            this.isForward = isForward;
             this.recordsToRead = recordsToRead;
-            this.readFromWhere = readFromWhere;
         }
-
+        
         @Override
         public void run() {
             try {
-                if (logBeginPos == null)    logBeginPos = log.first();
-                if (logBeginPos == null)    return;
-                if (logEndPos == null)      logEndPos = log.last();
-                if (fromWhere == null)      fromWhere = logBeginPos;
-
-                if (recordsToRead == regionSize)    clear();
-
-//                if (readFromWhere && fromWhere.getCorrespondingLog() != log) {
-//                	Position temp = log.next(fromWhere);
-//                	if (temp != null) { 
-//                		fromWhere = log.prev(temp);
-//                	} else { 
-//                		temp = log.prev(fromWhere);
-//                		if (temp == null)
-//                			return;
-//                		fromWhere = log.next(temp);
-//                	}
-//                }
-                
-                int reflectionCount = 0;
-                Position tempPos = fromWhere;
-                
-                
-                // TODO Make this comprehensible to everyone reading the code
-                for (int i = 0; i < recordsToRead; ++i) {
-                    if (i == 0 && readFromWhere)
-                        if (directionForward)
-                            pushBegin(pair(log.readRecord(tempPos), tempPos));
-                        else
-                            pushEnd(pair(log.readRecord(tempPos), tempPos));
-
-                    if (tempPos.equals(logBeginPos)) {
-                        if (++reflectionCount == 2 ) break;
-                        if (!directionForward) {
-                            directionForward = !directionForward;
-                            tempPos = fromWhere;
-                        }
-                    } else if (tempPos.equals(logEndPos)) {
-                        if (++reflectionCount == 2 ) break;
-                        if (directionForward) {
-                            directionForward = !directionForward;
-                            tempPos = fromWhere;
-                        }
-                    }
-
-                    tempPos = directionForward ? log.next(tempPos) : log.prev(tempPos);
-                    if (tempPos == null ||  (i == recordsToRead - 1 && readFromWhere))
-                        break;
-                    if (directionForward)
-                        pushEnd(pair(log.readRecord(tempPos), tempPos));
-                    else
-                        pushBegin(pair(log.readRecord(tempPos), tempPos));
-                }
-
-                
+            	Position tempPos;
+            	if (isForward) {
+            		if (logEndPos.equals(fromWhere)) return;
+            		tempPos = log.next(fromWhere);
+            	} else {
+            		if (logBeginPos.equals(fromWhere)) return;
+            		tempPos = log.prev(fromWhere);
+            	}
+            	addRecordsToModel(tempPos, recordsToRead, isForward);
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
             	setReadingDone(true);
             }
         }
+    }
 
+    private class AbsolutePosNavigator extends Navigator {
+        private final boolean isForward;
+        private Position fromWhere;
+        //if this constructor is used then reading will be done from log start 
+        public AbsolutePosNavigator() {
+            this.isForward = true;
+            this.fromWhere = null;
+        }
+        public AbsolutePosNavigator(Position fromWhere, boolean isForward) {
+            this.fromWhere = fromWhere;
+            this.isForward = isForward;
+        }
+        @Override
+        public void run() {
+            try {
+                if (logBeginPos == null)    logBeginPos = log.first();
+                if (logBeginPos == null)	return;
+                if (logEndPos == null)		logEndPos = log.last();
+                if (logEndPos == null)  	return;
+                if (fromWhere == null)      fromWhere = logBeginPos;
+                clear();
+                
+                int readedRecords = addRecordsToModel(fromWhere, regionSize, isForward);
+                if (readedRecords != regionSize) 
+                	addRecordsToModel(isForward ? log.prev(fromWhere) : log.next(fromWhere), regionSize - readedRecords, !isForward);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+            	setReadingDone(true);
+            }
+        }
     }
 
 
@@ -116,6 +116,7 @@ public class ScrollableLogViewModel extends Observable {
         this.regionSize = regionSize;
         this.readingDone = true;
         this.recBuffer = new CyclicBuffer<Pair<Record, Position>>(regionSize);
+        this.start();
     }
 
     @Nullable
@@ -132,49 +133,49 @@ public class ScrollableLogViewModel extends Observable {
     synchronized public void start() {
         if (!readingDone || isAtBegin()) return;
         readingDone = false;
-        navigatorThread = new Navigator();
+        navigatorThread = new AbsolutePosNavigator();
         navigatorThread.start();
     }
 
     synchronized public void end() {
         if (!readingDone || isAtEnd()) return;
         readingDone = false;
-        navigatorThread = new Navigator(false, logEndPos, regionSize, true);
+        navigatorThread = new AbsolutePosNavigator(logEndPos, false);
         navigatorThread.start();
     }
 
     synchronized public void next() {
         if (!readingDone || isAtEnd()) return;
         readingDone = false;
-        navigatorThread = new Navigator(true, getPosition(getRecordCount() - 1), regionSize, false);
+        navigatorThread = new RelativePosNavigator(getPosition(getRecordCount() - 1), true, regionSize);
         navigatorThread.start();
     }
 
     synchronized public void prev() {
         if (!readingDone || isAtBegin()) return;
         readingDone = false;
-        navigatorThread = new Navigator(false, getPosition(0), regionSize, false);
+        navigatorThread = new RelativePosNavigator(getPosition(0), false, regionSize);
         navigatorThread.start();
     }
 
     synchronized public void shiftUp() {
         if (!readingDone || isAtBegin()) return;
         readingDone = false;
-        navigatorThread = new Navigator(false, getPosition(0), 1, false);
+        navigatorThread = new RelativePosNavigator(getPosition(0), false, 1);
         navigatorThread.start();
     }
 
     synchronized public void shiftDown() {
         if (!readingDone || isAtEnd()) return;
         readingDone = false;
-        navigatorThread = new Navigator(true, getPosition(getRecordCount() - 1), 1, false);
+        navigatorThread = new RelativePosNavigator(getPosition(getRecordCount() - 1), true, 1);
         navigatorThread.start();
     }
 
     synchronized public void shiftTo(Position pos) {
         if (!readingDone || pos.equals(getPosition(0))) return;
         readingDone = false;
-        navigatorThread = new Navigator(true, pos, regionSize, true);
+        navigatorThread = new AbsolutePosNavigator(pos, true);
         navigatorThread.start();
     }
 

@@ -70,7 +70,10 @@ public class FilteredLog implements Log {
         Record rec = underlyingLog.readRecord(pos);
         if (filter.accepts(rec))
             return rec;
-        return readRecord(seek(pos, true));
+        Position resPos = seek(pos,true);
+        if (resPos == null)
+        	resPos = seek(pos, false);
+        return underlyingLog.readRecord(resPos);
     }
 
     public String toString(){
@@ -86,10 +89,11 @@ public class FilteredLog implements Log {
 	//so method invocation can take a lot of time
 	@Override
 	public Position convertToNative(Position pos) throws IOException {
+		if (pos.getCorrespondingLog() == this) return pos;
         if (pos == null) return null;
         if (filter.accepts(underlyingLog.readRecord(pos)))
             return pos;
-        return seek(pos,true);
-
+        Position res = seek(pos,true);
+        return res == null ? seek(pos, false) : res;
 	}
 }
