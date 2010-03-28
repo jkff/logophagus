@@ -1,4 +1,4 @@
-package org.lf.zlib;
+package org.lf.io.zlib;
 
 import com.sun.jna.Memory;
 import org.lf.util.ProgressListener;
@@ -225,13 +225,4 @@ class ZRan {
             ZLib.INSTANCE.inflateEnd(strm);
         }
     }
-//
-//    public static void main(String[] args) throws IOException {
-//        List<Point> index = build_index(
-//                new FileInputStream("c:\\projects\\opensource\\logophagus\\test-data\\test3.gz"), SPAN);
-//        Memory buf = new Memory(1001);
-//        extract(new RandomAccessFile("c:\\projects\\opensource\\logophagus\\test-data\\test3.gz", "r"), index,
-//                0, buf, 1000);
-//        System.out.println(buf.getString(0));
-//    }
 }

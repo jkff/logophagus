@@ -1,4 +1,4 @@
-package org.lf.zlib;
+package org.lf.io.zlib;
 
 import com.sun.jna.Memory;
 import org.lf.util.ProgressListener;

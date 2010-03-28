@@ -7,7 +7,7 @@ import org.lf.parser.ScrollableInputStream;
 import org.lf.util.CountingInputStream;
 import org.lf.util.Function;
 import org.lf.util.ProgressListener;
-import org.lf.zlib.RandomAccessGzip;
+import org.lf.io.zlib.RandomAccessGzip;
 
 import java.io.*;
 import java.util.Arrays;
