@@ -17,6 +17,7 @@ public class ProgramProperties {
     public static final String iconsPath;
    
     static {
+        //System.setProperty("jna.library.path", System.getProperty("user.dir")+ "/lib");
     	String sep = System.getProperty("file.separator");
     	iconsPath = System.getProperty("user.dir") +sep+ "src"+sep+"java"+sep+"org"+sep+"lf"+sep+"ui"+sep+"icons"+sep;
         String userHomePath = System.getProperty("user.home");

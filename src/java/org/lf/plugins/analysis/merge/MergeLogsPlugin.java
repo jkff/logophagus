@@ -1,5 +1,8 @@
 package org.lf.plugins.analysis.merge;
 
+import java.io.IOException;
+import java.util.List;
+
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -29,19 +32,29 @@ public class MergeLogsPlugin implements AnalysisPlugin {
             logs[i] = (Log) args[i].data;
             fields[i] = Integer.parseInt(index);
         }
-        Attributes[] allAttributes = new Attributes[args.length];
-        for (int i=0; i < args.length; ++i) {
-            Attributes as = args[i].attributes;
-            Bookmarks b = as.getValue(Bookmarks.class);
-            allAttributes[i] = as;
-        }
 
-        try {
-            return new Entity(Attributes.join(allAttributes), new MergeLogs(logs, fields));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+		Log mergedLog = null;
+		try {
+			mergedLog = new MergeLogs(logs, fields);
+
+			Attributes[] childAttributes = new Attributes[args.length];
+			for (int i = 0 ; i < args.length ; ++i) {
+				childAttributes[i] = args[i].attributes;
+			}
+			
+	        //TODO bookmarks use context approach -> so it is easy to overlap child positions by merged positions
+	        // but it's better to do this in gui as it can take a lot of time because of position convertation
+			Attributes myAttributes = Attributes.join(childAttributes, mergedLog);
+
+			if (mergedLog != null)
+				return new Entity(myAttributes, mergedLog);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return null;
     }
 
     @Override

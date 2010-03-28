@@ -1,7 +1,9 @@
 package org.lf.plugins.analysis;
 
+import java.io.IOException;
 import java.util.*;
 
+import org.lf.logs.Log;
 import org.lf.parser.Position;
 import org.lf.plugins.AttributeInstance;
 import org.lf.util.CollectionFactory;
@@ -9,37 +11,49 @@ import org.lf.util.CollectionFactory;
 import static org.lf.util.CollectionFactory.newList;
 
 public class Bookmarks implements AttributeInstance<BookmarksConcept,Bookmarks> {
-    private Bookmarks parent;
-    private Map<String, Position> data = CollectionFactory.newLinkedHashMap();
+    private final Bookmarks parent;
+    private final Log log;
+    
+    private Map<String, Position> myBookmarks = CollectionFactory.newLinkedHashMap();
 
-    public Bookmarks(Bookmarks parent) {
+    public Bookmarks(Bookmarks parent, Log bookmarksOwner) {
         this.parent = parent;
+        this.log = bookmarksOwner;
     }
 
 
     public List<String> getNames() {
-        ArrayList<String> result = newList(data.keySet());
+        ArrayList<String> result = newList(myBookmarks.keySet());
         if (parent != null)
             result.addAll(parent.getNames());
         return result;
     }
 
-    public Position getValue(String name) {
-        if (data.containsKey(name))
-            return data.get(name);
+    //positions from myBookmarks are not converted.
+    //Caching for converted positions values 
+    public Position getValue(String name) throws IOException {
+        if (myBookmarks.containsKey(name))
+            return myBookmarks.get(name);
         if (parent == null)
             return null;
-        return parent.getValue(name);
+        Position parentPos = parent.getValue(name);
+        if (parentPos == null) return null;
+        Position nativePos = log.convertToNative(parentPos);
+        addBookmark(name, nativePos);
+        return nativePos;
     }
 
     public int getSize() {
-        return data.size() + (parent == null ? 0 : parent.getSize());
+        return myBookmarks.size() + (parent == null ? 0 : parent.getSize());
     }
 
+    //it is only possible to add bookmark whose position belongs to this.log 
     public boolean addBookmark(String name, Position pos) {
-        if (data.containsKey(name))
+    	if (pos.getCorrespondingLog() != this.log) 
+    		throw new IllegalArgumentException("Position must be from bookmark owner log");
+        if (myBookmarks.containsKey(name))
             return false;
-        data.put(name, pos);
+        myBookmarks.put(name, pos);
         return true;
     }
 
@@ -49,10 +63,8 @@ public class Bookmarks implements AttributeInstance<BookmarksConcept,Bookmarks> 
     }
 
     @Override
-    public Bookmarks createChild() {
-
-        return new Bookmarks(this);
+    public Bookmarks createChild(Log attributeOwner) {
+        return new Bookmarks(this, attributeOwner);
     }
-
 
 }

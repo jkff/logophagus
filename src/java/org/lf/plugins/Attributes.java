@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.lf.logs.Log;
+
 import static org.lf.util.CollectionFactory.newHashMap;
 
 
@@ -16,11 +18,11 @@ public class Attributes {
 
     private Map<Class, AttributeInstance<?,?>> data = newHashMap();
 
-    public Attributes createSuccessor() {
+    public Attributes createSuccessor(Log attributesOwner) {
         Attributes result = new Attributes();
         Set<Entry<Class, AttributeInstance<?,?>>> set = data.entrySet();
         for (Entry<Class, AttributeInstance<?,?>> cur : set) {
-            result.addAttribute(cur.getValue().createChild());
+            result.addAttribute(cur.getValue().createChild(attributesOwner));
         }
         return result;
     }
@@ -40,7 +42,7 @@ public class Attributes {
         return null;
     }
 
-    public static Attributes join(Attributes[] others) {
+    public static Attributes join(Attributes[] others, Log attributeOwner) {
         Attributes result = new Attributes();
 
         Map<Class, Collection<AttributeInstance<?,?>>> othersAttrMap = new HashMap<Class, Collection<AttributeInstance<?,?>>>();
@@ -61,7 +63,7 @@ public class Attributes {
 
         for (Entry<Class, Collection<AttributeInstance<?,?>>> entry : othersAttrMap.entrySet()) {
             AttributeInstance instance = entry.getValue().iterator().next();
-            AttributeInstance joinedAttribute = instance.getConcept().join(entry.getValue());
+            AttributeInstance joinedAttribute = instance.getConcept().join(entry.getValue(), attributeOwner);
             result.addAttribute(joinedAttribute);
         }
 

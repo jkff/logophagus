@@ -39,15 +39,22 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
             }
 
             public boolean accepts(Record r) {
+<<<<<<< local
+                for (int i = 0; i < r.getCells().length; ++i) {
+                	Object fieldVal = r.getCells()[i].getValue();
+                    if (fieldVal != null && ((String)fieldVal).contains(substring))
+=======
                 for(Cell cell : r.getCells()) {
                     if(cell.getValue() != null && ((String)cell.getValue()).contains(substring))
+>>>>>>> other
                         return true;
                 }
                 return false;
             }
         };
+        
         return new Entity(
-                args[0].attributes.createSuccessor(), 
+        		args[0].attributes.createSuccessor(log), 
                 new FilteredLog(log, filter));
     }
 

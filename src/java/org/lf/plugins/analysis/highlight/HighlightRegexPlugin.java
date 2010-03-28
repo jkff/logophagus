@@ -35,7 +35,7 @@ public class HighlightRegexPlugin implements AnalysisPlugin {
         if (regex == null)
             return null;
         
-        Attributes atr = args[0].attributes.createSuccessor();
+        Attributes atr = args[0].attributes.createSuccessor(log);
         
         Highlighter highlighter = atr.getValue(Highlighter.class);
         if (highlighter == null) { 
@@ -49,8 +49,13 @@ public class HighlightRegexPlugin implements AnalysisPlugin {
             private final Pattern p = Pattern.compile(regex);
             @Override
             public Color getColor(Record r) {
+<<<<<<< local
+                for (int i = 0; i < r.getCells().length; ++i) {
+                    if (r.getCells()[i].getValue() != null && p.matcher((String)r.getCells()[i].getValue()).find()) return Color.RED;
+=======
                 for(Cell cell : r.getCells()) {
                     if (cell.getValue() != null && p.matcher((String)cell.getValue()).find()) return Color.RED;
+>>>>>>> other
                 }
                 return null;
             }

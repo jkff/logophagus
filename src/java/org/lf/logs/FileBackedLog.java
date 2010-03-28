@@ -99,4 +99,10 @@ public class FileBackedLog implements Log {
 		return parser.getLogMetadata();
 	}
 
+	@Override
+	public Position convertToNative(Position p) throws IOException {
+		if (p.getCorrespondingLog() != this) return null;
+		return p;
+	}
+
 }

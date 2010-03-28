@@ -8,7 +8,9 @@ import org.lf.plugins.analysis.Bookmarks;
 import org.lf.plugins.analysis.highlight.Highlighter;
 import org.lf.ui.util.GUIUtils;
 
+import java.awt.HeadlessException;
 import java.awt.event.*;
+import java.io.IOException;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -187,16 +189,24 @@ public class ScrollableLogView extends JPanel implements Observer {
                         "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE);
                 if (name == null) return;
 
-                if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
-                    JOptionPane.showMessageDialog(
-                            ScrollableLogView.this,
-                            "Bookmark with such name already exists. Please input a different name.");
-                } else {
-                    int row = table.getSelectedRow();
-                    if (row == -1) row = 0;
-                    attributes.getValue(Bookmarks.class).addBookmark(name, logSegmentModel.getPosition(row));
-                    return;
-                }
+                try {
+					if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
+					    JOptionPane.showMessageDialog(
+					            ScrollableLogView.this,
+					            "Bookmark with such name already exists. Please input a different name.");
+					} else {
+					    int row = table.getSelectedRow();
+					    if (row == -1) row = 0;
+					    attributes.getValue(Bookmarks.class).addBookmark(name, logSegmentModel.getPosition(row));
+					    return;
+					}
+				} catch (HeadlessException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
             }
         }
 
@@ -209,8 +219,15 @@ public class ScrollableLogView extends JPanel implements Observer {
             JComboBox cb = (JComboBox) e.getSource();
             String selectedBookmark = (String) cb.getSelectedItem();
             if (selectedBookmark == null) return;
-            Position pos = attributes.getValue(Bookmarks.class).getValue(selectedBookmark);
-            logSegmentModel.shiftTo(pos);
+            Position pos;
+			try {
+				pos = attributes.getValue(Bookmarks.class).getValue(selectedBookmark);
+	            logSegmentModel.shiftTo(pos);
+
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
             //TODO think about better solution
             //int row = getCorrespondingVisualRow(pos);
             //table.setRowSelectionInterval(row, row);

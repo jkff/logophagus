@@ -45,7 +45,7 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
 		}
         
         LogAndField result = new LogAndField(log, index);
-        return new Entity(args[0].attributes.createSuccessor(), result);
+        return new Entity(args[0].attributes.createSuccessor(log), result);
     }
 
 

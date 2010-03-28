@@ -43,13 +43,13 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
         }
         
         LogMetadata logMetadata = new LogMetadata() {
-        	private final String names[] = new String[]{"int", "text"};
+        	private final String names[] = new String[]{"int", "text", "text", "text", "text"};
 			@Override public String[] getFieldNames()                 { return names; }
             @Override public String   getFieldName(int fieldIndex)    { return names[fieldIndex]; }
             @Override public int      getFieldIndex(String fieldName) { return 0; }
             @Override public int      getFieldCount()                 { return names.length; }
         };
-		
+
         try {
             RandomAccessFileIO io;
             if(f.getName().endsWith(".gz") || f.getName().endsWith("zip")) {
@@ -90,7 +90,7 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 //                    new RegexParser( "(\\d+)\\s+(\\w+)\\s*" , '\n', logMetadata)
 
             Attributes atr = new Attributes();
-            atr.addAttribute(new Bookmarks(null));
+            atr.addAttribute(new Bookmarks(null, log));
             return new Entity(atr, log);
         } catch (IOException e) {
             e.printStackTrace();

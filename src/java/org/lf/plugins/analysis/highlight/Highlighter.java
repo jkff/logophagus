@@ -1,5 +1,6 @@
 package org.lf.plugins.analysis.highlight;
 
+import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.plugins.AttributeInstance;
 
@@ -39,13 +40,13 @@ public class Highlighter implements AttributeInstance<HighlighterConcept,Highlig
     }
 
     @Override
-    public Highlighter createChild() {
-        return new Highlighter(Arrays.asList(this));
-    }
-
-    @Override
     public HighlighterConcept getConcept() {
         return new HighlighterConcept();
     }
+
+	@Override
+	public Highlighter createChild(Log attributeOwner) {
+        return new Highlighter(Arrays.asList(this));
+	}
 
 }

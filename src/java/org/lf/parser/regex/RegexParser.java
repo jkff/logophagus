@@ -104,12 +104,19 @@ public class RegexParser implements Parser {
 					cellsList.add(new MatcherCell(m.group(i), logMetadata.getFieldName(i -1), Type.TEXT, i -1));
 				}
 			}
+<<<<<<< local
+=======
             cells = cellsList.toArray(new Cell[0]);
+>>>>>>> other
 		}
 
 		@Override
 		public Cell[] getCells() {
+<<<<<<< local
+			return cells.toArray(new Cell[0]);
+=======
 			return cells;
+>>>>>>> other
 		}
 	}
 

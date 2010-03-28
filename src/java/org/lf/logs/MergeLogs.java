@@ -58,6 +58,7 @@ public class MergeLogs implements Log {
 			this.value = value;
 			this.type = type;
 		}
+
 		
 		@Override
 		public int getIndexInRecord() {
@@ -82,13 +83,30 @@ public class MergeLogs implements Log {
 	
 	private class MergedRecord implements Record {
 		MergedPosition pos;
-		int size = 0;
+		private int size = 0;
 		private Map<Integer, Integer> our2origIndex;
-
+		private Cell[] cells;
 		public MergedRecord(MergedPosition pos) {
 			this.pos = pos;
+			this.cells = new Cell[size()];
+			fillCells();
 		}
 
+<<<<<<< local
+		private void fillCells() {
+			for(int i = 0 ; i < size(); ++i) {
+				if (!getOur2origIndex().containsKey(i)) {
+					cells[i] = new MergedCell("null", null, Type.TEXT, i);
+				} else {;
+					CurPrevIndex entity = pos.cpisAscCur.first();
+					Cell originalCell = entity.first.second.getCells()[getOur2origIndex().get(i)];
+					cells[i] = new MergedCell(originalCell.getName(), originalCell.getValue(), originalCell.getType(), i);
+				}
+			}			
+		}
+		
+=======
+>>>>>>> other
 		//map<key,value> : key is the index of merged record , value is the index of underlying record
 		private Map<Integer, Integer> getOur2origIndex() {
 			if (our2origIndex != null)
@@ -98,7 +116,11 @@ public class MergeLogs implements Log {
 
 			CurPrevIndex entity = pos.cpisAscCur.first();
 			if (entity.third == 0) {
+<<<<<<< local
+				for (int i = 0 ; i < entity.first.second.getCells().length ; ++i ) {
+=======
 				for (int i =0 ; i < entity.first.second.getCells().length ; ++i ) {
+>>>>>>> other
 					our2origIndex.put(i, i);
 				}
 			} else {
@@ -109,7 +131,11 @@ public class MergeLogs implements Log {
 				}
 				our2origIndex.put(timeFieldIndices[0], timeFieldIndices[entity.third]);
 				int indexShift = lengthSum - entity.third + 1;
+<<<<<<< local
+				for (int i = 0 ; i < entity.first.second.getCells().length ; ++i ) {
+=======
 				for (int i =0 ; i < entity.first.second.getCells().length ; ++i ) {
+>>>>>>> other
 					if (i < timeFieldIndices[entity.third])     our2origIndex.put(i + indexShift, i);
 					if (i == timeFieldIndices[entity.third])    continue;
 					if (i > timeFieldIndices[entity.third])     our2origIndex.put(i + indexShift - 1, i);
@@ -118,12 +144,21 @@ public class MergeLogs implements Log {
 			return our2origIndex;
 		}
 
+<<<<<<< local
+		private int size() {
+			if  (size != 0) return size;
+			for (Log log : logs) {
+				size += log.getMetadata().getFieldCount();
+			}
+			//one common field in every log
+			size -= logs.length - 1;
+			return size;
+		}
+
+=======
+>>>>>>> other
 		@Override
 		public Cell[] getCells() {
-			Cell[] cells = new Cell[size()];
-			for(int i = 0 ; i < size(); ++i) {
-				cells[i] = getField(i);
-			}
 			return cells;
 		}
 
@@ -256,7 +291,7 @@ public class MergeLogs implements Log {
 	public Position first() throws IOException {
 		List<CurPrevIndex> p = newList();
 		for(int i = 0; i < logs.length; ++i) {
-			Position curPos = getLogBorders(i).first;
+			Position curPos = logsBorders[i].first;
 			PosRec cur = new PosRec(curPos, logs[i].readRecord(curPos));
 			p.add(new CurPrevIndex(cur, null, i));
 		}
@@ -267,7 +302,7 @@ public class MergeLogs implements Log {
 	public Position last() throws IOException {
 		List<CurPrevIndex> p = newList();
 		for(int i = 0; i < logs.length; ++i) {
-			Position lastPos = getLogBorders(i).second;
+			Position lastPos = logsBorders[i].second;
 			PosRec prev = new PosRec(lastPos, logs[i].readRecord(lastPos));
 			p.add(new CurPrevIndex(null, prev , i));
 		}
@@ -276,7 +311,7 @@ public class MergeLogs implements Log {
 
 	@Override
 	public Position next(Position pos) throws IOException {
-		MergedPosition p = getMergedPosition(pos);
+		MergedPosition p = (MergedPosition)convertToNative(pos);
 		// Specification:
 			// readRecord(next(p)) is the earliest record in the union of all records
 			// in all logs, later than readRecord(p).
@@ -290,7 +325,7 @@ public class MergeLogs implements Log {
 		curSortedCopy.remove(cur);
 		prevSortedCopy.remove(cur);
 
-		Position nextPos = cur.first.first.equals(getLogBorders(cur.third).second) ? null : logs[cur.third].next(cur.first.first);       
+		Position nextPos = cur.first.first.equals(logsBorders[cur.third].second) ? null : logs[cur.third].next(cur.first.first);       
 		PosRec nextPair = (nextPos==null ? null : new PosRec(nextPos, logs[cur.third].readRecord(nextPos)) );
 		CurPrevIndex newEntity = new CurPrevIndex(nextPair, cur.first, cur.third);
 		curSortedCopy.add(newEntity);
@@ -301,7 +336,7 @@ public class MergeLogs implements Log {
 
 	@Override
 	public Position prev(Position pos) throws IOException {
-		MergedPosition p = getMergedPosition(pos);
+		MergedPosition p = (MergedPosition)convertToNative(pos);
 
 		if (p == null) 
 			throw new IllegalArgumentException("Unsupported position for this log.");
@@ -312,7 +347,7 @@ public class MergeLogs implements Log {
 		CurPrevIndex cur = prevSortedCopy.last();
 		curSortedCopy.remove(cur);
 		prevSortedCopy.remove(cur);
-		Position prevPos = getLogBorders(cur.third).first.equals(cur.second.first)? null : logs[cur.third].prev(cur.second.first);
+		Position prevPos = logsBorders[cur.third].first.equals(cur.second.first)? null : logs[cur.third].prev(cur.second.first);
 		PosRec prevPair = (prevPos==null ? null : new PosRec(prevPos, logs[cur.third].readRecord(prevPos)) );
 		CurPrevIndex newEntity = new CurPrevIndex(cur.second, prevPair, cur.third);
 		curSortedCopy.add(newEntity);
@@ -322,7 +357,7 @@ public class MergeLogs implements Log {
 
 	@Override
 	public Record readRecord(Position pos) throws IOException {
-		MergedPosition p = getMergedPosition(pos);
+		MergedPosition p = (MergedPosition)convertToNative(pos);
 		if (p == null) 
 			throw new IllegalArgumentException("Can't read record corresponding to such pos.");
 		return new MergedRecord(p);
@@ -363,14 +398,14 @@ public class MergeLogs implements Log {
 		};
 	}
 
-	@Nullable
-	private MergedPosition getMergedPosition(Position pos) throws IOException {
-		if (pos.getClass() == MergedPosition.class)
-			return (MergedPosition)pos;
+	@Override
+	public Position convertToNative(Position p) throws IOException{
+		if (p.getClass() == MergedPosition.class)
+			return (MergedPosition)p;
 
 		int logOfPos = -1;
 		for (int i = 0; i < logs.length; ++i) {
-			if (logs[i] == pos.getCorrespondingLog()) {
+			if (logs[i] == p.getCorrespondingLog()) {
 				logOfPos = i;
 				break;
 			}
@@ -383,7 +418,7 @@ public class MergeLogs implements Log {
 		MergedPosition lastPos = (MergedPosition)this.last();
 
 		while (	!(	curPos.cpisAscCur.first().third == logOfPos	&&
-				curPos.cpisAscCur.first().first.first.equals(pos))
+				curPos.cpisAscCur.first().first.first.equals(p))
 		) 
 		{
 			if (curPos.equals(lastPos)) return null;
@@ -393,7 +428,5 @@ public class MergeLogs implements Log {
 		return curPos;
 	}
 
-	private Pair<Position, Position> getLogBorders(int index) throws IOException {
-		return logsBorders[index];
-	}
+
 }

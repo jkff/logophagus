@@ -4,6 +4,7 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 
 interface ZLib extends Library {
+	
     public static ZLib INSTANCE = (ZLib) Native.loadLibrary("zlib1", ZLib.class);
 
     int inflatePrime(z_stream stream, int bits, int value);

@@ -11,6 +11,9 @@ import com.sun.istack.internal.Nullable;
 public interface Log {
 
     public LogMetadata getMetadata();
+    
+    @Nullable
+    public Position convertToNative(Position p) throws IOException;
 
     /**
      * Points to the first record in the log

@@ -26,7 +26,7 @@ public class FilteredLog implements Log {
         pos = isForward ? underlyingLog.next(pos) : underlyingLog.prev(pos);
         while (true) {
             if (filter.accepts(underlyingLog.readRecord(pos))) return pos;
-            if (pos.equals(borderPos))                            return null;
+            if (pos.equals(borderPos))                         return null;
             pos = isForward ? underlyingLog.next(pos) : underlyingLog.prev(pos);
         }
     }
@@ -80,5 +80,16 @@ public class FilteredLog implements Log {
 	@Override
 	public LogMetadata getMetadata() {
 		return underlyingLog.getMetadata();
+	}
+
+	//find first position that accepts filter and that equals to input pos or after it
+	//so method invocation can take a lot of time
+	@Override
+	public Position convertToNative(Position pos) throws IOException {
+        if (pos == null) return null;
+        if (filter.accepts(underlyingLog.readRecord(pos)))
+            return pos;
+        return seek(pos,true);
+
 	}
 }

@@ -30,9 +30,14 @@ class LogTableModel extends AbstractTableModel implements Observer {
 
     @Override
     public Object getValueAt(int row, int col) {
+<<<<<<< local
+        if (underlyingModel.getRecordCount() > row && underlyingModel.getRecord(row).getCells().length > col){
+            return underlyingModel.getRecord(row).getCells()[col].getValue();
+=======
         Cell[] cells = underlyingModel.getRecord(row).getCells();
         if (underlyingModel.getRecordCount() > row && cells.length > col){
             return cells[col].getValue();
+>>>>>>> other
         }
         return null;
     }
