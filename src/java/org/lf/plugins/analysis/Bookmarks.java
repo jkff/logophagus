@@ -30,7 +30,7 @@ public class Bookmarks implements AttributeInstance<BookmarksConcept,Bookmarks> 
     }
 
     //positions from myBookmarks are not converted.
-    //Caching for converted positions values 
+    //Caching for converted positions 
     public Position getValue(String name) throws IOException {
         if (myBookmarks.containsKey(name))
             return myBookmarks.get(name);
@@ -50,8 +50,8 @@ public class Bookmarks implements AttributeInstance<BookmarksConcept,Bookmarks> 
     //it is only possible to add bookmark whose position belongs to this.log 
     public boolean addBookmark(String name, Position pos) {
     	if (pos.getCorrespondingLog() != this.log) 
-    		throw new IllegalArgumentException("Position must be from bookmark owner log");
-        if (myBookmarks.containsKey(name))
+    		throw new IllegalArgumentException("Position("+pos.getClass()+") must be from bookmark owner log("+log.getClass()+ ")");
+        if (getNames().contains(name))
             return false;
         myBookmarks.put(name, pos);
         return true;

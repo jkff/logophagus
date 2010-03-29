@@ -12,10 +12,8 @@ import org.lf.logs.MergeLogs;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
-import org.lf.plugins.analysis.Bookmarks;
 import org.lf.services.ProgramProperties;
 
-import java.io.IOException;
 
 public class MergeLogsPlugin implements AnalysisPlugin {
 

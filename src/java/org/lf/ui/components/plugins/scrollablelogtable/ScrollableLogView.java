@@ -102,11 +102,11 @@ public class ScrollableLogView extends JPanel implements Observer {
         this.table.setDefaultRenderer(String.class, cellRenderer);
         this.table.setSelectionModel(tableSelectionModel);
         this.table.addKeyListener(new TableKeyListener());
-        tableSelectionModel.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                table.repaint();
-            }
-        });
+//        tableSelectionModel.addListSelectionListener(new ListSelectionListener() {
+//            public void valueChanged(ListSelectionEvent e) {
+//                table.repaint();
+//            }
+//        });
 
         scrollTable = new JScrollPane(this.table);
         scrollTable.addMouseWheelListener( new ScrollBarMouseWheelListener());
@@ -117,9 +117,9 @@ public class ScrollableLogView extends JPanel implements Observer {
         this.add(scrollTable);
         this.add(Box.createVerticalStrut(12));
         this.add(this.progressBar);
-        this.setVisible(true);
         this.logSegmentModel.addObserver(this);
         update(logSegmentModel, null);
+        this.setVisible(true);
     }
 
     public Position getSelectedRecord() {
@@ -154,14 +154,15 @@ public class ScrollableLogView extends JPanel implements Observer {
     }
 
     private void updateControls() {
-        if (logSegmentModel.isReadingDone()) {
+        if (!logSegmentModel.isReadingDone() || logSegmentModel.getRecordCount() == 0) {
+            disableControls();
+        } else {
             enableControls();
             if (logSegmentModel.isAtBegin())
                 startButton.setEnabled(false);
             if (logSegmentModel.isAtEnd())
                 endButton.setEnabled(false);
-        } else
-            disableControls();
+        }
     }
 
     private void enableControls() {
@@ -189,24 +190,19 @@ public class ScrollableLogView extends JPanel implements Observer {
                         "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE);
                 if (name == null) return;
 
-                try {
-					if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
-					    JOptionPane.showMessageDialog(
-					            ScrollableLogView.this,
-					            "Bookmark with such name already exists. Please input a different name.");
-					} else {
-					    int row = table.getSelectedRow();
-					    if (row == -1) row = 0;
-					    attributes.getValue(Bookmarks.class).addBookmark(name, logSegmentModel.getPosition(row));
-					    return;
+					try {
+						if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
+						    JOptionPane.showMessageDialog(
+						            ScrollableLogView.this,
+						            "Bookmark with such name already exists. Please input a different name.");
+						} else {
+						    int row = table.getSelectedRow();
+						    if (row == -1) row = 0;
+						    attributes.getValue(Bookmarks.class).addBookmark(name, logSegmentModel.getPosition(row));
+						}
+					} catch (IOException e1) {
+						e1.printStackTrace();
 					}
-				} catch (HeadlessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
             }
         }
 

@@ -47,9 +47,8 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
             }
         };
         
-        return new Entity(
-        		args[0].attributes.createSuccessor(log), 
-                new FilteredLog(log, filter));
+        Log fLog = new FilteredLog(log, filter);
+        return new Entity(args[0].attributes.createSuccessor(fLog), fLog);
     }
 
     public String getName() {

@@ -43,12 +43,10 @@ class LogTableModel extends AbstractTableModel implements Observer {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                if ("CHANGE_RECORD_SIZE".equals(message))
-                    fireTableStructureChanged();
-                else if ("ADD_END".equals(message)) {
+                if ("ADD_TO_END".equals(message)) {
                     fireTableRowsDeleted(0, 0);
                     fireTableRowsInserted(getRowCount()-1, getRowCount()-1);
-                } else if ("ADD_BEGIN".equals(message)) {
+                } else if ("ADD_TO_BEGIN".equals(message)) {
                     fireTableRowsInserted(0,0);
                     fireTableRowsDeleted(getRowCount()-1, getRowCount()-1);
                 } else
