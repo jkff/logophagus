@@ -58,13 +58,6 @@ public interface Log {
      * @throws IOException if :
      *  - during position transformation occur IOException
      *  
-     *   it is required from this method that invocation of following function return true if Position p != null and p != last():  
-     *   boolean checkNext(p) {
-     *   	Position p = next(p);
-     *   	if (p.equals(last()) return true;
-     *		if (p == null) return false;
-     *   	checkNext(p);  
-     *   } 
      */
     @Nullable
     public Position next(Position pos) throws IOException;
@@ -80,14 +73,6 @@ public interface Log {
      *  - null ,if position equals first() position
      * @throws IOException if :
      *  - during position transformation occur IOException
-     *  
-     *   it is required from this method that invocation of following function return true if Position p != null and p != first():  
-     *   boolean checkPrev(p) {
-     *   	Position p = prev(p);
-     *   	if (p.equals(first()) return true;
-     *		if (p == null) return false;
-     *   	checkPrev(p);  
-     *   } 
      */
     @Nullable
     public Position prev(Position pos) throws IOException;

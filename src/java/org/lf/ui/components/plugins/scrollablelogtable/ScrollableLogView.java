@@ -8,13 +8,10 @@ import org.lf.plugins.analysis.Bookmarks;
 import org.lf.plugins.analysis.highlight.Highlighter;
 import org.lf.ui.util.GUIUtils;
 
-import java.awt.HeadlessException;
 import java.awt.event.*;
 import java.io.IOException;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
 
 import java.util.Observable;
@@ -188,7 +185,7 @@ public class ScrollableLogView extends JPanel implements Observer {
                 String name = JOptionPane.showInputDialog(
                         ScrollableLogView.this,
                         "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE);
-                if (name == null) return;
+                if (name == null || name.equals("")) return;
 
 					try {
 						if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
@@ -199,6 +196,7 @@ public class ScrollableLogView extends JPanel implements Observer {
 						    int row = table.getSelectedRow();
 						    if (row == -1) row = 0;
 						    attributes.getValue(Bookmarks.class).addBookmark(name, logSegmentModel.getPosition(row));
+						    return;
 						}
 					} catch (IOException e1) {
 						e1.printStackTrace();

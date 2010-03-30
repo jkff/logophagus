@@ -57,7 +57,7 @@ public class BufferPool<B, K, H> {
 
         // Wait till there's space in the buffer pool
         if (hash2buf.size() >= maxBuffers) {
-            // No space: gc and try again.
+            // No space: garbageCollect() and try again.
             while (true) {
                 garbageCollectBuffers();
                 if (hash2buf.size() >= maxBuffers)

@@ -11,7 +11,6 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     private BufferPool<byte[], Long, Long>.Buffer buf;
 
     private int offsetInBuffer;
-
     private boolean isOpen;
     private BufferPool<byte[], Long, Long> bufferPool;
     private long fileSize;
