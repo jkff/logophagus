@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Observable;
 
 
+import org.lf.formatterlog.FormattedLog;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.parser.Position;
@@ -14,10 +15,9 @@ import org.lf.util.Pair;
 import com.sun.istack.internal.Nullable;
 
 public class ScrollableLogViewModel extends Observable {
-	// TODO Read "Java concurrency in practice" and insert proper synchronization
 	private final CyclicBuffer<Pair<Record,Position>> recBuffer;
 	private final int regionSize;
-	private final Log log;
+	private final FormattedLog log;
 	private Thread navigatorThread;
 	private Position logBeginPos;
 	private Position logEndPos;
@@ -121,7 +121,7 @@ public class ScrollableLogViewModel extends Observable {
 	}
 
 
-	public ScrollableLogViewModel(Log log, int regionSize) {
+	public ScrollableLogViewModel(FormattedLog log, int regionSize) {
 		this.log = log;
 		this.regionSize = regionSize;
 		this.readingDone = true;
@@ -223,12 +223,12 @@ public class ScrollableLogViewModel extends Observable {
 		return false;
 	}
 
-	Log getLog() {
+	FormattedLog getLog() {
 		return this.log;
 	}
 
 	int getRecordSize() {
-		return log.getMetadata().getFieldCount();
+		return log.getFields().length;
 	}
 
 	synchronized private void pushBegin(Pair<Record, Position> pair) {

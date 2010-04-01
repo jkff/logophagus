@@ -15,7 +15,6 @@ import static org.lf.util.CollectionFactory.newHashMap;
 
 
 public class Attributes {
-
     private Map<Class, AttributeInstance<?,?>> data = newHashMap();
 
     public Attributes createSuccessor(Log attributesOwner) {

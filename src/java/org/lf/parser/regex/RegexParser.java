@@ -1,68 +1,123 @@
 package org.lf.parser.regex;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.lf.logs.Cell;
+import org.lf.logs.Field;
 import org.lf.logs.Record;
-import org.lf.logs.Cell.Type;
 import org.lf.parser.*;
-import org.lf.parser.LogMetadata;
+import org.lf.util.Triple;
 
-import static org.lf.util.CollectionFactory.newList;
 
 public class RegexParser implements Parser {
-	private final Pattern pattern;
+	private final Pattern[] patterns;
 	private final char recordDelimeter;
-	private final LogMetadata logMetadata;
+	private final Field[][] regexFields;
+	private final int maxLinesPerRecord;
+	
+	private abstract class ReadableSink extends Sink {
+		public abstract String getReceivedChars();
+	}
 
-	public RegexParser(String regex, char recordDelimeter, LogMetadata logMetadata) {
-		this.pattern = Pattern.compile(regex);
+	private class OrderedReadableSink extends ReadableSink {
+		private final boolean isForward;
+		private final StringBuilder strB;
+		public OrderedReadableSink(boolean isForward) {
+			this.isForward = isForward;
+			this.strB = new StringBuilder();
+		}
+		
+		@Override
+		public String getReceivedChars() {
+            if(isForward)
+                return strB.toString();
+            StringBuilder rev = new StringBuilder();
+            rev.append(strB);
+            rev.reverse();
+            return rev.toString();
+		}
+
+		@Override
+		public void onChar(char c) {
+            strB.append(c);
+		}
+	}
+
+	public RegexParser(String[] regexes, Field[][] regexFields, char recordDelimeter, int maxLinesPerRecord) {
+		this.patterns = new Pattern[regexes.length];
+		for(int i = 0; i < regexes.length; ++i) {
+			patterns[i] = Pattern.compile(regexes[i]);
+		}
+		
+		this.regexFields = regexFields;
 		this.recordDelimeter = recordDelimeter;
-		this.logMetadata = logMetadata;
+		this.maxLinesPerRecord = maxLinesPerRecord;
 	}
 
 	@Override
 	public long findNextRecord(ScrollableInputStream is) throws IOException {
-		return getRecordFromCharStream(forward(is), new Sink() {
-			@Override
-			public void onChar(char c) {}
-		});
+		ReadableSink sink = new OrderedReadableSink(true);
+		return getRecordFromCharStream(forward(is), sink).first;
 	}
 
 	@Override
 	public long findPrevRecord(ScrollableInputStream is) throws IOException {
 		if (is.scrollBack(1) == 0)
 			return 0;
-		return getRecordFromCharStream(backward(is), new Sink() {
-			@Override
-			public void onChar(char c) {}
-		});
+		ReadableSink sink = new OrderedReadableSink(false);
+		return getRecordFromCharStream(backward(is), sink).first;
 	}
-
-
 
 	@Override
 	public Record readRecord(ScrollableInputStream is) throws IOException {
-		final StringBuilder record = new StringBuilder();
-
-		getRecordFromCharStream(forward(is), new Sink() {
-			@Override
-			public void onChar(char c) {
-				record.append(c);
+		ReadableSink sink = new OrderedReadableSink(true);
+		Triple<Long, Integer, Matcher> offsetIndexMatch = getRecordFromCharStream(forward(is), sink);
+		
+		String[] cells = new String[offsetIndexMatch.second == -1 ? 1 : regexFields[offsetIndexMatch.second].length ];
+		Field[] fields = (offsetIndexMatch.second.equals(-1) ? new Field[1] : regexFields[offsetIndexMatch.second]);
+		if (offsetIndexMatch.second.equals(-1)) {
+			cells[0] = sink.getReceivedChars();
+			fields[0] = new Field("Unknown record format");
+		} else {
+			for (int i = 0; i < regexFields[offsetIndexMatch.second].length; ++i) {
+				cells[i] = offsetIndexMatch.third.group(i + 1);
 			}
-		});
-		return new MatcherRecord(record.toString());
+		}
+		for (String cell : cells) {
+			System.out.print(cell);	
+		}
+		System.out.println("");
+		return new MatcherRecord(cells, fields);
 	}
 
-	private long getRecordFromCharStream(CharStream cs, Sink sink) throws IOException {
+	
+	//Long - offset, Integer - index of pattern(-1 then no matches).
+	private Triple<Long, Integer, Matcher> getRecordFromCharStream(CharStream cs, ReadableSink sink) throws IOException {
+		long firstLineBreakOffset = 0;
+		long offset = 0;
+		for(int i = 0 ; i < maxLinesPerRecord; ++i) {
+			long temp = getLineFromCharStream(cs, sink);
+			if (temp == 0) 	break;
+			offset += temp;
+			if (i == 0)		firstLineBreakOffset = offset;
+			
+			for (int j = 0; j < patterns.length; ++j) {
+				Matcher m = patterns[j].matcher(sink.getReceivedChars());
+				if (m.matches()) 
+					return new Triple<Long, Integer, Matcher>(offset, j, m);
+			}
+		}
+		return new Triple<Long, Integer, Matcher>(firstLineBreakOffset, -1, null);
+	}
+	
+	private long getLineFromCharStream(CharStream cs, Sink sink) throws IOException {
 		long offset = 0;
 		int c;
 		do {
 			c = cs.next();
-			if (c == -1) return offset;
+			if (c == -1) 
+                return offset;
 			++offset;
 			sink.onChar((char)c);
 		} while ((char)c != recordDelimeter);
@@ -90,68 +145,25 @@ public class RegexParser implements Parser {
 	}
 
 	private class MatcherRecord implements Record {
-		private final Cell[] cells;
+		private final String[] cells;
+		private final Field[] fields;
 
-		private MatcherRecord(String rawRecord) {
-            List<Cell> cellsList = newList();
-			Matcher m = pattern.matcher(rawRecord);
-			//if there is no group besides zero group then use this group(hole record) as only one field
-			if (!m.matches()) 
-				cellsList.add(new MatcherCell(rawRecord, "Failed to match", Type.TEXT, 0));
-			else {
-				//zero group is not included in groupCount() method result
-				for(int i = 1; i <= m.groupCount(); ++i) {
-					cellsList.add(new MatcherCell(m.group(i), logMetadata.getFieldName(i -1), Type.TEXT, i -1));
-				}
-			}
-            cells = cellsList.toArray(new Cell[0]);
+		private MatcherRecord(String[] cells, Field[] f) {
+			this.cells = cells;
+			this.fields = f;
 		}
 
 		@Override
-		public Cell[] getCells() {
+		public String[] getCellValues() {
 			return cells;
 		}
+
+		@Override
+		public Field[] getFields() {
+			return fields;
+		}
+
 	}
 
-	private static class MatcherCell extends Cell {
-		private final Object value;
-		private final String name;
-		private final int index;
-		private final Type type;
-		
-		public MatcherCell(Object value,  String name, Type type, int index) {
-			this.value = value;
-			this.name = name;
-			this.type = type;
-			this.index = index;
-			
-		}
-		
-		@Override
-		public int getIndexInRecord() {
-			return index;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public Type getType() {
-			return type;
-		}
-
-		@Override
-		public Object getValue() {
-			return value;
-		}
-		
-	}
-	
-	@Override
-	public LogMetadata getLogMetadata() {
-		return logMetadata;
-	}
 
 }

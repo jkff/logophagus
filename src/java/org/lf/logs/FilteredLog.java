@@ -2,7 +2,6 @@ package org.lf.logs;
 
 import java.io.IOException;
 
-import org.lf.parser.LogMetadata;
 import org.lf.parser.Position;
 import org.lf.util.Filter;
 
@@ -132,10 +131,6 @@ public class FilteredLog implements Log {
 		return underlyingLog.toString() + " => filter : " + filter.toString();
 	}
 
-	@Override
-	public LogMetadata getMetadata() {
-		return underlyingLog.getMetadata();
-	}
 
 	//find first position that accepts filter and that equals to input pos or after it
 	//so method invocation can take a lot of time
@@ -143,7 +138,8 @@ public class FilteredLog implements Log {
 	public Position convertToNative(Position pos) throws IOException {
 		if (pos == null) return null; 
 		if (pos.getCorrespondingLog() == this) return pos;
-		if (pos.getCorrespondingLog() != this.underlyingLog) return null;
+		if (pos.getCorrespondingLog() != this.underlyingLog)
+            throw new IllegalArgumentException("Position from a foreign log: " + pos);
 		if (filter.accepts(underlyingLog.readRecord(pos)))
 			return new FilteredPosition(pos);
 		Position res = seek(pos,true);
