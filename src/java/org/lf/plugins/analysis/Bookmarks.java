@@ -14,37 +14,37 @@ public class Bookmarks implements AttributeInstance<BookmarksConcept,Bookmarks> 
     private final Bookmarks parent;
     private final Log log;
     
-    private Map<String, Position> myBookmarks = CollectionFactory.newLinkedHashMap();
+    private Map<String, Position> name2pos = CollectionFactory.newLinkedHashMap();
 
     public Bookmarks(Bookmarks parent, Log bookmarksOwner) {
         this.parent = parent;
         this.log = bookmarksOwner;
     }
 
-
     public List<String> getNames() {
-        ArrayList<String> result = newList(myBookmarks.keySet());
+        ArrayList<String> result = newList(name2pos.keySet());
         if (parent != null)
             result.addAll(parent.getNames());
         return result;
     }
 
-    //positions from myBookmarks are not converted.
+    //positions from name2pos are not converted.
     //Caching for converted positions 
     public Position getValue(String name) throws IOException {
-        if (myBookmarks.containsKey(name))
-            return myBookmarks.get(name);
+        if (name2pos.containsKey(name))
+            return name2pos.get(name);
         if (parent == null)
             return null;
         Position parentPos = parent.getValue(name);
-        if (parentPos == null) return null;
+        if (parentPos == null)
+            return null;
         Position nativePos = log.convertToNative(parentPos);
-        addBookmark(name, nativePos);
+        name2pos.put(name, nativePos);
         return nativePos;
     }
 
     public int getSize() {
-        return myBookmarks.size() + (parent == null ? 0 : parent.getSize());
+        return getNames().size();
     }
 
     //it is only possible to add bookmark whose position belongs to this.log 
@@ -53,7 +53,7 @@ public class Bookmarks implements AttributeInstance<BookmarksConcept,Bookmarks> 
     		throw new IllegalArgumentException("Position("+pos.getClass()+") must be from bookmark owner log("+log.getClass()+ ")");
         if (getNames().contains(name))
             return false;
-        myBookmarks.put(name, pos);
+        name2pos.put(name, pos);
         return true;
     }
 

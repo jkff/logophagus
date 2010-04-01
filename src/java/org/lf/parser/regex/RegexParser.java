@@ -17,7 +17,7 @@ public class RegexParser implements Parser {
 	private final int maxLinesPerRecord;
 	
 	private abstract class ReadableSink extends Sink {
-		public abstract String getRecievedChars();
+		public abstract String getReceivedChars();
 	}
 
 	private class OrderedReadableSink extends ReadableSink {
@@ -29,16 +29,18 @@ public class RegexParser implements Parser {
 		}
 		
 		@Override
-		public String getRecievedChars() {
-			return strB.toString();
+		public String getReceivedChars() {
+            if(isForward)
+                return strB.toString();
+            StringBuilder rev = new StringBuilder();
+            rev.append(strB);
+            rev.reverse();
+            return rev.toString();
 		}
 
 		@Override
 		public void onChar(char c) {
-			if (isForward) 
-				strB.append(c);
-			else
-				strB.insert(0, c);
+            strB.append(c);
 		}
 	}
 
@@ -64,7 +66,7 @@ public class RegexParser implements Parser {
 		if (is.scrollBack(1) == 0)
 			return 0;
 		ReadableSink sink = new OrderedReadableSink(false);
-		return getRecordFromCharStream(forward(is), sink).first;
+		return getRecordFromCharStream(backward(is), sink).first;
 	}
 
 	@Override
@@ -75,11 +77,10 @@ public class RegexParser implements Parser {
 		String[] cells = new String[offsetIndexMatch.second == -1 ? 1 : regexFields[offsetIndexMatch.second].length ];
 		Field[] fields = (offsetIndexMatch.second.equals(-1) ? new Field[1] : regexFields[offsetIndexMatch.second]);
 		if (offsetIndexMatch.second.equals(-1)) {
-			cells[0] = sink.getRecievedChars(); 
+			cells[0] = sink.getReceivedChars();
 			fields[0] = new Field("Unknown record format");
 		} else {
 			for (int i = 0; i < regexFields[offsetIndexMatch.second].length; ++i) {
-				
 				cells[i] = offsetIndexMatch.third.group(i + 1);
 			}
 		}
@@ -102,7 +103,7 @@ public class RegexParser implements Parser {
 			if (i == 0)		firstLineBreakOffset = offset;
 			
 			for (int j = 0; j < patterns.length; ++j) {
-				Matcher m = patterns[j].matcher(sink.getRecievedChars());
+				Matcher m = patterns[j].matcher(sink.getReceivedChars());
 				if (m.matches()) 
 					return new Triple<Long, Integer, Matcher>(offset, j, m);
 			}
@@ -115,7 +116,8 @@ public class RegexParser implements Parser {
 		int c;
 		do {
 			c = cs.next();
-			if (c == -1) return offset;
+			if (c == -1) 
+                return offset;
 			++offset;
 			sink.onChar((char)c);
 		} while ((char)c != recordDelimeter);
@@ -152,7 +154,7 @@ public class RegexParser implements Parser {
 		}
 
 		@Override
-		public String[] getCells() {
+		public String[] getCellValues() {
 			return cells;
 		}
 

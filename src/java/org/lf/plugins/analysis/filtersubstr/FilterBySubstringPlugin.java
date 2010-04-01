@@ -38,7 +38,7 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
             }
 
             public boolean accepts(Record r) {
-                for(Object cell : r.getCells()) {
+                for(Object cell : r.getCellValues()) {
                     if(cell != null && ((String)cell).contains(substring))
                         return true;
                 }

@@ -76,13 +76,13 @@ public class MergeLogs implements Log {
 
 			for(i = 0 ; i < originalRec.getFields().length ; ++i) {
 				if (fieldMap.containsKey(originalRec.getFields()[i])) 
-					cells[fieldMap.get(originalRec.getFields()[i])] = originalRec.getCells()[i];
+					cells[fieldMap.get(originalRec.getFields()[i])] = originalRec.getCellValues()[i];
 			}
 		}
 
 
 		@Override
-		public String[] getCells() {
+		public String[] getCellValues() {
 			return cells;
 		}
 
@@ -108,8 +108,8 @@ public class MergeLogs implements Log {
 				return compareNullable(o1, o2);
 
 			int res =  timeComparator.compare(
-					(String)pr1.second.getCells()[timeFieldIndices[o1.third]],
-					(String)pr2.second.getCells()[timeFieldIndices[o1.third]]);
+					(String)pr1.second.getCellValues()[timeFieldIndices[o1.third]],
+					(String)pr2.second.getCellValues()[timeFieldIndices[o1.third]]);
 
 			if (res != 0)	return res; 
 			return o1.third.compareTo(o2.third);

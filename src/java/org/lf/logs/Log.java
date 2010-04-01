@@ -13,33 +13,28 @@ public interface Log {
     /**
      * @param pos can be: 
      * 	- position from this log(then it will be returned as the result)
-     *  - position of parent log ,for example parent log of filtered log, or one of parent logs in merged log 
-     *  - null -> then function return null;
+     *  - position of parent log, for example parent log of filtered log, or one of parent logs in merged log 
+     *  - null -> then function returns null;
      * @return :
-     *  - position that can be used in methods this.readRecord(), this.prev() , this.next() and this.convertToNative()
+     *  - position 'pos' that can be used in methods this.readRecord(), this.prev(), this.next() and this.convertToNative()
+     *    such that this.readRecord(pos) returns the same (if possible) record as pos.getCorrespondingLog().readRecord(pos).
      *  - null, if argument was null or position fail @param requirements
-     * @throws IOException if :
-     *  - during position transformation occur IOException 
      */
     @Nullable
     public Position convertToNative(Position pos) throws IOException;
 
     /**
-     * @return:
+     * @return
      *  - position of first record in this log
-     *  - null if there is no records in log
-     *  @throws IOException if :
-     *  - some exception occurs during its work
+     *  - null if there are no records in this log
      */
     @Nullable
     public Position first() throws IOException;
 
     /**
-     * @return:
-     *  - position of last record in this log( so this.readRecord() method can be called on it)
-     *  - null if there is no records in log
-     *  @throws IOException if :
-     *  - some exception occurs during its work
+     * @return
+     *  - position of last record in this log (so this.readRecord() method can be called on it)
+     *  - null if there are no records in the log
      */
     @Nullable
     public Position last() throws IOException;
@@ -47,14 +42,11 @@ public interface Log {
     /**
      * @param pos can be: 
      * 	- position from this log
-     *  - null -> then function return null;
+     *  - null -> then the function returns null;
      * @return
      *  - position that can be used in methods this.readRecord(), this.prev() , this.next() and this.convertToNative(),
-     *  	this position goes after input pos(so that pos == prev(next(pos)))
-     *  - null ,if position equals last() position
-     * @throws IOException if :
-     *  - during position transformation occur IOException
-     *  
+     *    this position goes after input pos(so that pos.equals(prev(next(pos))))
+     *  - null, if position equals last()
      */
     @Nullable
     public Position next(Position pos) throws IOException;
@@ -65,11 +57,8 @@ public interface Log {
      *  - null -> then function return null;
      * @return
      *  - position that can be used in methods this.readRecord(), this.prev() , this.next() and this.convertToNative(),
-     *  	this position goes before input pos(so that pos == next(prev(pos)))
-     *  	
-     *  - null ,if position equals first() position
-     * @throws IOException if :
-     *  - during position transformation occur IOException
+     *  	this position goes before input pos (so that pos.equals(next(prev(pos))))
+     *  - null, if position equals first()
      */
     @Nullable
     public Position prev(Position pos) throws IOException;
@@ -80,14 +69,15 @@ public interface Log {
      * 	- position from this log
      *  - null -> then function return null;
      * @return
-     *  - Record realization corresponding to pos (so equal pos always return equal Records) 
-     *  - null , pos == null
-     * @throws IOException if :
-     *  - during reading occur IOException
+     *  - Record corresponding to pos (so equal pos always return equal Records) 
+     *  - null, pos == null
      */
     public Record readRecord(Position pos) throws IOException;
 
-    //returns name of this log
+    /**
+     * returns name of this log
+     */
     public String toString();
 
+    public Format[] getFormats();
 }
