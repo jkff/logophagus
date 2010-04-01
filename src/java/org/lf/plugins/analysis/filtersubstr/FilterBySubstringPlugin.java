@@ -4,7 +4,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import org.lf.logs.Cell;
 import org.lf.logs.FilteredLog;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
@@ -39,8 +38,8 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
             }
 
             public boolean accepts(Record r) {
-                for(Cell cell : r.getCells()) {
-                    if(cell.getValue() != null && ((String)cell.getValue()).contains(substring))
+                for(Object cell : r.getCells()) {
+                    if(cell != null && ((String)cell).contains(substring))
                         return true;
                 }
                 return false;

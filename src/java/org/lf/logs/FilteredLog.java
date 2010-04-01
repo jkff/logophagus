@@ -2,7 +2,6 @@ package org.lf.logs;
 
 import java.io.IOException;
 
-import org.lf.parser.LogMetadata;
 import org.lf.parser.Position;
 import org.lf.util.Filter;
 
@@ -132,10 +131,6 @@ public class FilteredLog implements Log {
 		return underlyingLog.toString() + " => filter : " + filter.toString();
 	}
 
-	@Override
-	public LogMetadata getMetadata() {
-		return underlyingLog.getMetadata();
-	}
 
 	//find first position that accepts filter and that equals to input pos or after it
 	//so method invocation can take a lot of time

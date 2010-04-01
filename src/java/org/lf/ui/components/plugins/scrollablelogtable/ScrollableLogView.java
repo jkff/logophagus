@@ -1,6 +1,7 @@
 package org.lf.ui.components.plugins.scrollablelogtable;
 
 
+import org.lf.formatterlog.FirstRecordFormatLog;
 import org.lf.logs.Log;
 import org.lf.parser.*;
 import org.lf.plugins.Attributes;
@@ -30,7 +31,7 @@ public class ScrollableLogView extends JPanel implements Observer {
 
     private final Attributes attributes;
     private final ListSelectionModel tableSelectionModel = new TableSelectionModel();
-    private final ScrollableLogViewModel logSegmentModel;
+    private ScrollableLogViewModel logSegmentModel;
 
     public ScrollableLogView(Log log, Attributes attributes) {
         this(log, attributes, null);
@@ -38,7 +39,13 @@ public class ScrollableLogView extends JPanel implements Observer {
 
     public ScrollableLogView(Log log, Attributes attributes, Position pos) {
         this.attributes = attributes;
-        this.logSegmentModel = new ScrollableLogViewModel(log, 100);
+        this.logSegmentModel = null;
+        try {
+			this.logSegmentModel = new ScrollableLogViewModel(new FirstRecordFormatLog(log), 100);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         this.logSegmentModel.start();
 
         LogTableModel tableModel = new LogTableModel(logSegmentModel);

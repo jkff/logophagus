@@ -1,7 +1,5 @@
 package org.lf.logs;
 
-import org.lf.logs.Cell.Type;
-import org.lf.parser.LogMetadata;
 import org.lf.parser.Position;
 import org.lf.util.Comparators;
 import org.lf.util.Pair;
@@ -11,11 +9,10 @@ import org.lf.util.Triple;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 
 import static org.lf.util.CollectionFactory.newHashMap;
 import static org.lf.util.CollectionFactory.newList;
-
-import static org.lf.util.CollectionFactory.newLinkedList;
 
 public class MergeLogs implements Log {
 	private final Log[] logs;
@@ -44,109 +41,55 @@ public class MergeLogs implements Log {
 		}
 	}
 
-
-	private class MergedCell extends Cell {
-		private final int index;
-		private final String name;
-		private final Type type;
-		private final Object value;
-
-		private MergedCell(String name, Object value, Type type, int index) {
-			this.index = index;
-			this.name = name;
-			this.value = value;
-			this.type = type;
-		}
-
-
-		@Override
-		public int getIndexInRecord() {
-			return index;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public Type getType() {
-			return type;
-		}
-
-		@Override
-		public Object getValue() {
-			return value;
-		}
-	}
-
 	private class MergedRecord implements Record {
-		MergedPosition pos;
-		private int size = 0;
-		private Map<Integer, Integer> our2origIndex;
-		private Cell[] cells;
+		private final MergedPosition pos;
+		private int size;
+		private String[] cells;
+		private Field[] fields;
+
 		public MergedRecord(MergedPosition pos) {
 			this.pos = pos;
-			this.cells = new Cell[size()];
-			fillCells();
+			initValues();
 		}
 
-		private void fillCells() {
-			for(int i = 0 ; i < size(); ++i) {
-				if (!getOur2origIndex().containsKey(i)) {
-					cells[i] = new MergedCell("null", null, Type.TEXT, i);
-				} else {;
-				CurPrevIndex entity = pos.cpisAscCur.first();
-				Cell originalCell = entity.first.second.getCells()[getOur2origIndex().get(i)];
-				cells[i] = new MergedCell(originalCell.getName(), originalCell.getValue(), originalCell.getType(), i);
-				}
-			}			
-		}
-
-		//map<key,value> : key is the index of merged record , value is the index of underlying record
-		private Map<Integer, Integer> getOur2origIndex() {
-			if (our2origIndex != null)
-				return our2origIndex;
-
-			our2origIndex = newHashMap();
-
-			CurPrevIndex entity = pos.cpisAscCur.first();
-			if (entity.third == 0) {
-				for (int i = 0 ; i < entity.first.second.getCells().length ; ++i ) {
-					our2origIndex.put(i, i);
-				}
-			} else {
-				int lengthSum = 0;
-				for (int i = 0 ; i < entity.third; ++i) {
-					int recordLength = logs[i].getMetadata().getFieldCount();
-					lengthSum += recordLength;
-				}
-				our2origIndex.put(timeFieldIndices[0], timeFieldIndices[entity.third]);
-				int indexShift = lengthSum - entity.third + 1;
-				for (int i = 0 ; i < entity.first.second.getCells().length ; ++i ) {
-					if (i < timeFieldIndices[entity.third])     our2origIndex.put(i + indexShift, i);
-					if (i == timeFieldIndices[entity.third])    continue;
-					if (i > timeFieldIndices[entity.third])     our2origIndex.put(i + indexShift - 1, i);
-				}
+		private void initValues() {
+			Map<Field, Integer> fieldMap = newHashMap();
+			for (CurPrevIndex cpi : pos.cpisAscCur) {
+				if (cpi.first != null)
+					for (Field f : cpi.first.second.getFields()) {
+						fieldMap.put(f, 0);
+					}
 			}
-			return our2origIndex;
+
+			this.size = fieldMap.size();
+			fields = new Field[size];			
+			int i = 0;
+
+			for(Entry<Field,Integer> e : fieldMap.entrySet()) {
+				fields[i] = e.getKey();
+				e.setValue(i);
+				++i;
+			}
+
+			cells = new String[size];
+			Record originalRec = pos.cpisAscCur.first().first.second;
+
+			for(i = 0 ; i < originalRec.getFields().length ; ++i) {
+				if (fieldMap.containsKey(originalRec.getFields()[i])) 
+					cells[fieldMap.get(originalRec.getFields()[i])] = originalRec.getCells()[i];
+			}
 		}
 
-		private int size() {
-			if  (size != 0) return size;
-			for (Log log : logs) {
-				size += log.getMetadata().getFieldCount();
-			}
-			//one common field in every log
-			size -= logs.length - 1;
-			return size;
-		}
 
 		@Override
-		public Cell[] getCells() {
+		public String[] getCells() {
 			return cells;
 		}
 
+		@Override
+		public Field[] getFields() {
+			return fields;
+		}
 
 	}
 
@@ -160,14 +103,14 @@ public class MergeLogs implements Log {
 		@Override
 		public int compare(CurPrevIndex o1, CurPrevIndex o2) {
 			PosRec pr1 = getPosRec(o1), pr2 = getPosRec(o2);
-			
+
 			if(pr1 == null || pr2 == null)	
 				return compareNullable(o1, o2);
-			
+
 			int res =  timeComparator.compare(
-					(String)pr1.second.getCells()[timeFieldIndices[o1.third]].getValue(),
-					(String)pr2.second.getCells()[timeFieldIndices[o1.third]].getValue());
-			
+					(String)pr1.second.getCells()[timeFieldIndices[o1.third]],
+					(String)pr2.second.getCells()[timeFieldIndices[o1.third]]);
+
 			if (res != 0)	return res; 
 			return o1.third.compareTo(o2.third);
 		}
@@ -335,40 +278,6 @@ public class MergeLogs implements Log {
 		return new MergedRecord(p);
 	}
 
-	@Override
-	public LogMetadata getMetadata() {
-		final List<String> res = newLinkedList();
-		for (int i = 0; i < logs.length; ++i) {
-			String[] fieldNames = logs[i].getMetadata().getFieldNames();
-			for (int j = 0; j < fieldNames.length; ++j) {
-				if (i != 0 && timeFieldIndices[i] == j ) continue;
-				res.add(fieldNames[j]);
-			}
-		}
-
-		return new LogMetadata() {
-
-			@Override
-			public String[] getFieldNames() {
-				return res.toArray(new String[0]);
-			}
-
-			@Override
-			public String getFieldName(int fieldIndex) {
-				return res.get(fieldIndex);
-			}
-
-			@Override
-			public int getFieldIndex(String fieldName) {
-				return res.indexOf(fieldName);
-			}
-
-			@Override
-			public int getFieldCount() {
-				return res.size();
-			}
-		};
-	}
 
 	@Override
 	public Position convertToNative(Position p) throws IOException{

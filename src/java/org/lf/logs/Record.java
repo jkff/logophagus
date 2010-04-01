@@ -1,5 +1,6 @@
 package org.lf.logs;
 
 public interface Record {
-    public Cell[] getCells();
+    public String[] getCells();
+    public Field[] getFields();
 }

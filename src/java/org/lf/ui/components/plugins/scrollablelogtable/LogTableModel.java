@@ -6,12 +6,12 @@ import java.util.Observer;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 
-import org.lf.logs.Cell;
-import org.lf.logs.Log;
+import org.lf.formatterlog.FormattedLog;
+import org.lf.logs.Field;
 
 class LogTableModel extends AbstractTableModel implements Observer {
     private ScrollableLogViewModel underlyingModel;
-    private String[] fields;
+    private Field[] fields;
     public LogTableModel(ScrollableLogViewModel underlyingModel) {
         this.underlyingModel = underlyingModel;
         underlyingModel.addObserver(this);
@@ -30,9 +30,9 @@ class LogTableModel extends AbstractTableModel implements Observer {
     @Override
     public Object getValueAt(int row, int col) {
         if (row < underlyingModel.getRecordCount()) {
-        	Cell[] cells = underlyingModel.getRecord(row).getCells();
+        	Object[] cells = underlyingModel.getRecord(row).getCells();
         	if (col < cells.length) {
-        		return cells[col].getValue();
+        		return cells[col];
         	}
         }
         return null;
@@ -63,10 +63,10 @@ class LogTableModel extends AbstractTableModel implements Observer {
     @Override
     public String getColumnName(int column) {
         if (fields == null) {
-            Log log = underlyingModel.getLog();
-            fields = log.getMetadata().getFieldNames();
+            FormattedLog log = underlyingModel.getLog();
+            fields = log.getFields();
         }
-        return fields[column];
+        return fields[column].name;
     }
 
 }

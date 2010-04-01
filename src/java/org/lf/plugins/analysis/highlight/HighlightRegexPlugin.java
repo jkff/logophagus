@@ -1,6 +1,5 @@
 package org.lf.plugins.analysis.highlight;
 
-import org.lf.logs.Cell;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.plugins.AnalysisPlugin;
@@ -49,8 +48,8 @@ public class HighlightRegexPlugin implements AnalysisPlugin {
             private final Pattern p = Pattern.compile(regex);
             @Override
             public Color getColor(Record r) {
-                for(Cell cell : r.getCells()) {
-                    if (cell.getValue() != null && p.matcher((String)cell.getValue()).find()) return Color.RED;
+                for(Object cell : r.getCells()) {
+                    if (cell != null && p.matcher((String)cell).find()) return Color.RED;
                 }
                 return null;
             }
