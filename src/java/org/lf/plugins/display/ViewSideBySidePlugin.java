@@ -11,7 +11,7 @@ import org.lf.logs.Log;
 import org.lf.plugins.DisplayPlugin;
 import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.sidebyside.LogsPair;
-import org.lf.ui.components.plugins.scrollablelogtable.ScrollableLogView;
+import org.lf.ui.components.plugins.scrollablelog.ScrollableLogView;
 
 public class ViewSideBySidePlugin implements DisplayPlugin {
 

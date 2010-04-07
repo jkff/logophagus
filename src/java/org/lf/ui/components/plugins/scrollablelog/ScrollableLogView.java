@@ -1,7 +1,6 @@
-package org.lf.ui.components.plugins.scrollablelogtable;
+package org.lf.ui.components.plugins.scrollablelog;
 
 
-import org.lf.formatterlog.FirstRecordFormatLog;
 import org.lf.logs.Log;
 import org.lf.parser.*;
 import org.lf.plugins.Attributes;
@@ -9,11 +8,11 @@ import org.lf.plugins.analysis.Bookmarks;
 import org.lf.plugins.analysis.highlight.Highlighter;
 import org.lf.ui.util.GUIUtils;
 
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.io.IOException;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -25,13 +24,13 @@ public class ScrollableLogView extends JPanel implements Observer {
     private final JButton startButton;
     private final JButton endButton;
 
-    private final JTable table;
-    private final JScrollPane scrollTable;
+    private final JList recordsList;
+    private final JScrollPane scrollableRecords;
     private final JProgressBar progressBar;
 
     private final Attributes attributes;
-    private final ListSelectionModel tableSelectionModel = new TableSelectionModel();
-    private ScrollableLogViewModel logSegmentModel;
+
+    private ScrollableLogModel logSegmentModel;
 
     public ScrollableLogView(Log log, Attributes attributes) {
         this(log, attributes, null);
@@ -40,17 +39,9 @@ public class ScrollableLogView extends JPanel implements Observer {
     public ScrollableLogView(Log log, Attributes attributes, Position pos) {
         this.attributes = attributes;
         this.logSegmentModel = null;
-        try {
-			this.logSegmentModel = new ScrollableLogViewModel(new FirstRecordFormatLog(log), 100);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+        this.logSegmentModel = new ScrollableLogModel(log, 100);
         this.logSegmentModel.start();
 
-        LogTableModel tableModel = new LogTableModel(logSegmentModel);
-        LogTableCellRenderer cellRenderer = new LogTableCellRenderer(
-                attributes.getValue(Highlighter.class), logSegmentModel);
         // Create UI
 
         this.bookmarksList = new JComboBox(new BookmarksComboBoxModel(attributes.getValue(Bookmarks.class)));
@@ -102,23 +93,19 @@ public class ScrollableLogView extends JPanel implements Observer {
         controlPanel.add(Box.createHorizontalGlue());
         GUIUtils.fixMaxHeightSize(controlPanel);
 
-        this.table = new JTable(tableModel);
-        this.table.setDefaultRenderer(String.class, cellRenderer);
-        this.table.setSelectionModel(tableSelectionModel);
-        this.table.addKeyListener(new TableKeyListener());
-//        tableSelectionModel.addListSelectionListener(new ListSelectionListener() {
-//            public void valueChanged(ListSelectionEvent e) {
-//                table.repaint();
-//            }
-//        });
+        RecordsListModel listModel = new RecordsListModel(logSegmentModel);
+        RecordView cellRenderer = new RecordView(logSegmentModel, attributes.getValue(Highlighter.class));
+        this.recordsList = new JList(listModel);
+        this.recordsList.setCellRenderer(cellRenderer);
+        this.recordsList.addKeyListener(new ListKeyListener());
 
-        scrollTable = new JScrollPane(this.table);
-        scrollTable.addMouseWheelListener( new ScrollBarMouseWheelListener());
+        scrollableRecords = new JScrollPane(this.recordsList);
+        scrollableRecords.addMouseWheelListener( new ScrollBarMouseWheelListener());
         BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
         this.setLayout(layout);
         this.add(controlPanel);
         this.add(Box.createVerticalStrut(12));
-        this.add(scrollTable);
+        this.add(scrollableRecords);
         this.add(Box.createVerticalStrut(12));
         this.add(this.progressBar);
         this.logSegmentModel.addObserver(this);
@@ -127,12 +114,12 @@ public class ScrollableLogView extends JPanel implements Observer {
     }
 
     public Position getSelectedRecord() {
-        if (table.getSelectedRow() == -1) return logSegmentModel.getPosition(0);
-        return logSegmentModel.getPosition(table.getSelectedRow());
+        if (recordsList.getSelectedIndex() == -1) return logSegmentModel.getPosition(0);
+        return logSegmentModel.getPosition(recordsList.getSelectedIndex());
     }
 
-    public TableModel getTableModel() {
-        return this.table.getModel();
+    public ListModel getTableModel() {
+        return this.recordsList.getModel();
     }
 
     @Override
@@ -142,6 +129,7 @@ public class ScrollableLogView extends JPanel implements Observer {
             public void run() {
                 updateControls();
                 updateProgress();
+                recordsList.repaint();
             }
         });
     }
@@ -200,7 +188,7 @@ public class ScrollableLogView extends JPanel implements Observer {
 						            ScrollableLogView.this,
 						            "Bookmark with such name already exists. Please input a different name.");
 						} else {
-						    int row = table.getSelectedRow();
+						    int row = recordsList.getSelectedIndex();
 						    if (row == -1) row = 0;
 						    attributes.getValue(Bookmarks.class).addBookmark(name, logSegmentModel.getPosition(row));
 						    return;
@@ -224,15 +212,13 @@ public class ScrollableLogView extends JPanel implements Observer {
 			try {
 				pos = attributes.getValue(Bookmarks.class).getValue(selectedBookmark);
 	            logSegmentModel.shiftTo(pos);
-
+	            
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
             //TODO think about better solution
-            //int row = getCorrespondingVisualRow(pos);
-            //table.setRowSelectionInterval(row, row);
-            //scrollTable.repaint();
+            recordsList.setSelectedIndex(0);
+            scrollableRecords.scrollRectToVisible(new Rectangle(0, 0));
         }
     }
 
@@ -243,10 +229,10 @@ public class ScrollableLogView extends JPanel implements Observer {
         }
     }
 
-    class TableKeyListener extends KeyAdapter {
+    class ListKeyListener extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
-            int curIndex = tableSelectionModel.getMaxSelectionIndex();
+            int curIndex = recordsList.getSelectedIndex();
             switch (e.getKeyCode()) {
             case KeyEvent.VK_UP:
                 if (curIndex == 0 && !logSegmentModel.isAtBegin())
@@ -257,22 +243,22 @@ public class ScrollableLogView extends JPanel implements Observer {
                     logSegmentModel.prev();
                 break;
             case KeyEvent.VK_DOWN:
-                if (curIndex == (table.getRowCount() - 1) && !logSegmentModel.isAtEnd())
+                if (curIndex == (recordsList.getModel().getSize() - 1) && !logSegmentModel.isAtEnd())
                     logSegmentModel.shiftDown();
                 break;
             case KeyEvent.VK_PAGE_DOWN:
-                if (curIndex == (table.getRowCount() - 1) && !logSegmentModel.isAtEnd()) {
-                    tableSelectionModel.setSelectionInterval(table.getRowCount()-1, table.getRowCount()-1);
+                if (curIndex == (recordsList.getModel().getSize() - 1) && !logSegmentModel.isAtEnd()) {
+                    recordsList.setSelectedIndex(recordsList.getModel().getSize() - 1);
                     logSegmentModel.next();
                 }
                 break;
             case KeyEvent.VK_HOME:
-                tableSelectionModel.setSelectionInterval(0, 0);
+            	recordsList.setSelectedIndex(0);
                 if (!logSegmentModel.isAtBegin())
                     logSegmentModel.start();
                 break;
             case KeyEvent.VK_END:
-                tableSelectionModel.setSelectionInterval(table.getRowCount()-1, table.getRowCount()-1);
+            	recordsList.setSelectedIndex(recordsList.getModel().getSize() - 1);
                 if (!logSegmentModel.isAtEnd())
                     logSegmentModel.end();
                 break;
@@ -283,9 +269,9 @@ public class ScrollableLogView extends JPanel implements Observer {
     class ScrollBarMouseWheelListener implements MouseWheelListener {
         @Override
         public void mouseWheelMoved(MouseWheelEvent event) {
-            int maxValue = scrollTable.getVerticalScrollBar().getModel().getMaximum();
-            int curValue = scrollTable.getVerticalScrollBar().getModel().getValue();
-            int extValue = scrollTable.getVerticalScrollBar().getModel().getExtent();
+            int maxValue = scrollableRecords.getVerticalScrollBar().getModel().getMaximum();
+            int curValue = scrollableRecords.getVerticalScrollBar().getModel().getValue();
+            int extValue = scrollableRecords.getVerticalScrollBar().getModel().getExtent();
             if (event.getWheelRotation() < 0) {
                 if (curValue == 0 && !logSegmentModel.isAtBegin())
                     logSegmentModel.shiftUp();

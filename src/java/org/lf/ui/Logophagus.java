@@ -5,9 +5,10 @@ import org.lf.plugins.analysis.filtersubstr.FilterBySubstringPlugin;
 import org.lf.plugins.analysis.highlight.HighlightRegexPlugin;
 import org.lf.plugins.analysis.merge.MergeLogsPlugin;
 import org.lf.plugins.analysis.sidebyside.SideBySidePlugin;
+import org.lf.plugins.analysis.splitbyfield.SplitByFieldValuesPlugin;
 //import org.lf.plugins.analysis.splitbyfield.SplitByFieldValuesPlugin;
 import org.lf.plugins.display.ViewFieldSplittedLogPlugin;
-import org.lf.plugins.display.ViewLogAsTablePlugin;
+import org.lf.plugins.display.ViewScrollableLogPlugin;
 import org.lf.plugins.display.ViewSideBySidePlugin;
 import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
@@ -110,11 +111,11 @@ public class Logophagus extends JFrame {
             AnalysisPluginRepository.register(FileBackedLogPlugin.class);
             AnalysisPluginRepository.register(FilterBySubstringPlugin.class);
             AnalysisPluginRepository.register(SideBySidePlugin.class);
-//            AnalysisPluginRepository.register(SplitByFieldValuesPlugin.class);
+            AnalysisPluginRepository.register(SplitByFieldValuesPlugin.class);
             AnalysisPluginRepository.register(HighlightRegexPlugin.class);
             AnalysisPluginRepository.register(MergeLogsPlugin.class);
 
-            DisplayPluginRepository.register(ViewLogAsTablePlugin.class);
+            DisplayPluginRepository.register(ViewScrollableLogPlugin.class);
             DisplayPluginRepository.register(ViewSideBySidePlugin.class);
             DisplayPluginRepository.register(ViewFieldSplittedLogPlugin.class);
 

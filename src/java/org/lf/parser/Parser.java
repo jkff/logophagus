@@ -2,7 +2,9 @@ package org.lf.parser;
 
 import java.io.IOException;
 
+import org.lf.logs.Format;
 import org.lf.logs.Record;
+import org.lf.logs.UnknownFormat;
 
 public interface Parser {
     Record readRecord(ScrollableInputStream is) throws IOException;
@@ -22,4 +24,11 @@ public interface Parser {
      */
     long findPrevRecord(ScrollableInputStream is) throws IOException;
     
+    /**
+     * 
+     * @return formats of records that readRecord() can return
+     * if your parser can't match record with it's predefined formats then return record with {@link UnknownFormat}
+     * You shouldn't include format of {@link UnknownFormat} to getFormats() result
+     */
+    Format[] getFormats();
 }

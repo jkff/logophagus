@@ -148,4 +148,9 @@ public class FilteredLog implements Log {
 		if (res != null) return new FilteredPosition(res);
 		return null;
 	}
+
+	@Override
+	public Format[] getFormats() {
+		return underlyingLog.getFormats();
+	}
 }

@@ -1,12 +1,12 @@
-package org.lf.ui.components.plugins.scrollablelogtable;
+package org.lf.ui.components.plugins.scrollablelog;
 
 
 import javax.swing.DefaultListSelectionModel;
 
-public class TableSelectionModel extends DefaultListSelectionModel {
+public class RecordsListSelectionModel extends DefaultListSelectionModel {
     private int cachedIndex;
 
-    public TableSelectionModel() {
+    public RecordsListSelectionModel() {
         super();
         cachedIndex = 0;
         setSelectionMode(SINGLE_SELECTION);

@@ -116,4 +116,9 @@ public class FileBackedLog implements Log {
 		return p;
 	}
 
+	@Override
+	public Format[] getFormats() {
+		return parser.getFormats();
+	}
+
 }
