@@ -1,13 +1,11 @@
 package org.lf.ui.components.plugins.fieldsplittedlog;
 
-import org.lf.logs.Cell;
 import org.lf.logs.FilteredLog;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.parser.Position;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.analysis.splitbyfield.LogAndField;
-import org.lf.ui.components.plugins.scrollablelogtable.ScrollableLogView;
 import org.lf.ui.util.GUIUtils;
 import org.lf.util.Filter;
 
@@ -160,7 +158,7 @@ public class FieldSplittedLog extends JPanel {
             if (panel == null) {
                 //this section handles last list element
                 if (selectedIndex == listModel.getSize() - 1) {
-                    if (listModel.getOtherPosition() == null) {
+                    if (listModel.getEndScanPosition() == null) {
                         panel = new JPanel();
                         panel.add(new JLabel("There is no other field values"));
                     } else {
@@ -175,7 +173,7 @@ public class FieldSplittedLog extends JPanel {
                             }
                         };
                         Log log = new FilteredLog(FieldSplittedLog.this.logAndField.log, filter);
-                        panel = new ScrollableLogView(log, attributes, listModel.getOtherPosition());
+                        panel = new ScrollableLogView(log, attributes, listModel.getEndScanPosition());
                     }
                 } else {
                     Filter<Record> filter = new Filter<Record>() {

@@ -4,14 +4,8 @@ import org.lf.parser.Position;
 import org.lf.util.Comparators;
 import org.lf.util.Pair;
 import org.lf.util.Triple;
-
-
-
 import java.io.IOException;
 import java.util.*;
-import java.util.Map.Entry;
-
-import static org.lf.util.CollectionFactory.newHashMap;
 import static org.lf.util.CollectionFactory.newList;
 
 public class MergeLogs implements Log {
@@ -41,57 +35,7 @@ public class MergeLogs implements Log {
 		}
 	}
 
-	private class MergedRecord implements Record {
-		private final MergedPosition pos;
-		private int size;
-		private String[] cells;
-		private Field[] fields;
 
-		public MergedRecord(MergedPosition pos) {
-			this.pos = pos;
-			initValues();
-		}
-
-		private void initValues() {
-			Map<Field, Integer> fieldMap = newHashMap();
-			for (CurPrevIndex cpi : pos.cpisAscCur) {
-				if (cpi.first != null)
-					for (Field f : cpi.first.second.getFields()) {
-						fieldMap.put(f, 0);
-					}
-			}
-
-			this.size = fieldMap.size();
-			fields = new Field[size];			
-			int i = 0;
-
-			for(Entry<Field,Integer> e : fieldMap.entrySet()) {
-				fields[i] = e.getKey();
-				e.setValue(i);
-				++i;
-			}
-
-			cells = new String[size];
-			Record originalRec = pos.cpisAscCur.first().first.second;
-
-			for(i = 0 ; i < originalRec.getFields().length ; ++i) {
-				if (fieldMap.containsKey(originalRec.getFields()[i])) 
-					cells[fieldMap.get(originalRec.getFields()[i])] = originalRec.getCellValues()[i];
-			}
-		}
-
-
-		@Override
-		public String[] getCellValues() {
-			return cells;
-		}
-
-		@Override
-		public Field[] getFields() {
-			return fields;
-		}
-
-	}
 
 	private class CurPrevIndex extends Triple<PosRec,PosRec,Integer> {
 		private CurPrevIndex(PosRec cur, PosRec prev, Integer index) {
@@ -177,7 +121,6 @@ public class MergeLogs implements Log {
 		this.logsBorders = null;
 		this.timeFieldIndices = fields;
 		this.timeComparator = timeComparator;
-
 		logsBorders = new Pair[logs.length];
 		for (int i = 0; i < logs.length; ++i) {
 			logsBorders[i] = new Pair<Position, Position>(logs[i].first(), logs[i].last());
@@ -275,7 +218,7 @@ public class MergeLogs implements Log {
 		MergedPosition p = (MergedPosition)pos;
 		if (p == null) 
 			throw new IllegalArgumentException("Can't read record corresponding to such pos.");
-		return new MergedRecord(p);
+		return p.cpisAscCur.first().first.second;
 	}
 
 
@@ -307,6 +250,12 @@ public class MergeLogs implements Log {
 		}
 
 		return curPos;
+	}
+
+	@Override
+	public Format[] getFormats() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

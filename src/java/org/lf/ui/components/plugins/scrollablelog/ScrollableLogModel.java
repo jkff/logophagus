@@ -1,4 +1,4 @@
-package org.lf.ui.components.plugins.scrollablelogtable;
+package org.lf.ui.components.plugins.scrollablelog;
 
 import static org.lf.util.CollectionFactory.pair;
 
@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.Observable;
 
 
-import org.lf.formatterlog.FormattedLog;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.parser.Position;
@@ -14,10 +13,10 @@ import org.lf.util.Pair;
 
 import com.sun.istack.internal.Nullable;
 
-public class ScrollableLogViewModel extends Observable {
+public class ScrollableLogModel extends Observable {
 	private final CyclicBuffer<Pair<Record,Position>> recBuffer;
 	private final int regionSize;
-	private final FormattedLog log;
+	private final Log log;
 	private Thread navigatorThread;
 	private Position logBeginPos;
 	private Position logEndPos;
@@ -121,7 +120,7 @@ public class ScrollableLogViewModel extends Observable {
 	}
 
 
-	public ScrollableLogViewModel(FormattedLog log, int regionSize) {
+	public ScrollableLogModel(Log log, int regionSize) {
 		this.log = log;
 		this.regionSize = regionSize;
 		this.readingDone = true;
@@ -223,12 +222,8 @@ public class ScrollableLogViewModel extends Observable {
 		return false;
 	}
 
-	FormattedLog getLog() {
+	Log getLog() {
 		return this.log;
-	}
-
-	int getRecordSize() {
-		return log.getFields().length;
 	}
 
 	synchronized private void pushBegin(Pair<Record, Position> pair) {

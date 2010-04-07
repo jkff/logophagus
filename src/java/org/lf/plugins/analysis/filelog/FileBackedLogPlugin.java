@@ -81,12 +81,13 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
                 io = new MappedFile(f.getAbsolutePath());
             }
             
-            Field[] fields = new Field[2];
+            Field[] fields = new Field[4];
             for(int i = 0; i < fields.length; ++i) 
             	fields[i] = new Field("Field"+i);
             
 //            Log log = new FileBackedLog(io, new CSVParser(fields));
-            String[] regexes = new String[]{"\\s*(\\d+)\\s+(\\w+)\\s*"};
+//            [2010-03-27 06:27:46,148] DEBUG [btpool0-7298] Search performed in 0 with 501 hits
+            String[] regexes = new String[]{"\\[(.+)\\]\\s+(\\w+)\\s+\\[(.+)\\]\\s+(.+)\\s*"};
             Field[][] regexesFields = new Field[1][];
             regexesFields[0] = fields;
             

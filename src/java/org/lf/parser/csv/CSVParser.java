@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.*;
 
 import org.lf.logs.Field;
+import org.lf.logs.Format;
 import org.lf.logs.Record;
+import org.lf.logs.UnknownFormat;
 import org.lf.parser.*;
 
 import static org.lf.util.CollectionFactory.newList;
@@ -15,7 +17,8 @@ public class CSVParser implements Parser {
 	private final char quoteCharacter;
 	private final char escapeCharacter;
 	private final Field[] fields;
-
+	private final Format csvFormat;
+	
 	public CSVParser() {
 		this(null ,'\n', ',', '"', '\\');
 	}
@@ -30,6 +33,13 @@ public class CSVParser implements Parser {
 		this.quoteCharacter = quoteCharacter;
 		this.escapeCharacter = escapeCharacter;
 		this.fields = fields;
+		this.csvFormat = new Format() {
+			@Override
+			public Field[] getFields() {
+				return CSVParser.this.fields;
+			}
+		};
+
 	}
 
 	public long findNextRecord(ScrollableInputStream is) throws IOException {
@@ -130,14 +140,14 @@ public class CSVParser implements Parser {
 
 	private class CSVRecord implements Record {
 		private final String[] cells;
-		private final Field[] fields;
-
+		private final boolean matchesFormat;
+		
 		private CSVRecord(List<String> strFields) {
-			boolean matchesFormat = (CSVParser.this.fields != null ) 					&& 
-									(strFields.size() == CSVParser.this.fields.length);
+			matchesFormat = (CSVParser.this.fields != null )	&& 
+				(strFields.size() == CSVParser.this.fields.length);
 
 			this.cells = new String[strFields.size()];
-			this.fields = matchesFormat ? CSVParser.this.fields : getDismatchFields(strFields);
+			
 
 			for (int i = 0; i < cells.length; i++)
 				cells[i] =  strFields.get(i);
@@ -156,13 +166,18 @@ public class CSVParser implements Parser {
 		}
 
 		@Override
-		public Field[] getFields() {
-			return fields;
+		public Format getFormat() {
+			return matchesFormat ? CSVParser.this.csvFormat : UnknownFormat.getInstance(cells.length);
 		}
 	}
 
 	private static class Nop extends Sink {
 		public void onChar(char c) { }
+	}
+
+	@Override
+	public Format[] getFormats() {
+		return new Format[] { csvFormat };
 	}
 
 }

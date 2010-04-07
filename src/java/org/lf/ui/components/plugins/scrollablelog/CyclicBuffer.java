@@ -1,4 +1,4 @@
-package org.lf.ui.components.plugins.scrollablelogtable;
+package org.lf.ui.components.plugins.scrollablelog;
 
 import java.util.LinkedList;
 import java.util.List;

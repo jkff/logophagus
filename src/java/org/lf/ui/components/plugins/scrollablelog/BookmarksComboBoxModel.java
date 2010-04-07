@@ -1,4 +1,4 @@
-package org.lf.ui.components.plugins.scrollablelogtable;
+package org.lf.ui.components.plugins.scrollablelog;
 
 
 

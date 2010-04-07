@@ -43,7 +43,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     @Override
     public long scrollBack(long offset) throws IOException {
         ensureOpen();
-        long scrolled;
+        long scrolled = 0;
         long curFilePos = this.offsetInBuffer + this.buf.hash;
         try {
             if (curFilePos <= offset) {
