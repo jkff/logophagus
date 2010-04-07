@@ -1,0 +1,42 @@
+ + Read logs with user-specified format pattern (regex; 1 capturing group = 1 field ; list of field names)
+    - Fix remaining bugs
+ - TODO Make RegexParser skip lines that do not match regex, or perhaps show them "as is"
+    - Either skip them, or use the implementation of mixed-format logs and show "as is" but they should be of a different 'format' than those that matched.
+
+ - TODO Cell/Field; type should be a property of a field (column), not of a cell.
+ - TODO Mixed-format logs and single-format logs
+    Questions:
+        - How to render a mixed-format log?
+        - What operations are permitted on it?
+
+14:35:56<TAB>DEBUG<TAB>Hello world
+
+format.txt:
+Time,Level,Message
+(\d\d:\d\d:\d\d)\t([^\t]+)\t(.*)
+
+ - Find some example large apache or IIS log, try using program on it
+ - Concatenation of logs
+
+ - TODO Steal features from logvis (decreasing order of priority):
+  - Select by field (like split but with checkboxes)
+  - Colorize by field + colorized scrollbar
+  - Format parser (but only for single-line entries?)
+  - Composite actions (IActionLibrary)
+  - Fat cell contents for large cells
+  - Horizontal scrolling for long lines
+  - Save/load bookmarks
+  - Diff (how to implement streaming diff?)
+  - Plugin manager
+  - Multi-views with >2 logs and simultaneous scrolling
+
+ - TODO figure out how to get rid of scrollbar
+ - TODO Split by field values: combobox with field names instead of input textbox
+    + TODO Fix combobox issue (nothing can be selected)
+
+ - TODO (in case merge turns out to be too slow because of priority queue copying in MergeLogs.next()) Use an immutable (purely functional) priority queue there. See, for example, Okasaki "Purely functional data structures" or take one from the internet
+
+ - Find record satisfying condition (Ctrl-F: for example, containing substring)
+ - Diff two finite logs (t.i. the implementation may rely on their finiteness)
+ - Copy selection to clipboard as text (how to select a large range, for example between two bookmarks?)
+ - Pipe selection through shell command
