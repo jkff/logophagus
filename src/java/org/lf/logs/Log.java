@@ -13,7 +13,7 @@ public interface Log {
 
     /**
      * @param pos can be: 
-     * 	- position from this log(then it will be returned as the result)
+     *     - position from this log(then it will be returned as the result)
      *  - position of parent log, for example parent log of filtered log, or one of parent logs in merged log 
      *  - null -> then function returns null;
      * @return :
@@ -42,7 +42,7 @@ public interface Log {
 
     /**
      * @param pos can be: 
-     * 	- position from this log
+     *     - position from this log
      *  - null -> then the function returns null;
      * @return
      *  - position that can be used in methods this.readRecord(), this.prev() , this.next() and this.convertToNative(),
@@ -54,11 +54,11 @@ public interface Log {
 
     /**
      * @param pos can be: 
-     * 	- position from this log
+     *     - position from this log
      *  - null -> then function return null;
      * @return
      *  - position that can be used in methods this.readRecord(), this.prev() , this.next() and this.convertToNative(),
-     *  	this position goes before input pos (so that pos.equals(next(prev(pos))))
+     *      this position goes before input pos (so that pos.equals(next(prev(pos))))
      *  - null, if position equals first()
      */
     @Nullable
@@ -67,7 +67,7 @@ public interface Log {
     
     /**
      * @param pos can be: 
-     * 	- position from this log
+     *     - position from this log
      *  - null -> then function return null;
      * @return
      *  - Record corresponding to pos (so equal pos always return equal Records) 

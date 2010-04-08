@@ -26,7 +26,7 @@ public class TimeMergeLogs implements Log {
         public int compare(CurPrevIndex o1, CurPrevIndex o2) {
             Position pos1 = getPosition(o1), pos2 = getPosition(o2);
 
-            if(pos1 == null || pos2 == null)	
+            if(pos1 == null || pos2 == null)
                 return compareNullable(o1, o2);
 
             int res = 0;
@@ -223,10 +223,7 @@ public class TimeMergeLogs implements Log {
         MergedPosition curPos = (MergedPosition)this.first();
         MergedPosition lastPos = (MergedPosition)this.last();
 
-        while (	!(	curPos.cpisAscCur.first().third == logOfPos	&&
-                curPos.cpisAscCur.first().first.equals(p))
-        ) 
-        {
+        while(!(curPos.cpisAscCur.first().third == logOfPos && curPos.cpisAscCur.first().first.equals(p))) {
             if (curPos.equals(lastPos)) return null;
             curPos = (MergedPosition) next(curPos);
         }

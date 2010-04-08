@@ -31,7 +31,7 @@ public class Highlighter implements AttributeInstance<HighlighterConcept,Highlig
         if (colorer != null && colorer.getColor(rec) != null)
             return colorer.getColor(rec);
         if (parents == null) 
-        	return null;
+            return null;
         for(Highlighter p : parents) {
             Color c = p.getHighlightColor(rec);
             if (c!= null) return c;

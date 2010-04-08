@@ -12,123 +12,147 @@ import org.lf.parser.ScrollableInputStream;
 import java.io.IOException;
 
 public class FileBackedLog implements Log {
-	private final RandomAccessFileIO file;
-	private final Parser parser;
-	
-	private class PhysicalPosition implements Position {
-		final long offsetBytes;
+    private final RandomAccessFileIO file;
+    private final Parser parser;
 
-		@Override
-		public int hashCode() {
-			return (int)(offsetBytes ^ (offsetBytes >>> 32));
-		}
+    private Position cachedLast;
+    private long fileLengthAtCachedLast;
 
-		@Override
-		public boolean equals(Object obj) {
-			return obj != null &&
-			obj.getClass() == PhysicalPosition.class &&
-			((PhysicalPosition)obj).offsetBytes == this.offsetBytes;
-		}
+    private DateTime cachedTime;
+    private Position posWithCachedTime;
 
-		PhysicalPosition(long offsetBytes) {
-			this.offsetBytes = offsetBytes;
-		}
 
-		@Override
-		public String toString() {
-			return "Physical position " + offsetBytes;
-		}
+    private class PhysicalPosition implements Position {
+        final long offsetBytes;
 
-		@Override
-		public Log getCorrespondingLog() {
-			return FileBackedLog.this;
-		}
-	}
+        @Override
+        public int hashCode() {
+            return (int)(offsetBytes ^ (offsetBytes >>> 32));
+        }
 
-	public FileBackedLog(String fileName, Parser in) throws IOException {
-		this(new MappedFile(fileName), in);
-	}
-	
-	public FileBackedLog(RandomAccessFileIO io, Parser in) throws IOException {
-		this.parser = in;
-		this.file = io;
-	}
+        @Override
+        public boolean equals(Object obj) {
+            return obj != null &&
+            obj.getClass() == PhysicalPosition.class &&
+            ((PhysicalPosition)obj).offsetBytes == this.offsetBytes;
+        }
 
-	@Override
-	public Position first() {
-		return new PhysicalPosition(0L);
-	}
+        PhysicalPosition(long offsetBytes) {
+            this.offsetBytes = offsetBytes;
+        }
 
-	@Override
-	public Position last() throws IOException {
-		return prev(new PhysicalPosition(file.length()));
-	}
+        @Override
+        public String toString() {
+            return "Physical position " + offsetBytes;
+        }
 
-	@Override
-	public Record readRecord(Position pos) throws IOException {
-		ScrollableInputStream is = null;
-		try {
-			is = file.getInputStreamFrom(((PhysicalPosition) pos).offsetBytes);
-			Record rec = parser.readRecord(is);
-			return rec;
-		} finally {
-			if (is != null) is.close(); 
-		}
-	}
+        @Override
+        public Log getCorrespondingLog() {
+            return FileBackedLog.this;
+        }
+    }
 
-	@Override
-	public Position next(Position pos) throws IOException {
-		ScrollableInputStream is = null;
-		try {
-			PhysicalPosition pp = (PhysicalPosition) pos;
-			is = file.getInputStreamFrom(pp.offsetBytes);
-			long offset = parser.findNextRecord(is);
-			if (offset == 0)
-				return null;
-			return new PhysicalPosition(pp.offsetBytes + offset);
-		} finally {
-			if (is != null) is.close(); 
-		}
+    public FileBackedLog(String fileName, Parser in) throws IOException {
+        this(new MappedFile(fileName), in);
+    }
 
-	}
-
-	@Override
-	public Position prev(Position pos) throws IOException {
-		ScrollableInputStream is = null;
-		try {
-			PhysicalPosition pp = (PhysicalPosition) pos;
-			is = file.getInputStreamFrom(pp.offsetBytes);
-			long offset = parser.findPrevRecord(is);
-			if (offset == 0)
-				return null;
-			return new PhysicalPosition(pp.offsetBytes - offset);
-		} finally {
-			if (is != null) is.close(); 
-		}
-
-	}
-
-	@Override
-	public String toString() {
-		return file.getFileName();
-	}
-
-	@Override
-	public Position convertToNative(Position p) throws IOException {
-		if (p.getCorrespondingLog() != this) return null;
-		return p;
-	}
-
-	@Override
-	public Format[] getFormats() {
-		return parser.getFormats();
-	}
+    public FileBackedLog(RandomAccessFileIO io, Parser in) throws IOException {
+        this.parser = in;
+        this.file = io;
+    }
 
     @Override
-    public DateTime getTime(Position pos) throws IOException {
+    public Position first() {
+        return new PhysicalPosition(0L);
+    }
+
+    @Override
+    public synchronized Position last() throws IOException {
+        long len = file.length();
+        if(cachedLast == null || len != fileLengthAtCachedLast) {
+            cachedLast = prev(new PhysicalPosition(len));
+            fileLengthAtCachedLast = len;
+        }
+        return cachedLast;
+    }
+
+    @Override
+    public Record readRecord(Position pos) throws IOException {
+        ScrollableInputStream is = null;
+        try {
+            is = file.getInputStreamFrom(((PhysicalPosition) pos).offsetBytes);
+            Record rec = parser.readRecord(is);
+            return rec;
+        } finally {
+            if (is != null) is.close();
+        }
+    }
+
+    @Override
+    public Position next(Position pos) throws IOException {
+        ScrollableInputStream is = null;
+        try {
+            PhysicalPosition pp = (PhysicalPosition) pos;
+            is = file.getInputStreamFrom(pp.offsetBytes);
+            long offset = parser.findNextRecord(is);
+            if (offset == 0)
+                return null;
+            return new PhysicalPosition(pp.offsetBytes + offset);
+        } finally {
+            if (is != null) is.close();
+        }
+
+    }
+
+    @Override
+    public Position prev(Position pos) throws IOException {
+        ScrollableInputStream is = null;
+        try {
+            PhysicalPosition pp = (PhysicalPosition) pos;
+            is = file.getInputStreamFrom(pp.offsetBytes);
+            long offset = parser.findPrevRecord(is);
+            if (offset == 0)
+                return null;
+            return new PhysicalPosition(pp.offsetBytes - offset);
+        } finally {
+            if (is != null) is.close();
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return file.getFileName();
+    }
+
+    @Override
+    public Position convertToNative(Position p) throws IOException {
+        if (p.getCorrespondingLog() != this) return null;
+        return p;
+    }
+
+    @Override
+    public Format[] getFormats() {
+        return parser.getFormats();
+    }
+
+    @Override
+    public synchronized DateTime getTime(Position pos) throws IOException {
+        if(pos == posWithCachedTime) {
+            return cachedTime;
+        }
+
+        DateTime res = getTimeImpl(pos);
+        posWithCachedTime = pos;
+        cachedTime = res;
+
+        return res;
+    }
+
+    private DateTime getTimeImpl(Position pos) throws IOException {
         Record posRecord = readRecord(pos);
         if (posRecord.getFormat().getTimeFieldIndex() != -1) {
-            DateTimeFormatter dtf = DateTimeFormat.forPattern(posRecord.getFormat().getTimeFormat());
+            DateTimeFormatter dtf = posRecord.getFormat().getTimeFormat();
             return dtf.parseDateTime(posRecord.getCellValues()[posRecord.getFormat().getTimeFieldIndex()]);
         }
 
@@ -137,7 +161,7 @@ public class FileBackedLog implements Log {
             cur = prev(cur);
             Record curRec = readRecord(cur);
             if (curRec.getFormat().getTimeFieldIndex() != -1) {
-                DateTimeFormatter dtf = DateTimeFormat.forPattern(curRec.getFormat().getTimeFormat());
+                DateTimeFormatter dtf = curRec.getFormat().getTimeFormat();
                 return dtf.parseDateTime(curRec.getCellValues()[curRec.getFormat().getTimeFieldIndex()]);
             }
         }
@@ -147,11 +171,11 @@ public class FileBackedLog implements Log {
             cur = next(cur);
             Record curRec = readRecord(cur);
             if (curRec.getFormat().getTimeFieldIndex() != -1) {
-                DateTimeFormatter dtf = DateTimeFormat.forPattern(curRec.getFormat().getTimeFormat());
+                DateTimeFormatter dtf = curRec.getFormat().getTimeFormat();
                 return dtf.parseDateTime(curRec.getCellValues()[curRec.getFormat().getTimeFieldIndex()]);
             }
         }
-        
+
         return null;
     }
 

@@ -23,9 +23,9 @@ public class MergeLogsPlugin implements AnalysisPlugin {
             logs[i] = (Log) args[i].data;
         }
 
-		Log mergedLog = null;
-		try {
-			mergedLog = new TimeMergeLogs(logs);
+        Log mergedLog = null;
+        try {
+            mergedLog = new TimeMergeLogs(logs);
 
             Attributes[] childAttributes = new Attributes[args.length];
             for (int i = 0 ; i < args.length ; ++i) {

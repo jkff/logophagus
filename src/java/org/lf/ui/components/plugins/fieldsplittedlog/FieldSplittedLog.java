@@ -43,11 +43,11 @@ public class FieldSplittedLog extends JPanel {
                     if (progressMonitor.isCanceled())
                         break;
                     try {
-						Thread.currentThread().sleep(1);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+                        Thread.currentThread().sleep(1);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                     Record rec = logAndField.log.readRecord(cur);
                     listModel.addFieldValue(rec.getCellValues()[fieldIndex]);
                     if (cur.equals(end)) break;
@@ -56,22 +56,22 @@ public class FieldSplittedLog extends JPanel {
                 }
                 listModel.setMaxReadedPosition(cur);
                 listModel.addFieldValue(new Cell() {
-					@Override
-					public int getIndexInRecord() {
-						return fieldIndex;
-					}
-					@Override
-					public String getName() {
-						return "Other...";
-					}
-					@Override
-					public Type getType() {
-						return Type.TEXT;
-					}
-					@Override
-					public Object getValue() {
-						return "Other...";
-					}
+                    @Override
+                    public int getIndexInRecord() {
+                        return fieldIndex;
+                    }
+                    @Override
+                    public String getName() {
+                        return "Other...";
+                    }
+                    @Override
+                    public Type getType() {
+                        return Type.TEXT;
+                    }
+                    @Override
+                    public Object getValue() {
+                        return "Other...";
+                    }
                 });
             } catch (IOException e) {
                 e.printStackTrace();
@@ -87,10 +87,10 @@ public class FieldSplittedLog extends JPanel {
             
         }
 
-		@Override
-		protected void process(List<Void> arg0) {
-			FieldSplittedLog.this.splitPane.getRightComponent().validate();
-		}
+        @Override
+        protected void process(List<Void> arg0) {
+            FieldSplittedLog.this.splitPane.getRightComponent().validate();
+        }
     }
 
     public FieldSplittedLog(LogAndField logAndField, final Attributes attributes) {

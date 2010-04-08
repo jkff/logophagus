@@ -41,10 +41,10 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
         Field[] commonFields = getCommonFields(log.getFormats());
         
         if (commonFields.length == 0) {
-        	JOptionPane.showMessageDialog(null, "Records in log must have some equal fields!");
-        	return null;
+            JOptionPane.showMessageDialog(null, "Records in log must have some equal fields!");
+            return null;
         }
-        	
+
         Field field = (Field)JOptionPane.showInputDialog(
                 null,
                 "Select field", 

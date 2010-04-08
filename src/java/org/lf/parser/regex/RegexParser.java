@@ -13,9 +13,9 @@ import org.lf.util.Triple;
 
 public class RegexParser implements Parser {
     private final Format[] regexFormats;
-	private final Pattern[] patterns;
-	private final char recordDelimeter;
-	private final int maxLinesPerRecord;
+    private final Pattern[] patterns;
+    private final char recordDelimeter;
+    private final int maxLinesPerRecord;
 
     private abstract class ReadableSink extends Sink {
         public abstract String getReceivedChars();

@@ -103,26 +103,13 @@ public class ScrollableLogView extends JPanel implements Observer {
         this.recordsList.setCellRenderer(cellRenderer);
         this.recordsList.addKeyListener(new ListKeyListener());
         this.recordsList.setVisible(true);
-        this.recordsList.addListSelectionListener(new ListSelectionListener() {
-            
-            @Override
-            public void valueChanged(ListSelectionEvent arg0) {
-                try {
-                    DateTime dt = log.getTime(logSegmentModel.getPosition(recordsList.getSelectedIndex()));
-                    System.out.println(dt);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        });
         
         scrollableRecords = new JScrollPane(this.recordsList);
         scrollableRecords.addMouseWheelListener( new ScrollBarMouseWheelListener());
         this.scrollableRecords.setVisible(true);
         
 //        RepaintManager.currentManager(recordsList).setDoubleBufferingEnabled(false);
-//        scrollableRecords.setDebugGraphicsOptions( DebugGraphics.FLASH_OPTION);
+//        scrollableRecords.setDebugGraphicsOptions(DebugGraphics.FLASH_OPTION);
 
         BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
         this.setLayout(layout);

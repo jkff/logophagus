@@ -1,5 +1,7 @@
 package org.lf.plugins.analysis.filelog;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
 import org.lf.io.GzipRandomAccessIO;
@@ -28,12 +30,12 @@ import java.io.IOException;
 
 public class FileBackedLogPlugin implements AnalysisPlugin {
 
-	@Nullable
+    @Nullable
     public Entity applyTo(Entity[] args) {
         JFileChooser fileOpen = new JFileChooser(ProgramProperties.getWorkingDir());
         int state = fileOpen.showOpenDialog(null);
         if (state != JFileChooser.APPROVE_OPTION) 
-        	return null;
+            return null;
         File f = fileOpen.getSelectedFile();
         if (!f.isFile())
             return null;
@@ -85,13 +87,14 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
             
             Field[] fields = new Field[4];
             for(int i = 0; i < fields.length; ++i) 
-            	fields[i] = new Field("Field"+i);
+                fields[i] = new Field("Field"+i);
             
 //            Log log = new FileBackedLog(io, new CSVParser(fields));
 //            [2200-01-02 06:27:46,148] DEBUG [pool-798] Search performed in 0 with 507 hits
             String[] regexes = new String[]{"\\[(.+)\\]\\s+(\\w+)\\s+\\[(.+)\\]\\s+(.+)\\s*"};
             
-            Format singleFormat = new FormatAdapter(fields, 0, "yyyy-MM-dd HH:mm:ss,SSS");
+            Format singleFormat = new FormatAdapter(fields, 0,
+                    DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS"));
             
             Log log = new FileBackedLog(io, new RegexParser(regexes , new Format[]{singleFormat}, '\n', 1));
 

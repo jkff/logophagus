@@ -1,5 +1,6 @@
 package org.lf.logs;
 
+import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 public abstract class Format {
@@ -20,27 +21,27 @@ public abstract class Format {
         }
 
         @Override
-        public String getTimeFormat() {
+        public DateTimeFormatter getTimeFormat() {
             return null;
         }
     };
     
-	public abstract Field[] getFields();
+    public abstract Field[] getFields();
 
-	/**
-	 * 
-	 * @return index in getFields() corresponding to time field
-	 * or -1 if format has no time field
-	 */
-	  
-	public abstract int getTimeFieldIndex();
-	
-	/**
-	 * 
-	 * @return pattern for matching time with "Joda Time" library or null if this format has no time field
-	 * For example "yyyy-MM-dd"
-	 */
-    public abstract String getTimeFormat();
+    /**
+     *
+     * @return index in getFields() corresponding to time field
+     * or -1 if format has no time field
+     */
+
+    public abstract int getTimeFieldIndex();
+
+    /**
+     *
+     * @return pattern for matching time with "Joda Time" library or null if this format has no time field
+     * For example "yyyy-MM-dd"
+     */
+    public abstract DateTimeFormatter getTimeFormat();
 
 
     @Override
@@ -55,6 +56,6 @@ public abstract class Format {
     public int hashCode() {
         return getFields().hashCode();
     }
-	
-	 
+
+
 }

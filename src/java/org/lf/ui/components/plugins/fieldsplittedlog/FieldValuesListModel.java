@@ -31,9 +31,9 @@ class FieldValuesListModel extends AbstractListModel {
     }
     
     void addStringValue(String String) {
-        if (value2panel.containsKey(String)) return;
-        value2panel.put(String, null);
-        values.add(String);
+//        if (value2panel.containsKey(String)) return;
+//        value2panel.put(String, null);
+//        values.add(String);
     }
     
     void setMaxReadedPosition(Position pos) {
@@ -41,14 +41,15 @@ class FieldValuesListModel extends AbstractListModel {
     }
 
     void setView(String String, JPanel view) {
-        if (!value2panel.containsKey(String)) return;
-        value2panel.put(String, view);
+//        if (!value2panel.containsKey(String)) return;
+//        value2panel.put(String, view);
     }
 
     @Nullable
     JPanel getView(String String) {
-        //TODO check that there is no any String with value "other"
-        return value2panel.get(String);
+//        TODO check that there is no any String with value "other"
+//        return value2panel.get(String);
+        return null;
     }
 
     @Nullable

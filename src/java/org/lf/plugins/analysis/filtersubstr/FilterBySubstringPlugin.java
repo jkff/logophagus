@@ -56,7 +56,7 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
 
     @Override
     public Icon getIcon() {
-    	return new ImageIcon(ProgramProperties.iconsPath +"filter.gif");
+        return new ImageIcon(ProgramProperties.iconsPath +"filter.gif");
     }
 
 
