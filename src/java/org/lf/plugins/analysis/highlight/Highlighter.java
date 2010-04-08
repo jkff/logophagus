@@ -1,5 +1,6 @@
 package org.lf.plugins.analysis.highlight;
 
+import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.plugins.AttributeInstance;

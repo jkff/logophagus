@@ -1,34 +1,21 @@
 package org.lf.ui.components.plugins.scrollablelog;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.ListCellRenderer;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import org.lf.logs.Record;
 import org.lf.plugins.analysis.highlight.Highlighter;
 import static org.lf.util.CollectionFactory.newList;
 
 public class RecordView extends JPanel implements ListCellRenderer {
-    private final ScrollableLogModel model;
     private final Highlighter highlighter;
-    private final List<JTextArea> jCells;
-    private final JTextArea preferredSizeArea;
+    private final List<JLabel> cells;
 
-    public RecordView(ScrollableLogModel model, Highlighter highlighter) {
-        this.model = model;
+    public RecordView(Highlighter highlighter) {
         this.highlighter = highlighter;
-        this.jCells = newList();
-        preferredSizeArea = new JTextArea();
-        preferredSizeArea.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        this.cells = newList();
 
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
         this.setVisible(true);
@@ -46,54 +33,40 @@ public class RecordView extends JPanel implements ListCellRenderer {
         Record record = (Record)value;
         extendRecordViewIfSmaller(record);
         String[] cellValues = record.getCellValues();
-        int maxHeight  = 0;
-        for (int i = 0; i < cellValues.length; ++i) {
-            jCells.get(i).setText(cellValues[i]);
 
-            preferredSizeArea.setText(cellValues[i]);
-            Dimension preferredSize = preferredSizeArea.getPreferredSize();
-            jCells.get(i).setPreferredSize(preferredSize);
+        for (int i = 0; i < cellValues.length; ++i) cells.get(i).setText(" "+cellValues[i]+" ");
+        for (int i = 0; i < cells.size();      ++i) cells.get(i).setVisible(i < cellValues.length);
 
-            if (preferredSize.height > maxHeight) maxHeight = preferredSize.height;
-        }
-
-        for (int i = 0; i < cellValues.length; ++i) {
-            Dimension d = jCells.get(i).getPreferredSize();
-            d.height = maxHeight;
-            d.width += 10;
-            jCells.get(i).setPreferredSize(d);
-            jCells.get(i).setMinimumSize(d);
-            jCells.get(i).setMaximumSize(d);
-            jCells.get(i).setVisible(true);
-        }
-
-        for (int i = cellValues.length; i < jCells.size() ; i++) {
-            jCells.get(i).setVisible(false);
-        }
-
+        Color background, foreground;
         if (isSelected) {
-            this.setBackground(UIManager.getColor("List.selectionBackground"));
+            background = UIManager.getColor("List.selectionBackground");
+            foreground = UIManager.getColor("List.selectionForeground");
         } else {
-            Color color;
-            if (highlighter != null)   
-                color = highlighter.getHighlightColor(record);
-            else
-                color = UIManager.getColor("List.background");
-            this.setBackground(color);
+            Color c = (highlighter == null) ? null : highlighter.getHighlightColor(record);
+            background = (c == null) ? ((index%2 == 0) ? new Color(244,244,244) : Color.WHITE) : c;
+            foreground = UIManager.getColor("List.foreground");
         }
+        
+        for(JLabel cell : cells) {
+            cell.setBackground(background);
+            cell.setForeground(foreground);
+        }
+        this.setBackground(background);
+        this.setForeground(foreground);
+
         this.revalidate();
         return this;
     }
 
     void extendRecordViewIfSmaller( Record record) {
         int recSize = record.getCellValues().length;
-        int vRecSize = this.jCells.size();
-        if ( recSize <= vRecSize) return;
+        int vRecSize = this.cells.size();
+        if (recSize <= vRecSize) return;
         for (int i = 0; i < (recSize - vRecSize); ++i) {
-            JTextArea newTextArea = new JTextArea();
-            newTextArea.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-            this.jCells.add(newTextArea);
-            this.add(newTextArea);
+            JLabel label = new JLabel();
+            label.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+            this.cells.add(label);
+            this.add(label);
         }    
     }
 }

@@ -1,23 +1,24 @@
 package org.lf.ui.components.plugins.scrollablelog;
 
 
-import org.joda.time.DateTime;
+import org.lf.logs.Format;
 import org.lf.logs.Log;
+import org.lf.logs.Record;
 import org.lf.parser.*;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.analysis.Bookmarks;
 import org.lf.plugins.analysis.highlight.Highlighter;
+import org.lf.plugins.analysis.highlight.RecordColorer;
 import org.lf.ui.util.GUIUtils;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -98,7 +99,16 @@ public class ScrollableLogView extends JPanel implements Observer {
         GUIUtils.fixMaxHeightSize(controlPanel);
 
         RecordsListModel listModel = new RecordsListModel(logSegmentModel);
-        RecordView cellRenderer = new RecordView(logSegmentModel, attributes.getValue(Highlighter.class));
+
+        Highlighter customHighlighter = attributes.getValue(Highlighter.class);
+        Highlighter highlighter = new Highlighter(
+                customHighlighter==null ? new ArrayList<Highlighter>() : Arrays.asList(customHighlighter));
+        highlighter.setRecordColorer(new RecordColorer() {
+            public Color getColor(Record r) {
+                return r.getFormat() == Format.UNKNOWN_FORMAT ? Color.PINK : null;
+            }
+        });
+        RecordView cellRenderer = new RecordView(highlighter);
         this.recordsList = new JList(listModel);
         this.recordsList.setCellRenderer(cellRenderer);
         this.recordsList.addKeyListener(new ListKeyListener());

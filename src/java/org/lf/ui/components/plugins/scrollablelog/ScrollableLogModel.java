@@ -172,14 +172,19 @@ public class ScrollableLogModel extends Observable {
     synchronized public void shiftUp() {
         if (!readingDone || isAtBegin()) return;
         setReadingDone(false);
-        navigatorThread = new RelativePosNavigator(false, 1);
+        // Here and below we navigate an even number of records (for example, 2).
+        // This is a hack to ensure that the alternating white/gray coloring in
+        // RecordView remains consistent while the list is being scrolled.
+        // It could be done in a more elegant way, I suppose, but this hack is so
+        // innocent that I let it be.
+        navigatorThread = new RelativePosNavigator(false, 2);
         navigatorThread.start();
     }
 
     synchronized public void shiftDown() {
         if (!readingDone || isAtEnd()) return;
         setReadingDone(false);
-        navigatorThread = new RelativePosNavigator(true, 1);
+        navigatorThread = new RelativePosNavigator(true, 2);
         navigatorThread.start();
     }
 
