@@ -15,9 +15,36 @@ public class TimeMergeLogs implements Log {
     private final Format[] mergeFormats;
     private final Pair<Position, Position>[] logsBorders;
 
-    private class CurPrevIndex extends Triple<Position, Position, Integer> {
+    private class CurPrevIndex {
+        private Position cur;
+        private Position prev;
+        private DateTime curTime;
+        private DateTime prevTime;
+        private Integer index;
+
         private CurPrevIndex(Position cur, Position prev, Integer index) {
-            super(cur, prev, index);
+            this.cur = cur;
+            this.prev = prev;
+            this.index = index;
+        }
+
+        public DateTime getCurTime() {
+            if(curTime == null) try {
+                curTime = logs[index].getTime(cur);
+            } catch (IOException e) {
+                // Ignore
+                e.printStackTrace();
+            }
+            return curTime;
+        }
+        public DateTime getPrevTime() {
+            if(prevTime == null) try {
+                prevTime = logs[index].getTime(prev);
+            } catch (IOException e) {
+                // Ignore
+                e.printStackTrace();
+            }
+            return prevTime;
         }
     }
 
@@ -29,32 +56,28 @@ public class TimeMergeLogs implements Log {
             if(pos1 == null || pos2 == null)
                 return compareNullable(o1, o2);
 
-            int res = 0;
-            try {
-                DateTime dt1 = logs[o1.third].getTime(pos1);
-                DateTime dt2 = logs[o2.third].getTime(pos2);
-                res = dt1.compareTo(dt2);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            
-            if (res != 0)   return res; 
-            return o1.third.compareTo(o2.third);
+            DateTime dt1 = getTime(o1);
+            DateTime dt2 = getTime(o2);
+            int res = dt1.compareTo(dt2);
+            if (res != 0)   return res;
+
+            return o1.index.compareTo(o2.index);
         }
 
         protected abstract Position getPosition(CurPrevIndex cpi);
+        protected abstract DateTime getTime(CurPrevIndex cpi);
 
         protected abstract int compareNullable(CurPrevIndex cpi1, CurPrevIndex cpi2);
     }
 
     private Comparator<CurPrevIndex> COMPARE_CPI_ON_CUR = new CPIComparator() {
-        protected Position getPosition(CurPrevIndex cpi) { return cpi.first; }
+        protected Position getPosition(CurPrevIndex cpi) { return cpi.cur; }
+        protected DateTime getTime    (CurPrevIndex cpi) { return cpi.getCurTime(); }
 
         @Override
         public int compareNullable(CurPrevIndex cpi1, CurPrevIndex cpi2) {
             Position pos1 = getPosition(cpi1), pos2 = getPosition(cpi2);
-            if (pos1 == null && pos2 == null) return cpi1.third.compareTo(cpi2.third);
+            if (pos1 == null && pos2 == null) return cpi1.index.compareTo(cpi2.index);
             if (pos1 == null) return 1;
             if (pos2 == null) return -1;
             throw new IllegalArgumentException("Expected one of the two Position's to be null");
@@ -62,12 +85,13 @@ public class TimeMergeLogs implements Log {
     };
 
     private Comparator<CurPrevIndex> COMPARE_CPI_ON_PREV = new CPIComparator() {
-        protected Position getPosition(CurPrevIndex cpi) { return cpi.second; }
+        protected Position getPosition(CurPrevIndex cpi) { return cpi.prev; }
+        protected DateTime getTime    (CurPrevIndex cpi) { return cpi.getPrevTime(); }
 
         @Override
         public int compareNullable(CurPrevIndex cpi1, CurPrevIndex cpi2) {
             Position pos1 = getPosition(cpi1), pos2 = getPosition(cpi2);
-            if (pos1 == null && pos2 == null) return -cpi1.third.compareTo(cpi2.third);
+            if (pos1 == null && pos2 == null) return -cpi1.index.compareTo(cpi2.index);
             if (pos1 == null) return -1;
             if (pos2 == null) return 1;
             throw new IllegalArgumentException("Expected one of the two Position's to be null");
@@ -165,9 +189,9 @@ public class TimeMergeLogs implements Log {
         curSortedCopy.remove(cur);
         prevSortedCopy.remove(cur);
         //check if it's not the position of merged log end
-        if (cur.first == null) return null; 
-        Position nextPos = logsBorders[cur.third].second.equals(cur.first) ? null : logs[cur.third].next(cur.first);       
-        CurPrevIndex newEntity = new CurPrevIndex(nextPos, cur.first, cur.third);
+        if (cur.cur == null) return null;
+        Position nextPos = logsBorders[cur.index].second.equals(cur.cur) ? null : logs[cur.index].next(cur.cur);
+        CurPrevIndex newEntity = new CurPrevIndex(nextPos, cur.cur, cur.index);
         curSortedCopy.add(newEntity);
         prevSortedCopy.add(newEntity);
 
@@ -187,9 +211,9 @@ public class TimeMergeLogs implements Log {
         CurPrevIndex cur = prevSortedCopy.last();
         curSortedCopy.remove(cur);
         prevSortedCopy.remove(cur);
-        if (cur.second == null) return null;
-        Position prevPos = logsBorders[cur.third].first.equals(cur.second)? null : logs[cur.third].prev(cur.second);
-        CurPrevIndex newEntity = new CurPrevIndex(cur.second, prevPos, cur.third);
+        if (cur.prev == null) return null;
+        Position prevPos = logsBorders[cur.index].first.equals(cur.prev)? null : logs[cur.index].prev(cur.prev);
+        CurPrevIndex newEntity = new CurPrevIndex(cur.prev, prevPos, cur.index);
         curSortedCopy.add(newEntity);
         prevSortedCopy.add(newEntity);
         return new MergedPosition(curSortedCopy, prevSortedCopy);
@@ -200,7 +224,7 @@ public class TimeMergeLogs implements Log {
         MergedPosition p = (MergedPosition)pos;
         if (p == null) 
             throw new IllegalArgumentException("Can't read record corresponding to such pos.");
-        return logs[p.cpisAscCur.first().third].readRecord(p.cpisAscCur.first().first);
+        return logs[p.cpisAscCur.first().index].readRecord(p.cpisAscCur.first().cur);
     }
 
 
@@ -223,7 +247,7 @@ public class TimeMergeLogs implements Log {
         MergedPosition curPos = (MergedPosition)this.first();
         MergedPosition lastPos = (MergedPosition)this.last();
 
-        while(!(curPos.cpisAscCur.first().third == logOfPos && curPos.cpisAscCur.first().first.equals(p))) {
+        while(!(curPos.cpisAscCur.first().index == logOfPos && curPos.cpisAscCur.first().cur.equals(p))) {
             if (curPos.equals(lastPos)) return null;
             curPos = (MergedPosition) next(curPos);
         }
@@ -239,7 +263,7 @@ public class TimeMergeLogs implements Log {
     @Override
     public DateTime getTime(Position pos) throws IOException {
         MergedPosition mPos = (MergedPosition)pos;
-        return logs[mPos.cpisAscCur.first().third].getTime(mPos.cpisAscCur.first().first);
+        return logs[mPos.cpisAscCur.first().index].getTime(mPos.cpisAscCur.first().cur);
     }
 
 }

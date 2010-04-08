@@ -20,7 +20,6 @@ Exception in thread "AWT-EventQueue-0" java.lang.ArrayIndexOutOfBoundsException:
 	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:169)
 	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:161)
 	at java.awt.EventDispatchThread.run(EventDispatchThread.java:122)
- - TODO Profile search for INFO on a merge of several logs
  - TODO Some GUI for entering/selecting format
  - TODO In merged log: provide a way to navigate to the same position in the original log
 
@@ -38,8 +37,6 @@ Exception in thread "AWT-EventQueue-0" java.lang.ArrayIndexOutOfBoundsException:
   - Multi-views with >2 logs and simultaneous scrolling
 
  - TODO figure out how to get rid of scrollbar
- - TODO Split by field values: combobox with field names instead of input textbox
-    + TODO Fix combobox issue (nothing can be selected)
 
  - TODO (in case merge turns out to be too slow because of priority queue copying in MergeLogs.next()) Use an immutable (purely functional) priority queue there. See, for example, Okasaki "Purely functional data structures" or take one from the internet
 
