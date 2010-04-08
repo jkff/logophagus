@@ -1,6 +1,4 @@
  - TODO Multiple selection in Open window
- - TODO Fix height of records, use prettier font, maybe use JLabel instead of JTextArea.
- - TODO Fix selection behavior.
 Exception during opening a log:
 Exception in thread "AWT-EventQueue-0" java.lang.ArrayIndexOutOfBoundsException: 5
 	at javax.swing.plaf.basic.BasicListUI.updateLayoutState(BasicListUI.java:1351)
