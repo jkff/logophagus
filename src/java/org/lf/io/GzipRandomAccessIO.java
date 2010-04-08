@@ -71,7 +71,7 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
 
     @Override
     public String getFileName() {
-        return fileName;
+        return new File(fileName).getName();
     }
 
     @Override

@@ -1,5 +1,4 @@
  - TODO Multiple selection in Open window
- - TODO Bug: on windows full absolute path to log is shown in tree
  - TODO Fix height of records, use prettier font, maybe use JLabel instead of JTextArea.
  - TODO Fix selection behavior.
 Exception during opening a log:
