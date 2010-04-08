@@ -5,6 +5,8 @@ import org.lf.io.RandomAccessFileIO;
 import org.lf.io.GzipRandomAccessIO;
 import org.lf.logs.Field;
 import org.lf.logs.FileBackedLog;
+import org.lf.logs.Format;
+import org.lf.logs.FormatAdapter;
 import org.lf.logs.Log;
 import org.lf.parser.csv.CSVParser;
 import org.lf.parser.regex.RegexParser;
@@ -86,12 +88,12 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
             	fields[i] = new Field("Field"+i);
             
 //            Log log = new FileBackedLog(io, new CSVParser(fields));
-//            [2010-03-27 06:27:46,148] DEBUG [btpool0-7298] Search performed in 0 with 501 hits
+//            [2200-01-02 06:27:46,148] DEBUG [pool-798] Search performed in 0 with 507 hits
             String[] regexes = new String[]{"\\[(.+)\\]\\s+(\\w+)\\s+\\[(.+)\\]\\s+(.+)\\s*"};
-            Field[][] regexesFields = new Field[1][];
-            regexesFields[0] = fields;
             
-            Log log = new FileBackedLog(io, new RegexParser(regexes , regexesFields, '\n', 1));
+            Format singleFormat = new FormatAdapter(fields, 0, "yyyy-MM-dd HH:mm:ss,SSS");
+            
+            Log log = new FileBackedLog(io, new RegexParser(regexes , new Format[]{singleFormat}, '\n', 1));
 
             Attributes atr = new Attributes();
             atr.addAttribute(new Bookmarks(null, log));
@@ -102,19 +104,19 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
         }
     }
 
-	public String getName() {
-		return "Open log from file";
-	}
+    public String getName() {
+        return "Open log from file";
+    }
 
-	public Class getOutputType(Class[] inputTypes) {
-		if (inputTypes.length == 0)
-			return Log.class;
-		return null;
-	}
+    public Class getOutputType(Class[] inputTypes) {
+        if (inputTypes.length == 0)
+            return Log.class;
+        return null;
+    }
 
-	@Override
-	public Icon getIcon() {
-		return new ImageIcon(ProgramProperties.iconsPath + "log.gif");
-	}
+    @Override
+    public Icon getIcon() {
+        return new ImageIcon(ProgramProperties.iconsPath + "log.gif");
+    }
 
 }

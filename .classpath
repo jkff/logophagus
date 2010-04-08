@@ -4,5 +4,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/annotations.jar"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
+	<classpathentry kind="lib" path="lib/joda-time-1.6.jar" sourcepath="/home/ruslan/Загрузки/joda-time-1.6/joda-time-1.6-sources.jar"/>
+	<classpathentry kind="lib" path="lib/zlib.dll"/>
 	<classpathentry kind="output" path="out/test/Logophagus"/>
 </classpath>

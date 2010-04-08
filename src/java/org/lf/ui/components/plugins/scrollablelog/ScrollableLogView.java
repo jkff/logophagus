@@ -1,6 +1,7 @@
 package org.lf.ui.components.plugins.scrollablelog;
 
 
+import org.joda.time.DateTime;
 import org.lf.logs.Log;
 import org.lf.parser.*;
 import org.lf.plugins.Attributes;
@@ -8,11 +9,14 @@ import org.lf.plugins.analysis.Bookmarks;
 import org.lf.plugins.analysis.highlight.Highlighter;
 import org.lf.ui.util.GUIUtils;
 
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.*;
 import java.io.IOException;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -36,12 +40,11 @@ public class ScrollableLogView extends JPanel implements Observer {
         this(log, attributes, null);
     }
 
-    public ScrollableLogView(Log log, Attributes attributes, Position pos) {
+    public ScrollableLogView(final Log log, Attributes attributes, Position pos) {
         this.attributes = attributes;
         this.logSegmentModel = null;
-        this.logSegmentModel = new ScrollableLogModel(log, 100);
+        this.logSegmentModel = new ScrollableLogModel(log, 50);
         this.logSegmentModel.start();
-
         // Create UI
 
         this.bookmarksList = new JComboBox(new BookmarksComboBoxModel(attributes.getValue(Bookmarks.class)));
@@ -81,7 +84,7 @@ public class ScrollableLogView extends JPanel implements Observer {
         this.progressBar = new JProgressBar(0, 100);
         this.progressBar.setValue(0);
         this.progressBar.setStringPainted(true);
-
+            
         Box controlPanel = Box.createHorizontalBox();
         controlPanel.add(startButton);
         controlPanel.add(Box.createHorizontalStrut(5));
@@ -91,6 +94,7 @@ public class ScrollableLogView extends JPanel implements Observer {
         controlPanel.add(Box.createHorizontalStrut(5));
         controlPanel.add(bookmarksList);
         controlPanel.add(Box.createHorizontalGlue());
+        
         GUIUtils.fixMaxHeightSize(controlPanel);
 
         RecordsListModel listModel = new RecordsListModel(logSegmentModel);
@@ -98,9 +102,28 @@ public class ScrollableLogView extends JPanel implements Observer {
         this.recordsList = new JList(listModel);
         this.recordsList.setCellRenderer(cellRenderer);
         this.recordsList.addKeyListener(new ListKeyListener());
-
+        this.recordsList.setVisible(true);
+        this.recordsList.addListSelectionListener(new ListSelectionListener() {
+            
+            @Override
+            public void valueChanged(ListSelectionEvent arg0) {
+                try {
+                    DateTime dt = log.getTime(logSegmentModel.getPosition(recordsList.getSelectedIndex()));
+                    System.out.println(dt);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
+        
         scrollableRecords = new JScrollPane(this.recordsList);
         scrollableRecords.addMouseWheelListener( new ScrollBarMouseWheelListener());
+        this.scrollableRecords.setVisible(true);
+        
+//        RepaintManager.currentManager(recordsList).setDoubleBufferingEnabled(false);
+//        scrollableRecords.setDebugGraphicsOptions( DebugGraphics.FLASH_OPTION);
+
         BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
         this.setLayout(layout);
         this.add(controlPanel);
@@ -108,9 +131,10 @@ public class ScrollableLogView extends JPanel implements Observer {
         this.add(scrollableRecords);
         this.add(Box.createVerticalStrut(12));
         this.add(this.progressBar);
-        this.logSegmentModel.addObserver(this);
-        update(logSegmentModel, null);
         this.setVisible(true);
+        update(logSegmentModel, null);
+        this.logSegmentModel.addObserver(this);
+
     }
 
     public Position getSelectedRecord() {
@@ -129,6 +153,7 @@ public class ScrollableLogView extends JPanel implements Observer {
             public void run() {
                 updateControls();
                 updateProgress();
+                recordsList.revalidate();
                 recordsList.repaint();
             }
         });
@@ -182,20 +207,20 @@ public class ScrollableLogView extends JPanel implements Observer {
                         "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE);
                 if (name == null || name.equals("")) return;
 
-					try {
-						if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
-						    JOptionPane.showMessageDialog(
-						            ScrollableLogView.this,
-						            "Bookmark with such name already exists. Please input a different name.");
-						} else {
-						    int row = recordsList.getSelectedIndex();
-						    if (row == -1) row = 0;
-						    attributes.getValue(Bookmarks.class).addBookmark(name, logSegmentModel.getPosition(row));
-						    return;
-						}
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
+                    try {
+                        if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
+                            JOptionPane.showMessageDialog(
+                                    ScrollableLogView.this,
+                                    "Bookmark with such name already exists. Please input a different name.");
+                        } else {
+                            int row = recordsList.getSelectedIndex();
+                            if (row == -1) row = 0;
+                            attributes.getValue(Bookmarks.class).addBookmark(name, logSegmentModel.getPosition(row));
+                            return;
+                        }
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
             }
         }
 
@@ -209,13 +234,13 @@ public class ScrollableLogView extends JPanel implements Observer {
             String selectedBookmark = (String) cb.getSelectedItem();
             if (selectedBookmark == null) return;
             Position pos;
-			try {
-				pos = attributes.getValue(Bookmarks.class).getValue(selectedBookmark);
-	            logSegmentModel.shiftTo(pos);
-	            
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+            try {
+                pos = attributes.getValue(Bookmarks.class).getValue(selectedBookmark);
+                logSegmentModel.shiftTo(pos);
+                
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             //TODO think about better solution
             recordsList.setSelectedIndex(0);
             scrollableRecords.scrollRectToVisible(new Rectangle(0, 0));
@@ -233,6 +258,12 @@ public class ScrollableLogView extends JPanel implements Observer {
         @Override
         public void keyPressed(KeyEvent e) {
             int curIndex = recordsList.getSelectedIndex();
+
+            Point viewPos = scrollableRecords.getViewport().getViewPosition();
+            int maxScrollValue = scrollableRecords.getHorizontalScrollBar().getModel().getMaximum();
+            int curScrollValue = scrollableRecords.getHorizontalScrollBar().getModel().getValue();
+            int extScrollValue = scrollableRecords.getHorizontalScrollBar().getModel().getExtent();
+
             switch (e.getKeyCode()) {
             case KeyEvent.VK_UP:
                 if (curIndex == 0 && !logSegmentModel.isAtBegin())
@@ -253,14 +284,28 @@ public class ScrollableLogView extends JPanel implements Observer {
                 }
                 break;
             case KeyEvent.VK_HOME:
-            	recordsList.setSelectedIndex(0);
+                recordsList.setSelectedIndex(0);
                 if (!logSegmentModel.isAtBegin())
                     logSegmentModel.start();
                 break;
             case KeyEvent.VK_END:
-            	recordsList.setSelectedIndex(recordsList.getModel().getSize() - 1);
+                recordsList.setSelectedIndex(recordsList.getModel().getSize() - 1);
                 if (!logSegmentModel.isAtEnd())
                     logSegmentModel.end();
+                break;
+            case KeyEvent.VK_LEFT:
+                if (curScrollValue > 5) 
+                    viewPos.x -= 5;
+                else if (curScrollValue > 0) 
+                    viewPos.x = 0;
+                scrollableRecords.getViewport().setViewPosition(viewPos);
+                break;
+            case KeyEvent.VK_RIGHT:
+                if (curScrollValue + extScrollValue + 5 < maxScrollValue) 
+                    viewPos.x += 5;
+                else if (curScrollValue + extScrollValue < maxScrollValue) 
+                    viewPos.x = maxScrollValue;
+                scrollableRecords.getViewport().setViewPosition(viewPos);     
                 break;
             }
         }

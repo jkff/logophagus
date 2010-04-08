@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JList;
@@ -14,23 +15,23 @@ import javax.swing.UIManager;
 
 import org.lf.logs.Record;
 import org.lf.plugins.analysis.highlight.Highlighter;
+import static org.lf.util.CollectionFactory.newList;
 
 public class RecordView extends JPanel implements ListCellRenderer {
 	private final ScrollableLogModel model;
 	private final Highlighter highlighter;
-	private JTextArea[] jCells = new JTextArea[10];
+	private final List<JTextArea> jCells;
+	private final JTextArea preferredSizeArea;
 
 	public RecordView(ScrollableLogModel model, Highlighter highlighter) {
 		this.model = model;
 		this.highlighter = highlighter;
+		this.jCells = newList();
+		preferredSizeArea = new JTextArea();
+		preferredSizeArea.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		
 		this.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
-
-		for (int i = 0; i < jCells.length; ++i) {
-			jCells[i] = new JTextArea();
-//			jCells[i].setLineWrap(false);
-			jCells[i].setBorder(BorderFactory.createLineBorder(Color.GRAY));
-			add(jCells[i]);
-		}
+		this.setVisible(true);
 	}
 
 	@Override
@@ -42,41 +43,58 @@ public class RecordView extends JPanel implements ListCellRenderer {
 			boolean cellHasFocus) 
 	{
 		if (value == null || value.getClass().isAssignableFrom(Record.class)) return null;
-		
 		Record record = (Record)value;
+		extendRecordViewIfSmaller(record);
 		String[] cellValues = record.getCellValues();
 		int maxHeight  = 0;
 		for (int i = 0; i < cellValues.length; ++i) {
-			jCells[i].setText(cellValues[i]);
-			if (jCells[i].getPreferredSize().height > maxHeight) maxHeight = jCells[i].getPreferredSize().height;
+			jCells.get(i).setText(cellValues[i]);
+			
+			preferredSizeArea.setText(cellValues[i]);
+			Dimension preferredSize = preferredSizeArea.getPreferredSize();
+			jCells.get(i).setPreferredSize(preferredSize);
+			
+			if (preferredSize.height > maxHeight) maxHeight = preferredSize.height;
 		}
 
 		for (int i = 0; i < cellValues.length; ++i) {
-			setVisible(true);
-			Dimension d = jCells[i].getPreferredSize();
+			Dimension d = jCells.get(i).getPreferredSize();
 			d.height = maxHeight;
-			jCells[i].setPreferredSize(d);
-//			jCells[i].setVisible(true);
+			d.width += 10;
+			jCells.get(i).setPreferredSize(d);
+			jCells.get(i).setMinimumSize(d);
+			jCells.get(i).setMaximumSize(d);
+			jCells.get(i).setVisible(true);
 		}
 		
-		for (int i = cellValues.length; i < jCells.length ; i++) {
-			jCells[i].setVisible(false);
+		for (int i = cellValues.length; i < jCells.size() ; i++) {
+			jCells.get(i).setVisible(false);
 		}
-		
+
+        		
 		if (isSelected) { 
 			this.setBackground(UIManager.getColor("List.selectionBackground"));
 		} else {
-			Color color;
-			if (highlighter != null)   
-				color = highlighter.getHighlightColor(record);
-			else
-				color = UIManager.getColor("List.background");
-			this.setBackground(color);
-		}
-		
-		this.setVisible(true);
-		
-		return this;
-	}
+	        Color color;
+            if (highlighter != null)   
+                color = highlighter.getHighlightColor(record);
+            else
+                color = UIManager.getColor("List.background");
+            this.setBackground(color);
+        }
+        this.revalidate();
+        return this;
+    }
 
+    void extendRecordViewIfSmaller( Record record) {
+        int recSize = record.getCellValues().length;
+        int vRecSize = this.jCells.size();
+        if ( recSize <= vRecSize) return;
+        for (int i = 0; i < (recSize - vRecSize); ++i) {
+            JTextArea newTextArea = new JTextArea();
+            newTextArea.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            this.jCells.add(newTextArea);
+            this.add(newTextArea);
+        }    
+    }
 }

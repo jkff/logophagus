@@ -36,6 +36,6 @@ public class SideBySidePlugin implements AnalysisPlugin {
 
     @Override
     public Icon getIcon() {
-    	return new ImageIcon(ProgramProperties.iconsPath +"folder_files.gif");
+        return new ImageIcon(ProgramProperties.iconsPath +"folder_files.gif");
     }
 }

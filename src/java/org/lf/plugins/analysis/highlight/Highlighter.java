@@ -44,9 +44,9 @@ public class Highlighter implements AttributeInstance<HighlighterConcept,Highlig
         return new HighlighterConcept();
     }
 
-	@Override
-	public Highlighter createChild(Log attributeOwner) {
+    @Override
+    public Highlighter createChild(Log attributeOwner) {
         return new Highlighter(Arrays.asList(this));
-	}
+    }
 
 }

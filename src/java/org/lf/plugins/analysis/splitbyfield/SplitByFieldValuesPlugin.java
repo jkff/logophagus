@@ -1,8 +1,14 @@
 package org.lf.plugins.analysis.splitbyfield;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -18,7 +24,7 @@ import org.lf.plugins.analysis.splitbyfield.LogAndField;
 import org.lf.services.ProgramProperties;
 
 import com.sun.istack.internal.Nullable;
-import static org.lf.util.CollectionFactory.newHashMap;
+import static org.lf.util.CollectionFactory.newHashSet;
 
 public class SplitByFieldValuesPlugin implements AnalysisPlugin {
 
@@ -32,7 +38,7 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
     @Override
     public Entity applyTo(Entity[] args) {
         Log log = (Log) args[0].data;
-        Field[] commonFields = getEqualFields(log.getFormats());
+        Field[] commonFields = getCommonFields(log.getFormats());
         
         if (commonFields.length == 0) {
         	JOptionPane.showMessageDialog(null, "Records in log must have some equal fields!");
@@ -63,25 +69,14 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
 
     @Override
     public Icon getIcon() {
-    	return new ImageIcon(ProgramProperties.iconsPath +"folder_files.gif");
+        return new ImageIcon(ProgramProperties.iconsPath +"folder_files.gif");
     }
 
-    private Field[] getEqualFields(Format[] formats) {
-    	Map<Field, Integer> fieldToCount = newHashMap();
-    	for (Format format : formats) {
-			for (Field field : format.getFields()) {
-				if (fieldToCount.containsKey(field)) 
-					fieldToCount.put(field, fieldToCount.get(field) + 1);
-				else
-					fieldToCount.put(field, 1);
-			}
-		}
-    	
-    	Iterator<Map.Entry<Field, Integer>> it = fieldToCount.entrySet().iterator();
-    	while(it.hasNext()) {
-			if (!it.next().getValue().equals(formats.length))
-				it.remove();
-		}
-    	return fieldToCount.keySet().toArray(new Field[0]);
+    private Field[] getCommonFields(Format[] formats) {
+        Set<Field> commonFields = new HashSet<Field>(Arrays.asList(formats[0].getFields()));
+        for (Format format : formats) {
+            commonFields.retainAll(Arrays.asList(format.getFields()));
+        }
+        return commonFields.toArray(new Field[0]);
     }
 }

@@ -3,6 +3,7 @@ package org.lf.logs;
 
 import java.io.IOException;
 
+import org.joda.time.DateTime;
 import org.lf.parser.Position;
 
 import com.sun.istack.internal.Nullable;
@@ -74,6 +75,18 @@ public interface Log {
      */
     public Record readRecord(Position pos) throws IOException;
 
+    /**
+     * 
+     * @param pos from this log of record whose time method return
+     * @return  DateTime of record obtained from this log
+     * if record has no time then time of previous record is used
+     * if first record has no time then it uses the time of first record after it that has time
+     * if no record in this log has time then null returned;
+     * @throws IOException
+     */
+    @Nullable
+    public DateTime getTime(Position pos) throws IOException;
+    
     /**
      * returns name of this log
      */

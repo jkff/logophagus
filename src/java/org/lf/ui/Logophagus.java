@@ -97,7 +97,7 @@ public class Logophagus extends JFrame {
         logsTree.setCellRenderer(renderer);
         logsTree.setAutoscrolls(true);
         logsTree.addContainerListener(new ContainerAdapter() {
-        	@Override
+            @Override
             public void componentAdded(ContainerEvent ce) {
                 logsTree.setSelectionPath(logsHierarchy.getLastNewPath());
                 logsTree.scrollPathToVisible(logsHierarchy.getLastNewPath());
@@ -161,16 +161,16 @@ public class Logophagus extends JFrame {
 
     private class MyTreeCellRenderer extends DefaultTreeCellRenderer {
 
-		@Override
-		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
-				boolean leaf, int row, boolean hasFocus) {
-			NodeData nodeValue = (NodeData)((DefaultMutableTreeNode)value).getUserObject();
-			JLabel label = (JLabel)super.getTreeCellRendererComponent(tree, value, sel,expanded,leaf,row,hasFocus);
-			if (nodeValue != null)
-				label.setIcon(nodeValue.icon);
-			return label;
-		}
-    	
+        @Override
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
+                boolean leaf, int row, boolean hasFocus) {
+            NodeData nodeValue = (NodeData)((DefaultMutableTreeNode)value).getUserObject();
+            JLabel label = (JLabel)super.getTreeCellRendererComponent(tree, value, sel,expanded,leaf,row,hasFocus);
+            if (nodeValue != null)
+                label.setIcon(nodeValue.icon);
+            return label;
+        }
+        
     }
     
 }

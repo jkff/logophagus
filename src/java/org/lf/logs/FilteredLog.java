@@ -2,6 +2,7 @@ package org.lf.logs;
 
 import java.io.IOException;
 
+import org.joda.time.DateTime;
 import org.lf.parser.Position;
 import org.lf.util.Filter;
 
@@ -153,4 +154,9 @@ public class FilteredLog implements Log {
 	public Format[] getFormats() {
 		return underlyingLog.getFormats();
 	}
+
+    @Override
+    public DateTime getTime(Position pos) throws IOException {
+        return underlyingLog.getTime(((FilteredPosition)pos).underlyingPos);
+    }
 }

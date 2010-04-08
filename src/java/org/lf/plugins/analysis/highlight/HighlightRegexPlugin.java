@@ -64,6 +64,6 @@ public class HighlightRegexPlugin implements AnalysisPlugin {
 
     @Override
     public Icon getIcon() {
-    	return new ImageIcon(ProgramProperties.iconsPath +"colorized.gif");
+        return new ImageIcon(ProgramProperties.iconsPath +"colorized.gif");
     }
 }

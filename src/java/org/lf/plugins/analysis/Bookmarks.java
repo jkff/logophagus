@@ -8,7 +8,7 @@ import org.lf.parser.Position;
 import org.lf.plugins.AttributeInstance;
 import org.lf.util.CollectionFactory;
 
-import static org.lf.util.CollectionFactory.newList;
+import static org.lf.util.CollectionFactory.newHashSet;;
 
 public class Bookmarks implements AttributeInstance<BookmarksConcept,Bookmarks> {
     private final Bookmarks parent;
@@ -22,10 +22,11 @@ public class Bookmarks implements AttributeInstance<BookmarksConcept,Bookmarks> 
     }
 
     public List<String> getNames() {
-        ArrayList<String> result = newList(name2pos.keySet());
+        Set<String> result = newHashSet();
+        result.addAll(name2pos.keySet());
         if (parent != null)
             result.addAll(parent.getNames());
-        return result;
+        return Arrays.asList(result.toArray(new String[0]));
     }
 
     //positions from name2pos are not converted.
@@ -49,8 +50,8 @@ public class Bookmarks implements AttributeInstance<BookmarksConcept,Bookmarks> 
 
     //it is only possible to add bookmark whose position belongs to this.log 
     public boolean addBookmark(String name, Position pos) {
-    	if (pos.getCorrespondingLog() != this.log) 
-    		throw new IllegalArgumentException("Position("+pos.getClass()+") must be from bookmark owner log("+log.getClass()+ ")");
+        if (pos.getCorrespondingLog() != this.log) 
+            throw new IllegalArgumentException("Position("+pos.getClass()+") must be from bookmark owner log("+log.getClass()+ ")");
         if (getNames().contains(name))
             return false;
         name2pos.put(name, pos);

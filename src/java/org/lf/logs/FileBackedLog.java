@@ -1,5 +1,8 @@
 package org.lf.logs;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
 import org.lf.parser.Parser;
@@ -120,5 +123,36 @@ public class FileBackedLog implements Log {
 	public Format[] getFormats() {
 		return parser.getFormats();
 	}
+
+    @Override
+    public DateTime getTime(Position pos) throws IOException {
+        Record posRecord = readRecord(pos);
+        if (posRecord.getFormat().getTimeFieldIndex() != -1) {
+            DateTimeFormatter dtf = DateTimeFormat.forPattern(posRecord.getFormat().getTimeFormat());
+            return dtf.parseDateTime(posRecord.getCellValues()[posRecord.getFormat().getTimeFieldIndex()]);
+        }
+
+        Position cur = pos;
+        while (!cur.equals(first())) {
+            cur = prev(cur);
+            Record curRec = readRecord(cur);
+            if (curRec.getFormat().getTimeFieldIndex() != -1) {
+                DateTimeFormatter dtf = DateTimeFormat.forPattern(curRec.getFormat().getTimeFormat());
+                return dtf.parseDateTime(curRec.getCellValues()[curRec.getFormat().getTimeFieldIndex()]);
+            }
+        }
+
+        cur = pos;
+        while (!cur.equals(last())) {
+            cur = next(cur);
+            Record curRec = readRecord(cur);
+            if (curRec.getFormat().getTimeFieldIndex() != -1) {
+                DateTimeFormatter dtf = DateTimeFormat.forPattern(curRec.getFormat().getTimeFormat());
+                return dtf.parseDateTime(curRec.getCellValues()[curRec.getFormat().getTimeFieldIndex()]);
+            }
+        }
+        
+        return null;
+    }
 
 }

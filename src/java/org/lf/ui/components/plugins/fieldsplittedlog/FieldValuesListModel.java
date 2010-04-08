@@ -17,7 +17,7 @@ import static org.lf.util.CollectionFactory.newList;
 import static org.lf.util.CollectionFactory.newHashMap;
 
 class FieldValuesListModel extends AbstractListModel {
-    private final List<String> values = Collections.emptyList();
+    private final List<String> values = newList();
     private final Map<String, Log> value2log = newHashMap();
     private Position endScanPosition;
     
