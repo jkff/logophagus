@@ -81,8 +81,7 @@ public class FileBackedLog implements Log {
         ScrollableInputStream is = null;
         try {
             is = file.getInputStreamFrom(((PhysicalPosition) pos).offsetBytes);
-            Record rec = parser.readRecord(is);
-            return rec;
+            return parser.readRecord(is);
         } finally {
             if (is != null) is.close();
         }
@@ -101,7 +100,6 @@ public class FileBackedLog implements Log {
         } finally {
             if (is != null) is.close();
         }
-
     }
 
     @Override
@@ -117,7 +115,6 @@ public class FileBackedLog implements Log {
         } finally {
             if (is != null) is.close();
         }
-
     }
 
     @Override

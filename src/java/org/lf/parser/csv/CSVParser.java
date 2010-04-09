@@ -108,19 +108,14 @@ public class CSVParser implements Parser {
 
         findBorder(forward(is), new Forward(),
                 new Sink() {
-            private StringBuilder sb = new StringBuilder();
-
-            public void onChar(char c) {
-                sb.append(c);
-            }
             public void fieldBreak() {
-                fields.add(sb.toString());
-                sb = new StringBuilder();
+                fields.add(getContents().toString());
+                resetContents();
             }
             public void error() { }
 
             public void recordBorder() {
-                fields.add(sb.toString());
+                fields.add(getContents().toString());
             }
         });
 
@@ -162,7 +157,6 @@ public class CSVParser implements Parser {
     }
 
     private static class Nop extends Sink {
-        public void onChar(char c) { }
     }
 
     @Override

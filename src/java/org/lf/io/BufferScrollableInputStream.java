@@ -36,7 +36,6 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
             throw new IOException("InterruptedException in bufferPool.move()");
         }
         this.offsetInBuffer = (int) (newOffset - this.buf.hash);
-
     }
 
     //relative scroll
@@ -83,6 +82,17 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
             throw new IOException("InterruptedException in bufferPool.move()");
         }
         return scrolled;
+    }
+
+    @Override
+    public long getOffset() {
+        return this.buf.hash + this.offsetInBuffer;
+    }
+
+    @Override
+    public boolean isSameSource(ScrollableInputStream other) {
+        return (other instanceof BufferScrollableInputStream) &&
+               ((BufferScrollableInputStream)other).bufferPool == this.bufferPool;
     }
 
     //relative read
