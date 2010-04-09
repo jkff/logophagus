@@ -1,3 +1,5 @@
+ - TODO Support logs in an arbitrary encoding (now bytes are simply interpreted as chars, which is completely wrong) - use StreamDecoder or something like that
+ - TODO Improve performance of log reading: it is unacceptable to read one byte/char at a time: we should provide buffered reading apis like "read(char[] buf, int offset, int len)" all the way down and perhaps also "readUntilDelimiter(char delim, char[] buf, int offset, int len)" and same thing for reading in backward direction (in ScrollableInputStream). Abstraction is good but in this case its price is just too high. Performance goal: regex matching should take up at least 80% of program time (now it takes ~15%).
  - TODO Multiple selection in Open window
 Exception during opening a log:
 Exception in thread "AWT-EventQueue-0" java.lang.ArrayIndexOutOfBoundsException: 5
