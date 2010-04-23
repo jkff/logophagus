@@ -19,20 +19,22 @@ public final class Field {
         TIME,
         TEXT,
         NUMBER,
-    };
+    }
+
+    ;
 
 
     @Override
     public boolean equals(Object o) {
-        return     o != null &&
+        return o != null &&
                 o.getClass() == this.getClass() &&
-                ((Field)o).name.equals(name) &&
-                ((Field)o).type.equals(type);
+                ((Field) o).name.equals(name) &&
+                ((Field) o).type.equals(type);
     }
 
     @Override
     public int hashCode() {
-        return     name.hashCode();
+        return name.hashCode();
     }
 
     @Override

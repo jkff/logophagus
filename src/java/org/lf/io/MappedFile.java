@@ -3,7 +3,6 @@ package org.lf.io;
 import org.lf.parser.ScrollableInputStream;
 import org.lf.util.Function;
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,7 +19,7 @@ public class MappedFile implements RandomAccessFileIO {
 
     // File is divided into parts of equal size = bufSize (last part size may
     // differ from others, so buffers do not overlap
-    private static final int MAX_BUFFERS_COUNT = 100;
+    private static final int MAX_BUFFERS_COUNT = 20;
     private static final long BUF_SIZE = 1000000;
     private static final Function<Long, Long> TRUNCATE_BUF = new Function<Long, Long>() {
         public Long apply(Long offset) {
@@ -35,6 +34,7 @@ public class MappedFile implements RandomAccessFileIO {
 
         Function<Long, byte[]> LOAD_BUF = new Function<Long, byte[]>() {
             private RandomAccessFile raf = new RandomAccessFile(fileName, "r");
+
             public byte[] apply(Long base) {
                 try {
                     long curBufSize = BUF_SIZE;
@@ -62,7 +62,11 @@ public class MappedFile implements RandomAccessFileIO {
             }
         };
 
-        Function DO_NOTHING = new Function() { public Object apply(Object buffer) { return null; } };
+        Function DO_NOTHING = new Function() {
+            public Object apply(Object buffer) {
+                return null;
+            }
+        };
         this.bufferPool = new BufferPool<byte[], Long, Long>(MAX_BUFFERS_COUNT, TRUNCATE_BUF, LOAD_BUF, DO_NOTHING);
     }
 

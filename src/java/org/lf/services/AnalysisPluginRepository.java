@@ -1,9 +1,10 @@
 package org.lf.services;
 
-import java.util.*;
-
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Entity;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.lf.util.CollectionFactory.newList;
 
@@ -30,10 +31,10 @@ public class AnalysisPluginRepository {
 
         List<AnalysisPlugin> res = newList();
         for (AnalysisPlugin plugin : analysisPlugins) {
-            if(plugin.getOutputType(pluginArgsArray) != null)
+            if (plugin.getOutputType(pluginArgsArray) != null)
                 res.add(plugin);
         }
-        
+
         return res;
     }
 }

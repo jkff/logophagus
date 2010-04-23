@@ -5,8 +5,8 @@ import org.lf.parser.ScrollableInputStream;
 import java.io.IOException;
 
 /**
-* Created on: 26.03.2010 21:49:58
-*/
+ * Created on: 26.03.2010 21:49:58
+ */
 public class BufferScrollableInputStream extends ScrollableInputStream {
     private BufferPool<byte[], Long, Long>.Buffer buf;
 
@@ -29,6 +29,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     }
 
     //absolute scroll
+
     @Override
     public void scrollTo(long newOffset) throws IOException {
         try {
@@ -40,6 +41,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     }
 
     //relative scroll
+
     @Override
     public long scrollBack(long offset) throws IOException {
         ensureOpen();
@@ -63,6 +65,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     }
 
     //relative scroll
+
     @Override
     public long scrollForward(long offset) throws IOException {
         ensureOpen();
@@ -93,10 +96,11 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     @Override
     public boolean isSameSource(ScrollableInputStream other) {
         return (other instanceof BufferScrollableInputStream) &&
-               ((BufferScrollableInputStream)other).bufferPool == this.bufferPool;
+                ((BufferScrollableInputStream) other).bufferPool == this.bufferPool;
     }
 
     //relative read
+
     @Override
     public int read() throws IOException {
         ensureOpen();
@@ -111,7 +115,22 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     }
 
 
+    @Override
+    public int readBack() throws IOException {
+        ensureOpen();
+        if (this.offsetInBuffer != 0)
+            return this.buf.data[--this.offsetInBuffer];
+
+        if (!shiftPrevBuffer())
+            return -1;
+
+        this.offsetInBuffer = this.buf.data.length - 1;
+        return this.buf.data[this.offsetInBuffer];
+    }
+
+
     //relative read
+
     @Override
     public int read(byte[] b) throws IOException {
         int needToRead = b.length;
@@ -132,7 +151,18 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
         } while (needToRead > 0);
 
         return bytesRead;
+    }
 
+    private boolean shiftPrevBuffer() throws IOException {
+        if (this.buf.hash == 0)
+            return false;
+        try {
+            this.buf = bufferPool.move(this.buf, this.buf.hash - 1);
+        } catch (InterruptedException e) {
+            throw new IOException("InterruptedException from bufferPool.move()");
+        }
+        this.offsetInBuffer = 0;
+        return true;
     }
 
     private boolean shiftNextBuffer() throws IOException {

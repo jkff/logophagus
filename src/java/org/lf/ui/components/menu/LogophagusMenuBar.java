@@ -1,20 +1,16 @@
 package org.lf.ui.components.menu;
 
+import org.lf.plugins.analysis.filelog.FileBackedLogPlugin;
+import org.lf.ui.model.LogsHierarchy;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
-import org.lf.plugins.analysis.filelog.FileBackedLogPlugin;
-import org.lf.ui.model.LogsHierarchy;
-
-
-
-public class LogophagusMenuBar extends JMenuBar implements Observer{
+public class LogophagusMenuBar extends JMenuBar implements Observer {
     private LogsHierarchy logsTree;
 
     public LogophagusMenuBar(LogsHierarchy logsTree) {

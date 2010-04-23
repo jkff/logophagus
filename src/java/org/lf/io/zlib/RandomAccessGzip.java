@@ -11,9 +11,10 @@ import java.util.List;
 public class RandomAccessGzip {
     public interface Index {
         int read(RandomAccessFile f, long origin, byte[] buf, int offset, int len) throws IOException;
+
         long decompressedSize();
     }
-    
+
     private static class IndexImpl implements Index {
         List<ZRan.Point> idx;
         long decompressedSize;
@@ -33,7 +34,7 @@ public class RandomAccessGzip {
             Memory mem = new Memory(len);
             int n = ZRan.extract(f, idx, origin, mem, len);
             mem.getByteBuffer(0, len).get(buf, offset, len);
-            return n; 
+            return n;
         }
     }
 

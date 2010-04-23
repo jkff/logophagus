@@ -1,19 +1,22 @@
 package org.lf.plugins.analysis;
 
-import java.io.IOException;
-import java.util.*;
-
 import org.lf.logs.Log;
 import org.lf.parser.Position;
 import org.lf.plugins.AttributeInstance;
 import org.lf.util.CollectionFactory;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import static org.lf.util.CollectionFactory.newHashSet;
 
-public class Bookmarks implements AttributeInstance<BookmarksConcept,Bookmarks> {
+public class Bookmarks implements AttributeInstance<BookmarksConcept, Bookmarks> {
     private final Bookmarks parent;
     private final Log log;
-    
+
     private Map<String, Position> name2pos = CollectionFactory.newLinkedHashMap();
 
     public Bookmarks(Bookmarks parent, Log bookmarksOwner) {
@@ -50,8 +53,8 @@ public class Bookmarks implements AttributeInstance<BookmarksConcept,Bookmarks> 
 
     //it is only possible to add bookmark whose position belongs to this.log 
     public boolean addBookmark(String name, Position pos) {
-        if (pos.getCorrespondingLog() != this.log) 
-            throw new IllegalArgumentException("Position(" + pos.getCorrespondingLog().toString() 
+        if (pos.getCorrespondingLog() != this.log)
+            throw new IllegalArgumentException("Position(" + pos.getCorrespondingLog().toString()
                     + ") must be from bookmark owner log(" + log.toString() + ")");
         if (getNames().contains(name))
             return false;

@@ -3,14 +3,16 @@ package org.lf.io.zlib;
 import com.sun.jna.Memory;
 import org.lf.util.ProgressListener;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * This file is a nearly identical reimplementation of 'zran.c'
- * from the examples to zlib 1.2.3. 
+ * from the examples to zlib 1.2.3.
  */
 class ZRan {
     private static final int SPAN = 1048576;
@@ -41,8 +43,7 @@ class ZRan {
     }
 
     static List<Point> build_index(InputStream in, long span, long[] decompressedSize, ProgressListener<Long> listener)
-            throws IOException
-    {
+            throws IOException {
         int ret;
         long totin, totout;  /* our own total counters to avoid 4GB limit */
         long last;                 /* totout value of last access Point */
@@ -51,7 +52,7 @@ class ZRan {
         Memory input = new Memory(CHUNK);
         Memory window = new Memory(WINSIZE);
         byte[] buf = new byte[CHUNK];
-       
+
         /* initialize inflate */
         strm.zalloc = null;
         strm.zfree = null;
@@ -70,7 +71,7 @@ class ZRan {
             index = new ArrayList<Point>();               /* will be allocated by first addpoint() */
             strm.avail_out = 0;
             do {
-                if(!listener.reportProgress(totin))
+                if (!listener.reportProgress(totin))
                     return null;
 
                 /* get some compressed data from input file */

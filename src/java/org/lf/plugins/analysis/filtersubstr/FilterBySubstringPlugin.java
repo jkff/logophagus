@@ -1,9 +1,6 @@
 package org.lf.plugins.analysis.filtersubstr;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
+import com.sun.istack.internal.Nullable;
 import org.lf.logs.FilteredLog;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
@@ -12,7 +9,7 @@ import org.lf.plugins.Entity;
 import org.lf.services.ProgramProperties;
 import org.lf.util.Filter;
 
-import com.sun.istack.internal.Nullable;
+import javax.swing.*;
 
 public class FilterBySubstringPlugin implements AnalysisPlugin {
     @Nullable
@@ -38,14 +35,14 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
             }
 
             public boolean accepts(Record r) {
-                for(Object cell : r.getCellValues()) {
-                    if(cell != null && ((String)cell).contains(substring))
+                for (Object cell : r.getCellValues()) {
+                    if (cell != null && ((String) cell).contains(substring))
                         return true;
                 }
                 return false;
             }
         };
-        
+
         Log fLog = new FilteredLog(log, filter);
         return new Entity(args[0].attributes.createSuccessor(fLog), fLog);
     }
@@ -56,7 +53,7 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
 
     @Override
     public Icon getIcon() {
-        return new ImageIcon(ProgramProperties.iconsPath +"filter.gif");
+        return new ImageIcon(ProgramProperties.iconsPath + "filter.gif");
     }
 
 

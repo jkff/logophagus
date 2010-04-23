@@ -17,28 +17,28 @@ public class CountingInputStream extends InputStream {
     @Override
     public int read() throws IOException {
         int res = delegate.read();
-        if(res != -1) ++bytesRead;
+        if (res != -1) ++bytesRead;
         return res;
     }
 
     @Override
     public int read(byte[] b) throws IOException {
         int n = delegate.read(b);
-        if(n != -1) bytesRead += n;
+        if (n != -1) bytesRead += n;
         return n;
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         int n = delegate.read(b, off, len);
-        if(n != -1) bytesRead += n;
+        if (n != -1) bytesRead += n;
         return n;
     }
 
     @Override
     public long skip(long s) throws IOException {
         long n = delegate.skip(s);
-        if(n != -1) bytesRead += n;
+        if (n != -1) bytesRead += n;
         return n;
     }
 

@@ -1,15 +1,13 @@
 package org.lf.ui.components.popup;
 
+import org.lf.plugins.AnalysisPlugin;
+import org.lf.ui.model.LogsHierarchy;
+
+import javax.swing.*;
+import javax.swing.tree.TreePath;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.tree.TreePath;
-
-import org.lf.plugins.AnalysisPlugin;
-import org.lf.ui.model.LogsHierarchy;
 
 
 public class TreeRightClickPopup extends JPopupMenu {
@@ -38,7 +36,8 @@ public class TreeRightClickPopup extends JPopupMenu {
             });
             add(itemDelete);
 
-        };
+        }
+        ;
 
 
     }

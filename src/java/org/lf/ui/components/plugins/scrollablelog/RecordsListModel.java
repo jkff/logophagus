@@ -1,14 +1,12 @@
 package org.lf.ui.components.plugins.scrollablelog;
 
+import javax.swing.*;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.swing.AbstractListModel;
-import javax.swing.SwingUtilities;
-
-class RecordsListModel extends AbstractListModel  implements Observer{
+class RecordsListModel extends AbstractListModel implements Observer {
     private int lastUpdateSize = 0;
-    
+
     private ScrollableLogModel underlyingModel;
 
     public RecordsListModel(ScrollableLogModel underlyingModel) {
@@ -28,7 +26,7 @@ class RecordsListModel extends AbstractListModel  implements Observer{
 
     @Override
     public void update(Observable o, Object arg) {
-        if (underlyingModel.getRecordCount() != lastUpdateSize) 
+        if (underlyingModel.getRecordCount() != lastUpdateSize)
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {

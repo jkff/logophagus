@@ -1,6 +1,6 @@
 package org.lf.util;
 
-public class Triple <A, B, C> {
+public class Triple<A, B, C> {
     public final A first;
     public final B second;
     public final C third;

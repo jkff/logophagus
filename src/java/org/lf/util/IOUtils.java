@@ -10,10 +10,10 @@ import java.io.OutputStream;
  */
 public class IOUtils {
     public static int pump(InputStream src, int n, OutputStream dest) throws IOException {
-        byte[] buf = new byte[1<<20];
+        byte[] buf = new byte[1 << 20];
         int total = 0;
         int cb;
-        while(n > 0 && -1 != (cb = src.read(buf, 0, Math.min(n, buf.length)))) {
+        while (n > 0 && -1 != (cb = src.read(buf, 0, Math.min(n, buf.length)))) {
             n -= cb;
             total += cb;
             dest.write(buf, 0, cb);
@@ -23,7 +23,7 @@ public class IOUtils {
 
     public static byte[] readInputStream(InputStream is) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream(is.available());
-        while(pump(is, Integer.MAX_VALUE, bos) > 0)
+        while (pump(is, Integer.MAX_VALUE, bos) > 0)
             ;
         return bos.toByteArray();
     }

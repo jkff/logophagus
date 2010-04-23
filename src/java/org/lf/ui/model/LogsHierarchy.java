@@ -7,13 +7,12 @@ import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
 
 import javax.swing.tree.*;
-
 import java.util.List;
 import java.util.Observable;
 
 import static org.lf.util.CollectionFactory.newLinkedList;
 
-public class LogsHierarchy extends Observable{
+public class LogsHierarchy extends Observable {
     private final DefaultTreeModel treeModel;
     private final TreePath rootPath;
     private TreePath lastNewPath;
@@ -34,7 +33,7 @@ public class LogsHierarchy extends Observable{
 
     public void addChildToNode(MutableTreeNode child, MutableTreeNode parent) {
         treeModel.insertNodeInto(child, parent, parent.getChildCount());
-        lastNewPath = new TreePath(((DefaultMutableTreeNode)child).getPath());
+        lastNewPath = new TreePath(((DefaultMutableTreeNode) child).getPath());
         setChanged();
         notifyObservers();
     }
@@ -47,14 +46,14 @@ public class LogsHierarchy extends Observable{
     }
 
     public void removeNodesByPath(TreePath[] paths) {
-        for (TreePath path : paths){
-            removeNode(((DefaultMutableTreeNode)path.getLastPathComponent()));
+        for (TreePath path : paths) {
+            removeNode(((DefaultMutableTreeNode) path.getLastPathComponent()));
         }
     }
 
     public List<AnalysisPlugin> getApplicablePlugins(TreePath[] selPaths) {
         List<Entity> pluginArgs = getContentByPaths(selPaths);
-        Entity[] argsArray  = (selPaths == null ? new Entity[0] : pluginArgs.toArray(new Entity[0]));
+        Entity[] argsArray = (selPaths == null ? new Entity[0] : pluginArgs.toArray(new Entity[0]));
         return AnalysisPluginRepository.getApplicablePlugins(argsArray);
     }
 
@@ -65,9 +64,9 @@ public class LogsHierarchy extends Observable{
 
         List<DisplayPlugin> availabaleDisplays = DisplayPluginRepository.getApplicablePlugins(res.data);
         MutableTreeNode childNode = new DefaultMutableTreeNode(
-                new NodeData(res, availabaleDisplays.get(0).createView(res), plugin.getIcon())); 
+                new NodeData(res, availabaleDisplays.get(0).createView(res), plugin.getIcon()));
         if (data.size() == 1) {
-            addChildToNode(childNode, (MutableTreeNode)(selPaths[0].getLastPathComponent()));
+            addChildToNode(childNode, (MutableTreeNode) (selPaths[0].getLastPathComponent()));
         } else {
             addChildToRoot(childNode);
         }

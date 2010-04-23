@@ -1,36 +1,24 @@
 package org.lf.plugins.analysis.splitbyfield;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-
-
+import com.sun.istack.internal.Nullable;
 import org.lf.logs.Field;
 import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Entity;
-import org.lf.plugins.analysis.splitbyfield.LogAndField;
 import org.lf.services.ProgramProperties;
 
-import com.sun.istack.internal.Nullable;
-import static org.lf.util.CollectionFactory.newHashSet;
+import javax.swing.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SplitByFieldValuesPlugin implements AnalysisPlugin {
 
     @Nullable
     public Class getOutputType(Class[] inputTypes) {
-        if( inputTypes.length == 1 && Log.class.isAssignableFrom(inputTypes[0]))
+        if (inputTypes.length == 1 && Log.class.isAssignableFrom(inputTypes[0]))
             return LogAndField.class;
         return null;
     }
@@ -39,24 +27,24 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
     public Entity applyTo(Entity[] args) {
         Log log = (Log) args[0].data;
         Field[] commonFields = getCommonFields(log.getFormats());
-        
+
         if (commonFields.length == 0) {
             JOptionPane.showMessageDialog(null, "Records in log must have some equal fields!");
             return null;
         }
 
-        Field field = (Field)JOptionPane.showInputDialog(
+        Field field = (Field) JOptionPane.showInputDialog(
                 null,
-                "Select field", 
-                "Setup", 
-                JOptionPane.PLAIN_MESSAGE, 
+                "Select field",
+                "Setup",
+                JOptionPane.PLAIN_MESSAGE,
                 null,
                 commonFields,
                 null);
-        
+
         if (field == null)
             return null;
-                
+
         LogAndField result = new LogAndField(log, field);
         return new Entity(args[0].attributes.createSuccessor(log), result);
     }
@@ -69,7 +57,7 @@ public class SplitByFieldValuesPlugin implements AnalysisPlugin {
 
     @Override
     public Icon getIcon() {
-        return new ImageIcon(ProgramProperties.iconsPath +"folder_files.gif");
+        return new ImageIcon(ProgramProperties.iconsPath + "folder_files.gif");
     }
 
     private Field[] getCommonFields(Format[] formats) {

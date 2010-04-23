@@ -19,6 +19,8 @@ public class FileBackedLog implements Log {
 
     private DateTime cachedTime;
     private Position posWithCachedTime;
+    private Record recWithCachedTime;
+
     private boolean hasTimeField;
 
 
@@ -27,14 +29,14 @@ public class FileBackedLog implements Log {
 
         @Override
         public int hashCode() {
-            return (int)(offsetBytes ^ (offsetBytes >>> 32));
+            return (int) (offsetBytes ^ (offsetBytes >>> 32));
         }
 
         @Override
         public boolean equals(Object obj) {
             return obj != null &&
-            obj.getClass() == PhysicalPosition.class &&
-            ((PhysicalPosition)obj).offsetBytes == this.offsetBytes;
+                    obj.getClass() == PhysicalPosition.class &&
+                    ((PhysicalPosition) obj).offsetBytes == this.offsetBytes;
         }
 
         PhysicalPosition(long offsetBytes) {
@@ -60,13 +62,13 @@ public class FileBackedLog implements Log {
         this.parser = in;
         this.file = io;
 
-        for(Format f: parser.getFormats()) {
+        for (Format f : parser.getFormats()) {
             if (f.getTimeFieldIndex() != -1) {
                 hasTimeField = true;
                 break;
             }
         }
-        
+
     }
 
     @Override
@@ -77,7 +79,7 @@ public class FileBackedLog implements Log {
     @Override
     public synchronized Position last() throws IOException {
         long len = file.length();
-        if(cachedLast == null || len != fileLengthAtCachedLast) {
+        if (cachedLast == null || len != fileLengthAtCachedLast) {
             cachedLast = prev(new PhysicalPosition(len));
             fileLengthAtCachedLast = len;
         }
@@ -86,6 +88,9 @@ public class FileBackedLog implements Log {
 
     @Override
     public Record readRecord(Position pos) throws IOException {
+        if (pos.equals(posWithCachedTime))
+            return recWithCachedTime;
+
         ScrollableInputStream is = null;
         try {
             is = file.getInputStreamFrom(((PhysicalPosition) pos).offsetBytes);
@@ -144,8 +149,8 @@ public class FileBackedLog implements Log {
     @Override
     public synchronized DateTime getTime(Position pos) throws IOException {
         if (!hasTimeField) return null;
-        
-        if(pos == posWithCachedTime) {
+
+        if (pos == posWithCachedTime) {
             return cachedTime;
         }
 
@@ -157,8 +162,8 @@ public class FileBackedLog implements Log {
     }
 
     private DateTime getTimeImpl(Position pos) throws IOException {
-
         Record posRecord = readRecord(pos);
+        recWithCachedTime = posRecord;
         if (posRecord.getFormat().getTimeFieldIndex() != -1) {
             DateTimeFormatter dtf = posRecord.getFormat().getTimeFormat();
             return dtf.parseDateTime(posRecord.getCellValues()[posRecord.getFormat().getTimeFieldIndex()]);

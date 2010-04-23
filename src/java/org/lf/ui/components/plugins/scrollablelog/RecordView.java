@@ -1,12 +1,12 @@
 package org.lf.ui.components.plugins.scrollablelog;
 
+import org.lf.logs.Record;
+import org.lf.plugins.analysis.highlight.Highlighter;
+
+import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-import javax.swing.*;
-
-import org.lf.logs.Record;
-import org.lf.plugins.analysis.highlight.Highlighter;
 import static org.lf.util.CollectionFactory.newList;
 
 public class RecordView extends JPanel implements ListCellRenderer {
@@ -27,15 +27,14 @@ public class RecordView extends JPanel implements ListCellRenderer {
             Object value,
             int index,
             boolean isSelected,
-            boolean cellHasFocus)
-    {
+            boolean cellHasFocus) {
         if (value == null || value.getClass().isAssignableFrom(Record.class)) return null;
-        Record record = (Record)value;
+        Record record = (Record) value;
         extendRecordViewIfSmaller(record);
         String[] cellValues = record.getCellValues();
 
-        for (int i = 0; i < cellValues.length; ++i) cells.get(i).setText(" "+cellValues[i]+" ");
-        for (int i = 0; i < cells.size();      ++i) cells.get(i).setVisible(i < cellValues.length);
+        for (int i = 0; i < cellValues.length; ++i) cells.get(i).setText(" " + cellValues[i] + " ");
+        for (int i = 0; i < cells.size(); ++i) cells.get(i).setVisible(i < cellValues.length);
 
         Color background, foreground;
         if (isSelected) {
@@ -43,22 +42,27 @@ public class RecordView extends JPanel implements ListCellRenderer {
             foreground = UIManager.getColor("List.selectionForeground");
         } else {
             Color c = (highlighter == null) ? null : highlighter.getHighlightColor(record);
-            background = (c == null) ? ((index%2 == 0) ? new Color(244,244,244) : Color.WHITE) : c;
+            background = (c == null) ? ((index % 2 == 0) ? new Color(244, 244, 244) : Color.WHITE) : c;
             foreground = UIManager.getColor("List.foreground");
         }
-        
-        for(JLabel cell : cells) {
-            cell.setBackground(background);
-            cell.setForeground(foreground);
+
+        for (JLabel cell : cells) {
+            if (!cell.getBackground().equals(background))
+                cell.setBackground(background);
+            if (!cell.getForeground().equals(foreground))
+                cell.setForeground(foreground);
         }
-        this.setBackground(background);
-        this.setForeground(foreground);
+
+        if (!this.getBackground().equals(background))
+            this.setBackground(background);
+        if (!this.getForeground().equals(foreground))
+            this.setForeground(foreground);
 
         this.revalidate();
         return this;
     }
 
-    void extendRecordViewIfSmaller( Record record) {
+    void extendRecordViewIfSmaller(Record record) {
         int recSize = record.getCellValues().length;
         int vRecSize = this.cells.size();
         if (recSize <= vRecSize) return;
@@ -67,6 +71,6 @@ public class RecordView extends JPanel implements ListCellRenderer {
             label.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
             this.cells.add(label);
             this.add(label);
-        }    
+        }
     }
 }
