@@ -137,7 +137,7 @@
       <file leaf-file-name="ParserSetupDialog.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/dialog/ParserSetupDialog.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="30" column="71" selection-start="1059" selection-end="1059" vertical-scroll-proportion="1.064">
+            <state line="30" column="71" selection-start="1059" selection-end="1059" vertical-scroll-proportion="0.5185185">
               <folding />
             </state>
           </provider>
@@ -675,7 +675,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20333838" sideWeight="0.5410122" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962063" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.44677138" sideWeight="0.33840948" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44677138" sideWeight="0.33840948" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32852808" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -834,7 +834,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/dialog/ParserSetupDialog.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="71" selection-start="1059" selection-end="1059" vertical-scroll-proportion="1.064">
+        <state line="30" column="71" selection-start="1059" selection-end="1059" vertical-scroll-proportion="0.5185185">
           <folding />
         </state>
       </provider>
