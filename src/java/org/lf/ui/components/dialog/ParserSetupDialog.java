@@ -1,42 +1,42 @@
 package org.lf.ui.components.dialog;
 
 import com.sun.istack.internal.Nullable;
-import org.lf.io.MappedFile;
 import org.lf.parser.Parser;
-import org.lf.parser.ParserAdjuster;
 import org.lf.parser.csv.CSVParserAdjuster;
+import org.lf.parser.line.LineParserAdjuster;
 import org.lf.parser.regex.RegexpParserAdjuster;
+import org.lf.ui.components.common.ParserAdjuster;
 import org.lf.ui.util.GUIUtils;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.Map;
 
 import static org.lf.util.CollectionFactory.newHashMap;
 
-public class ParserSetup extends JDialog {
+public class ParserSetupDialog extends JDialog implements PropertyChangeListener {
     private final Map<String, Class> parserNameToClass;
     private final Box adjusterBox;
     private final JComboBox parserChooser;
-    private ParserAdjuster parserAdjuster;
-    private Boolean isOKPressed = false;
+    private ParserAdjuster parserAdjuster = null;
+    private boolean clickedOkNotCancel = false;
     private JButton okButton;
 
 
-    public ParserSetup(String fileName) throws IOException {
-        super((JFrame)null, "Parser setup");
+    public ParserSetupDialog() throws IOException {
+        super((JFrame) null, "Parser setup");
 
         Box mainPanel = Box.createVerticalBox();
-        mainPanel.setBorder( BorderFactory.createEmptyBorder(12,12,12,12));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         this.setContentPane(mainPanel);
 
-        MappedFile file = new MappedFile(fileName);
-        JPanel rawPreviewPanel = new RawFilePreview(file);
+        parserNameToClass = newHashMap();
 
-        parserNameToClass  = newHashMap();
+        parserNameToClass.put("Line parser", LineParserAdjuster.class);
         parserNameToClass.put("CSV parser", CSVParserAdjuster.class);
         parserNameToClass.put("Regexp parser", RegexpParserAdjuster.class);
         this.parserChooser = new JComboBox(parserNameToClass.keySet().toArray(new String[0]));
@@ -48,6 +48,7 @@ public class ParserSetup extends JDialog {
         parserSelectionBox.add(parserChooser);
         parserSelectionBox.add(Box.createHorizontalGlue());
         GUIUtils.makePreferredSize(parserChooser);
+        GUIUtils.makePreferredSize(parserSelectionBox);
 
 
         Box okCancelBox = Box.createHorizontalBox();
@@ -55,7 +56,7 @@ public class ParserSetup extends JDialog {
         okButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                isOKPressed = true;
+                clickedOkNotCancel = true;
                 dispose();
             }
         });
@@ -64,32 +65,20 @@ public class ParserSetup extends JDialog {
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                isOKPressed = false;
+                clickedOkNotCancel = false;
                 dispose();
             }
         });
         okCancelBox.add(okButton);
         okCancelBox.add(Box.createHorizontalStrut(12));
         okCancelBox.add(cancelButton);
-        
+        GUIUtils.createRecommendedButtonMargin(okButton, cancelButton);
+        GUIUtils.makeSameWidth(okButton, cancelButton);
+
+        GUIUtils.makePreferredSize(okCancelBox);
+
         adjusterBox = Box.createHorizontalBox();
-        try {
-            this.parserAdjuster = (ParserAdjuster)parserNameToClass.get(parserChooser.getSelectedItem()).newInstance();
-            this.parserAdjuster.setParent(this);
-            adjusterBox.add(parserAdjuster);
-        } catch (InstantiationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        adjusterBox.add(Box.createHorizontalGlue());
 
-
-        GUIUtils.createRecommendedButtonMargin(new JButton[]{okButton, cancelButton});
-        GUIUtils.makeSameWidth(new JComponent[] {okButton, cancelButton});        
-
-        this.add(rawPreviewPanel);
-        this.add(Box.createVerticalStrut(5));        
         this.add(parserSelectionBox);
         this.add(Box.createVerticalStrut(5));
         this.add(adjusterBox);
@@ -97,37 +86,47 @@ public class ParserSetup extends JDialog {
         this.add(okCancelBox);
 
         this.setModal(true);
-        this.setPreferredSize(new Dimension(500, 600));
-        this.pack();
         this.setVisible(false);
-    }
-    
-    @Nullable
-    public Parser showSetupDialog() {
-        this.setVisible(true);
-        if (!isOKPressed) return null;
-        return parserAdjuster.getParser();
+        this.setResizable(false);
     }
 
-    public void setOKButtonEnable(boolean isEnable) {
-        okButton.setEnabled(isEnable);
+    @Nullable
+    public Parser showSetupDialog() {
+        update();
+        this.pack();
+        this.setVisible(true);
+        if (clickedOkNotCancel)
+            return parserAdjuster.getParser();
+        return null;
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        okButton.setEnabled(parserAdjuster.isValidAdjust());
+    }
+
+    private void update() {
+        if (parserAdjuster != null)
+            parserAdjuster.removePropertyChangeListener(this);
+        try {
+            parserAdjuster = (ParserAdjuster) parserNameToClass.get(parserChooser.getSelectedItem()).newInstance();
+            parserAdjuster.addPropertyChangeListener("validAdjust", this);
+        } catch (InstantiationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        adjusterBox.removeAll();
+        adjusterBox.add(parserAdjuster);
+        adjusterBox.revalidate();
+        this.pack();
     }
 
     private class ParserChooserListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
-            try {
-                parserAdjuster = (ParserAdjuster)parserNameToClass.get(parserChooser.getSelectedItem()).newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-            adjusterBox.removeAll();
-            adjusterBox.add(parserAdjuster);
-            parserAdjuster.setParent(ParserSetup.this);            
-            adjusterBox.add(Box.createHorizontalGlue());
-            adjusterBox.revalidate();
+            update();
         }
     }
 }

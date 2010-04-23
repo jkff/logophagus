@@ -2,7 +2,7 @@ package org.lf.plugins;
 
 import com.sun.istack.internal.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 
 public interface AnalysisPlugin {
@@ -11,6 +11,7 @@ public interface AnalysisPlugin {
 
     @Nullable
     Entity applyTo(Entity[] args);
+
     String getName();
 
     Icon getIcon();

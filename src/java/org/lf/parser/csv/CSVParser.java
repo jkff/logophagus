@@ -1,11 +1,14 @@
 package org.lf.parser.csv;
 
-import java.io.IOException;
-import java.util.*;
-
 import org.lf.logs.Format;
 import org.lf.logs.Record;
-import org.lf.parser.*;
+import org.lf.parser.CharStream;
+import org.lf.parser.Parser;
+import org.lf.parser.ScrollableInputStream;
+import org.lf.parser.Sink;
+
+import java.io.IOException;
+import java.util.List;
 
 import static org.lf.util.CollectionFactory.newList;
 
@@ -22,11 +25,11 @@ class CSVParser implements Parser {
     private final Format csvFormat;
 
     public CSVParser() {
-        this(null , DEFAULT_RECORD_DELIMITER, DEFAULT_FIELD_DELIMITER, DEFAULT_QUOTE_CHARACTER , DEFAULT_ESCAPE_CHARACTER);
+        this(null, DEFAULT_RECORD_DELIMITER, DEFAULT_FIELD_DELIMITER, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
     }
 
     public CSVParser(Format singleFormat) {
-        this(singleFormat, DEFAULT_RECORD_DELIMITER, DEFAULT_FIELD_DELIMITER, DEFAULT_QUOTE_CHARACTER , DEFAULT_ESCAPE_CHARACTER);
+        this(singleFormat, DEFAULT_RECORD_DELIMITER, DEFAULT_FIELD_DELIMITER, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
     }
 
     public CSVParser(Format singleFormat, char recordDelimiter, char fieldDelimiter, char quoteCharacter, char escapeCharacter) {
@@ -50,9 +53,8 @@ class CSVParser implements Parser {
 
     private long findBorder(
             CharStream stream,
-            TransitionFunction<State,SymbolType> tf,
-            Sink sink) throws IOException
-            {
+            TransitionFunction<State, SymbolType> tf,
+            Sink sink) throws IOException {
         State state = State.RECORD_BORDER;
         int offset = 0;
         do {
@@ -63,30 +65,43 @@ class CSVParser implements Parser {
                 return offset;
             }
 
-            char c = (char)i;
+            char c = (char) i;
             SymbolType s =
-                (c == recordDelimiter) ? SymbolType.RECORD_DELIMITER :
-                    (c == escapeCharacter) ? SymbolType.ESCAPE :
-                        (c == fieldDelimiter)  ? SymbolType.FIELD_DELIMITER :
-                            (c == quoteCharacter)  ? SymbolType.QUOTE :
-                                SymbolType.OTHER;
+                    (c == recordDelimiter) ? SymbolType.RECORD_DELIMITER :
+                            (c == escapeCharacter) ? SymbolType.ESCAPE :
+                                    (c == fieldDelimiter) ? SymbolType.FIELD_DELIMITER :
+                                            (c == quoteCharacter) ? SymbolType.QUOTE :
+                                                    SymbolType.OTHER;
 
             state = tf.next(state, s);
 
-            switch(state) {
-            case FIELD:             sink.onChar(c);     break;
-            case IN_QUOTE:          sink.onChar(c);     break;
-            case DOUBLE_QUOTE:      sink.onChar(c);     break;
-            case BETWEEN_FIELDS:    sink.fieldBreak();  break;
-            case ERROR:             sink.error();       break;
-            case RECORD_BORDER:     sink.recordBorder();break;
+            switch (state) {
+                case FIELD:
+                    sink.onChar(c);
+                    break;
+                case IN_QUOTE:
+                    sink.onChar(c);
+                    break;
+                case DOUBLE_QUOTE:
+                    sink.onChar(c);
+                    break;
+                case BETWEEN_FIELDS:
+                    sink.fieldBreak();
+                    break;
+                case ERROR:
+                    sink.error();
+                    break;
+                case RECORD_BORDER:
+                    sink.recordBorder();
+                    break;
 
-            default:                                    break;
+                default:
+                    break;
             }
         } while (state != State.RECORD_BORDER);
 
         return offset;
-            }
+    }
 
 
     private CharStream forward(final ScrollableInputStream is) {
@@ -96,14 +111,11 @@ class CSVParser implements Parser {
             }
         };
     }
+
     private CharStream backward(final ScrollableInputStream is) {
         return new CharStream() {
             public int next() throws IOException {
-                if (is.scrollBack(1) == 0)
-                    return -1;
-                int res = is.read();
-                is.scrollBack(1);
-                return res;
+                return is.readBack();
             }
         };
     }
@@ -113,16 +125,18 @@ class CSVParser implements Parser {
 
         findBorder(forward(is), new Forward(),
                 new Sink() {
-            public void fieldBreak() {
-                fields.add(getContents().toString());
-                resetContents();
-            }
-            public void error() { }
+                    public void fieldBreak() {
+                        fields.add(getContents().toString());
+                        resetContents();
+                    }
 
-            public void recordBorder() {
-                fields.add(getContents().toString());
-            }
-        });
+                    public void error() {
+                    }
+
+                    public void recordBorder() {
+                        fields.add(getContents().toString());
+                    }
+                });
 
         return new CSVRecord(fields);
     }
@@ -139,7 +153,7 @@ class CSVParser implements Parser {
 
             if (matchesFormat) {
                 for (int i = 0; i < cells.length; i++)
-                    cells[i] =  strFields.get(i);
+                    cells[i] = strFields.get(i);
             } else {
                 StringBuilder strB = new StringBuilder();
                 for (String string : strFields) {
@@ -166,7 +180,7 @@ class CSVParser implements Parser {
 
     @Override
     public Format[] getFormats() {
-        return new Format[] { csvFormat };
+        return new Format[]{csvFormat};
     }
 
 }

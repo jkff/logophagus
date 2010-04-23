@@ -1,15 +1,15 @@
 package org.lf.io;
 
-import org.lf.io.BufferPool;
-import org.lf.io.BufferScrollableInputStream;
-import org.lf.io.RandomAccessFileIO;
+import org.lf.io.zlib.RandomAccessGzip;
 import org.lf.parser.ScrollableInputStream;
 import org.lf.util.CountingInputStream;
 import org.lf.util.Function;
 import org.lf.util.ProgressListener;
-import org.lf.io.zlib.RandomAccessGzip;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Arrays;
 
 public class GzipRandomAccessIO implements RandomAccessFileIO {
@@ -40,14 +40,14 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
         }
         progressListener.reportProgress(1.0);
 
-        Function<Long,Long> TRUNCATE_BUF = new Function<Long, Long>() {
+        Function<Long, Long> TRUNCATE_BUF = new Function<Long, Long>() {
             @Override
             public Long apply(Long offset) {
-                return (offset / chunkSize) * chunkSize;  
+                return (offset / chunkSize) * chunkSize;
             }
         };
 
-        Function<Long,byte[]> LOAD_BUF = new Function<Long, byte[]>() {
+        Function<Long, byte[]> LOAD_BUF = new Function<Long, byte[]>() {
             @Override
             public byte[] apply(Long base) {
                 try {
@@ -65,7 +65,11 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
             }
         };
 
-        Function DO_NOTHING = new Function() { public Object apply(Object buffer) { return null; } };
+        Function DO_NOTHING = new Function() {
+            public Object apply(Object buffer) {
+                return null;
+            }
+        };
         this.bufferPool = new BufferPool<byte[], Long, Long>(numBuffers, TRUNCATE_BUF, LOAD_BUF, DO_NOTHING);
     }
 

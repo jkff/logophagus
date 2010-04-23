@@ -36,7 +36,7 @@ public class ProgressDialog extends JDialog {
         getContentPane().add(cancelButton);
         pack();
 
-        Dimension dim = owner==null ? Toolkit.getDefaultToolkit().getScreenSize() : owner.getSize();
+        Dimension dim = owner == null ? Toolkit.getDefaultToolkit().getScreenSize() : owner.getSize();
         setLocationRelativeTo(owner);
         setLocation((dim.width - getWidth()) / 2, (dim.height - getHeight()) / 2);
     }
@@ -46,6 +46,6 @@ public class ProgressDialog extends JDialog {
     }
 
     public void setProgress(double donePart) {
-        progressBar.setValue((int)(1000*donePart));
+        progressBar.setValue((int) (1000 * donePart));
     }
 }

@@ -3,6 +3,7 @@ package org.lf.ui.components.dialog;
 import org.joda.time.format.DateTimeFormat;
 import org.lf.logs.Field;
 import org.lf.logs.Format;
+import org.lf.ui.components.common.ControllableListView;
 import org.lf.ui.util.GUIUtils;
 
 import javax.swing.*;
@@ -21,9 +22,9 @@ public class FormatDialog extends JDialog {
     private boolean isOkPressed = false;
 
     public FormatDialog() {
-        super((JFrame)null, "Format creation");
+        super((JFrame) null, "Format creation");
         Box contentBox = Box.createVerticalBox();
-        contentBox.setBorder( BorderFactory.createEmptyBorder(12,12,12,12));
+        contentBox.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         this.setContentPane(contentBox);
 
         JLabel forFieldsLabel = new JLabel("Add fields from record considering their order:");
@@ -36,7 +37,7 @@ public class FormatDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 String fieldName = JOptionPane.showInputDialog(null, "Enter field name",
-                        "Enter field name", JOptionPane.QUESTION_MESSAGE );
+                        "Enter field name", JOptionPane.QUESTION_MESSAGE);
                 fieldsView.getListModel().add(fieldName);
             }
         });
@@ -46,10 +47,12 @@ public class FormatDialog extends JDialog {
             public void intervalAdded(ListDataEvent listDataEvent) {
                 updateComponents();
             }
+
             @Override
             public void intervalRemoved(ListDataEvent listDataEvent) {
                 updateComponents();
             }
+
             @Override
             public void contentsChanged(ListDataEvent listDataEvent) {
                 updateComponents();
@@ -89,7 +92,7 @@ public class FormatDialog extends JDialog {
                 updateComponents();
             }
         });
-        
+
         GUIUtils.fixMaxHeightSize(timeTemplateField);
 
         this.add(box4);
@@ -117,13 +120,13 @@ public class FormatDialog extends JDialog {
             }
         });
 
-        GUIUtils.makeSameWidth(new JComponent[]{okButton, cancelButton});
+        GUIUtils.makeSameWidth(okButton, cancelButton);
         Box box5 = Box.createHorizontalBox();
         box5.add(okButton);
         box5.add(Box.createHorizontalStrut(12));
         box5.add(cancelButton);
         GUIUtils.fixMaxHeightSize(box5);
-        
+
         this.add(box5);
 
         this.pack();
@@ -136,13 +139,13 @@ public class FormatDialog extends JDialog {
         setVisible(true);
         if (!isOkPressed) return null;
         Field[] fields = new Field[fieldsView.getListModel().getSize()];
-        for(int i = 0; i < fields.length ; ++i)
+        for (int i = 0; i < fields.length; ++i)
             fields[i] = new Field(fieldsView.getListModel().getElementAt(i));
 
-        int timeIndex = timePretenders.getSelectedIndex() == 0 || timePretenders.getSelectedIndex()== -1 ?
-                -1: timePretenders.getSelectedIndex() - 1;
+        int timeIndex = timePretenders.getSelectedIndex() == 0 || timePretenders.getSelectedIndex() == -1 ?
+                -1 : timePretenders.getSelectedIndex() - 1;
 
-        return new  Format(fields, timeIndex, timeIndex == -1? null : DateTimeFormat.forPattern(timeTemplateField.getText()));
+        return new Format(fields, timeIndex, timeIndex == -1 ? null : DateTimeFormat.forPattern(timeTemplateField.getText()));
     }
 
 
@@ -156,20 +159,19 @@ public class FormatDialog extends JDialog {
             timePretenders.setEnabled(false);
             timeTemplateField.setEnabled(false);
         } else {
-            Object selected = ((AdapterComboBoxModel)timePretenders.getModel()).selectedObject;
+            Object selected = ((AdapterComboBoxModel) timePretenders.getModel()).selectedObject;
             if (selected == null || selected == AdapterComboBoxModel.defaultElement)
                 timeTemplateField.setEnabled(false);
-            else
-                if (timeTemplateField.getText() == null || timeTemplateField.getText().length() == 0)
-                    okButton.setEnabled(false);
-                else {
-                    try {
-                        if (DateTimeFormat.forPattern(timeTemplateField.getText()) == null)
-                            okButton.setEnabled(false);
-                    } catch(IllegalArgumentException e) {
+            else if (timeTemplateField.getText() == null || timeTemplateField.getText().length() == 0)
+                okButton.setEnabled(false);
+            else {
+                try {
+                    if (DateTimeFormat.forPattern(timeTemplateField.getText()) == null)
                         okButton.setEnabled(false);
-                    }
+                } catch (IllegalArgumentException e) {
+                    okButton.setEnabled(false);
                 }
+            }
 
         }
 
@@ -183,7 +185,7 @@ public class FormatDialog extends JDialog {
         AdapterComboBoxModel(ListModel listModel) {
             this.listModel = listModel;
         }
-        
+
         @Override
         public void setSelectedItem(Object o) {
             this.selectedObject = o;
@@ -202,7 +204,7 @@ public class FormatDialog extends JDialog {
 
         @Override
         public Object getElementAt(int i) {
-            return i == 0 ?  defaultElement: listModel.getElementAt(i - 1);
+            return i == 0 ? defaultElement : listModel.getElementAt(i - 1);
         }
 
         @Override

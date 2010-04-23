@@ -7,5 +7,6 @@ package org.lf.util;
  */
 public interface Filter<T> {
     boolean accepts(T t);
+
     String toString();
 }

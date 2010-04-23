@@ -48,7 +48,7 @@ public class Logophagus extends JFrame {
     }
 
     private void initComponents() {
-        this.setMinimumSize(new Dimension(800,600));
+        this.setMinimumSize(new Dimension(800, 600));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setJMenuBar(getLogophagusMenuBar());
 
@@ -58,7 +58,7 @@ public class Logophagus extends JFrame {
         splitPane.setRightComponent(getPluginPanel());
 
         JPanel treePanel = new JPanel(new BorderLayout());
-        treePanel.setBorder(BorderFactory.createEmptyBorder(12,12,12,4));
+        treePanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 4));
         treePanel.add(new JScrollPane(getLogsHierarchyView()));
         treePanel.setVisible(true);
 
@@ -130,15 +130,15 @@ public class Logophagus extends JFrame {
         @Override
         public void mouseClicked(MouseEvent e) {
             TreePath selPath = logsTree.getPathForLocation(e.getX(), e.getY());
-            if(e.getButton() == MouseEvent.BUTTON1) {
+            if (e.getButton() == MouseEvent.BUTTON1) {
                 if (e.isControlDown()) {
                     logsTree.addSelectionPath(selPath);
                 } else {
                     logsTree.setSelectionPath(selPath);
                 }
-            } else if(e.getButton() == MouseEvent.BUTTON3) {
+            } else if (e.getButton() == MouseEvent.BUTTON3) {
                 boolean isAtSelection = false;
-                if (logsTree.getSelectionPaths() != null )
+                if (logsTree.getSelectionPaths() != null)
                     for (TreePath cur : logsTree.getSelectionPaths()) {
                         if (cur.equals(selPath)) {
                             isAtSelection = true;
@@ -157,16 +157,16 @@ public class Logophagus extends JFrame {
 
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
-                boolean leaf, int row, boolean hasFocus) {
-            NodeData nodeValue = (NodeData)((DefaultMutableTreeNode)value).getUserObject();
-            JLabel label = (JLabel)super.getTreeCellRendererComponent(tree, value, sel,expanded,leaf,row,hasFocus);
+                                                      boolean leaf, int row, boolean hasFocus) {
+            NodeData nodeValue = (NodeData) ((DefaultMutableTreeNode) value).getUserObject();
+            JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             if (nodeValue != null)
                 label.setIcon(nodeValue.icon);
             return label;
         }
-        
+
     }
-    
+
 }
 
 

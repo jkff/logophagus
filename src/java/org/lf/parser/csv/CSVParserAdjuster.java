@@ -2,7 +2,7 @@ package org.lf.parser.csv;
 
 import org.lf.logs.Format;
 import org.lf.parser.Parser;
-import org.lf.parser.ParserAdjuster;
+import org.lf.ui.components.common.ParserAdjuster;
 import org.lf.ui.components.dialog.FormatDialog;
 import org.lf.ui.util.GUIUtils;
 
@@ -21,8 +21,8 @@ public class CSVParserAdjuster extends ParserAdjuster {
 
     private final JTextField recordDelimiterField;
     private final JTextField fieldDelimiterField;
-    private final JTextField quoteCharacterFiled;
-    private final JTextField escapeCharacterFiled;
+    private final JTextField quoteCharacterField;
+    private final JTextField escapeCharacterField;
     private final JButton setFormatButton;
     private final JButton clearFormatButton;
 
@@ -32,80 +32,46 @@ public class CSVParserAdjuster extends ParserAdjuster {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         initMaps();
 
-        Box rdBox = Box.createHorizontalBox();
+        String[] labels = new String[]{
+                "Enter record delimiter",
+                "Enter field delimiter",
+                "Enter quote character",
+                "Enter escape character"
+        };
 
-        JLabel rdLabel = new JLabel("Enter record delimiter");
-        rdBox.add(rdLabel);
-        rdBox.add(Box.createHorizontalStrut(12));
+        LabelWithField[] fieldViews = new LabelWithField[labels.length];
+        for (int i = 0; i < fieldViews.length; ++i) {
+            fieldViews[i] = new LabelWithField(labels[i], 2);
+        }
+
         String s = characterToName.containsKey(CSVParser.DEFAULT_RECORD_DELIMITER) ?
                 characterToName.get(CSVParser.DEFAULT_RECORD_DELIMITER) :
-                Character.toString(CSVParser.DEFAULT_RECORD_DELIMITER)   ;
-        recordDelimiterField = new JTextField(s, 2);
-        recordDelimiterField.addCaretListener(new CaretListener() {
-            @Override
-            public void caretUpdate(CaretEvent caretEvent) {
-                updateComponents();
-            }
-        });
-        rdBox.add(recordDelimiterField);
-
-        rdBox.add(Box.createHorizontalGlue());
+                Character.toString(CSVParser.DEFAULT_RECORD_DELIMITER);
+        recordDelimiterField = fieldViews[0].field;
+        recordDelimiterField.setText(s);
 
 
-        Box fdBox = Box.createHorizontalBox();
-        JLabel fdLabel = new JLabel("Enter field delimiter");
-        fdBox.add(fdLabel);
-        fdBox.add(Box.createHorizontalStrut(12));
         s = characterToName.containsKey(CSVParser.DEFAULT_FIELD_DELIMITER) ?
                 characterToName.get(CSVParser.DEFAULT_FIELD_DELIMITER) :
-                Character.toString(CSVParser.DEFAULT_FIELD_DELIMITER)   ;
-        fieldDelimiterField = new JTextField(s, 2);
-        fieldDelimiterField.addCaretListener(new CaretListener() {
-            @Override
-            public void caretUpdate(CaretEvent caretEvent) {
-                updateComponents();
-            }
-        });
-        fdBox.add(fieldDelimiterField);
-        fdBox.add(Box.createHorizontalGlue());
+                Character.toString(CSVParser.DEFAULT_FIELD_DELIMITER);
+        fieldDelimiterField = fieldViews[1].field;
+        fieldDelimiterField.setText(s);
 
-        Box qcBox = Box.createHorizontalBox();
-        JLabel qcLabel = new JLabel("Enter quote character");
-        qcBox.add(qcLabel);
-        qcBox.add(Box.createHorizontalStrut(12));
         s = characterToName.containsKey(CSVParser.DEFAULT_QUOTE_CHARACTER) ?
                 characterToName.get(CSVParser.DEFAULT_QUOTE_CHARACTER) :
-                Character.toString(CSVParser.DEFAULT_QUOTE_CHARACTER)   ;
-        quoteCharacterFiled = new JTextField(s, 2);
-        quoteCharacterFiled.addCaretListener(new CaretListener() {
-            @Override
-            public void caretUpdate(CaretEvent caretEvent) {
-                updateComponents();
-            }
-        });
-        qcBox.add(quoteCharacterFiled);
-        qcBox.add(Box.createHorizontalGlue());
+                Character.toString(CSVParser.DEFAULT_QUOTE_CHARACTER);
+        quoteCharacterField = fieldViews[2].field;
+        quoteCharacterField.setText(s);
 
-        Box ecBox = Box.createHorizontalBox();
-        JLabel ecLabel = new JLabel("Enter escape character");
-        ecBox.add(ecLabel);
-        ecBox.add(Box.createHorizontalStrut(12));
         s = characterToName.containsKey(CSVParser.DEFAULT_ESCAPE_CHARACTER) ?
                 characterToName.get(CSVParser.DEFAULT_ESCAPE_CHARACTER) :
-                Character.toString(CSVParser.DEFAULT_ESCAPE_CHARACTER)   ;
-        escapeCharacterFiled = new JTextField(s, 2);
-        escapeCharacterFiled.addCaretListener(new CaretListener() {
-            @Override
-            public void caretUpdate(CaretEvent caretEvent) {
-                updateComponents();
-            }
-        });
-        ecBox.add(escapeCharacterFiled);
-        ecBox.add(Box.createHorizontalGlue());
+                Character.toString(CSVParser.DEFAULT_ESCAPE_CHARACTER);
+        escapeCharacterField = fieldViews[3].field;
+        escapeCharacterField.setText(s);
 
-        GUIUtils.makeSameWidth(new JComponent[]{rdLabel, fdLabel, qcLabel, ecLabel});
-        GUIUtils.makeSameWidth(new JComponent[]{recordDelimiterField, fieldDelimiterField,
-                quoteCharacterFiled, escapeCharacterFiled});
+        GUIUtils.makeSameWidth(fieldViews[0].label, fieldViews[1].label, fieldViews[2].label, fieldViews[3].label);
+        GUIUtils.makeSameWidth(recordDelimiterField, fieldDelimiterField,
+                quoteCharacterField, escapeCharacterField);
 
         setFormatButton = new JButton("Set format");
         setFormatButton.addActionListener(new ActionListener() {
@@ -130,102 +96,86 @@ public class CSVParserAdjuster extends ParserAdjuster {
         buttonBox.add(clearFormatButton);
 
 
+        for (LabelWithField cur : fieldViews) {
+            cur.field.addCaretListener(new CaretListener() {
+                @Override
+                public void caretUpdate(CaretEvent caretEvent) {
+                    update();
+                }
+            });
+            this.add(cur);
+            this.add(Box.createVerticalStrut(5));
+        }
 
-        this.add(rdBox);
-        this.add(Box.createVerticalStrut(5));
-        this.add(fdBox);
-        this.add(Box.createVerticalStrut(5));
-        this.add(qcBox);
-        this.add(Box.createVerticalStrut(5));
-        this.add(ecBox);
-        this.add(Box.createVerticalStrut(5));
         this.add(buttonBox);
 
         GUIUtils.makePreferredSize(this);
+        update();
         this.revalidate();
     }
 
 
     @Override
     public Parser getParser() {
-        String temp = recordDelimiterField.getText().trim();
-        char rd;
-        char fd;
-        char ec;
-        char qc;
+        if (!isValidAdjust()) return null;
+        JTextField[] fields = new JTextField[]{
+                recordDelimiterField,
+                fieldDelimiterField,
+                quoteCharacterField,
+                escapeCharacterField
+        };
+        char[] fieldValues = new char[4];
 
-        if (temp.length() == 1)
-            rd = temp.toCharArray()[0];
-        else
-            rd = nameToCharacter.get(temp);
+        for (int i = 0; i < fields.length; ++i) {
+            String temp = fields[i].getText();
+            if (temp.length() == 1)
+                fieldValues[i] = temp.toCharArray()[0];
+            else
+                fieldValues[i] = nameToCharacter.get(temp);
+        }
 
-        temp = fieldDelimiterField.getText().trim();
-        if (temp.length() == 1)
-            fd = temp.toCharArray()[0];
-        else
-            fd = nameToCharacter.get(temp);
-
-        temp = escapeCharacterFiled.getText().trim();
-        if (temp.length() == 1)
-            ec = temp.toCharArray()[0];
-        else
-            ec = nameToCharacter.get(temp);
-
-        temp = quoteCharacterFiled.getText().trim();
-        if (temp.length() == 1)
-            qc = temp.toCharArray()[0];
-        else
-            qc = nameToCharacter.get(temp);
-
-        return new CSVParser(format, rd, fd, qc, ec);
+        return new CSVParser(format, fieldValues[0], fieldValues[1], fieldValues[2], fieldValues[3]);
     }
 
-    @Override
-    protected void updateComponents() {
-        if (parent != null)
-            this.parent.setOKButtonEnable(true);
+    protected void update() {
+        boolean isValidAdjust = true;
+
+        JTextField[] fields = new JTextField[]{
+                recordDelimiterField,
+                fieldDelimiterField,
+                quoteCharacterField,
+                escapeCharacterField
+        };
+
+        for (JTextField field : fields) {
+            String temp = field.getText();
+            if (temp.length() != 1 && !nameToCharacter.containsKey(temp)) {
+                isValidAdjust = false;
+                break;
+            }
+        }
 
         if (format == null) {
             clearFormatButton.setEnabled(false);
             setFormatButton.setEnabled(true);
-            if (parent != null)
-                this.parent.setOKButtonEnable(false);
+            isValidAdjust = false;
         } else {
             clearFormatButton.setEnabled(true);
             setFormatButton.setEnabled(false);
         }
-
-        if (parent == null) return;
-        String temp = recordDelimiterField.getText().trim();
-        if (temp.length() != 1 && !nameToCharacter.containsKey(temp)) {
-            this.parent.setOKButtonEnable(false);
-            return;
-        }
-        temp = fieldDelimiterField.getText().trim();
-        if (temp.length() != 1 && !nameToCharacter.containsKey(temp)) {
-            this.parent.setOKButtonEnable(false);
-            return;
-        }
-        temp = escapeCharacterFiled.getText().trim();
-        if (temp.length() != 1 && !nameToCharacter.containsKey(temp)) {
-            this.parent.setOKButtonEnable(false);
-            return;
-        }
-        temp = quoteCharacterFiled.getText().trim();
-        if (temp.length() != 1 && !nameToCharacter.containsKey(temp))
-            this.parent.setOKButtonEnable(false);
+        setValidAdjust(isValidAdjust);
     }
 
     private void resetFormat() {
         format = null;
-        updateComponents();        
+        update();
     }
 
     private void setFormat(Format f) {
         format = f;
-        updateComponents();
+        update();
     }
-    
+
     private void initMaps() {
         this.nameToCharacter.put("\\n", '\n');
         this.nameToCharacter.put("\\t", '\t');
@@ -235,4 +185,22 @@ public class CSVParserAdjuster extends ParserAdjuster {
         this.characterToName.put('\t', "\\t");
         this.characterToName.put('\r', "\\r");
     }
+
+    private class LabelWithField extends JPanel {
+        private JLabel label;
+        private JTextField field;
+
+        public LabelWithField(String labelText, int fieldLength) {
+            Box box = Box.createHorizontalBox();
+            label = new JLabel(labelText);
+            box.add(label);
+            box.add(Box.createHorizontalStrut(12));
+            field = new JTextField(fieldLength);
+            box.add(field);
+            box.add(Box.createHorizontalGlue());
+            this.add(box);
+            GUIUtils.makePreferredSize(box);
+        }
+    }
+
 }

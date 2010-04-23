@@ -9,17 +9,16 @@ import org.lf.plugins.analysis.splitbyfield.LogAndField;
 import org.lf.ui.util.GUIUtils;
 import org.lf.util.Filter;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class FieldSplittedLog extends JPanel {
     private LogAndField logAndField;
@@ -60,14 +59,17 @@ public class FieldSplittedLog extends JPanel {
                     public int getIndexInRecord() {
                         return fieldIndex;
                     }
+
                     @Override
                     public String getName() {
                         return "Other...";
                     }
+
                     @Override
                     public Type getType() {
                         return Type.TEXT;
                     }
+
                     @Override
                     public Object getValue() {
                         return "Other...";
@@ -84,7 +86,7 @@ public class FieldSplittedLog extends JPanel {
             super.done();
             progressMonitor.setProgress(DEFAULT_RECORDS_TO_LOAD);
             fieldValues.enableControls();
-            
+
         }
 
         @Override
@@ -98,7 +100,7 @@ public class FieldSplittedLog extends JPanel {
         this.logAndField = logAndField;
         this.attributes = attributes;
         this.fieldIndex = logAndField.fieldIndex;
-        
+
         fieldValues = new MyList(listModel);
         fieldValues.setCellRenderer(new FieldValuesCellRenderer());
         fieldValues.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -110,22 +112,22 @@ public class FieldSplittedLog extends JPanel {
         listPanel.add(Box.createVerticalStrut(5));
         listPanel.add(new JScrollPane(fieldValues));
         defaultPanel.add(new JLabel("Select field value from right list to look at corresponding log"));
-        
+
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setDividerSize(5);
         splitPane.setContinuousLayout(true);
         splitPane.setRightComponent(listPanel);
         splitPane.setLeftComponent(defaultPanel);
         splitPane.setResizeWeight(0.7);
-        
+
         GUIUtils.makePreferredSize(listPanel);
         GUIUtils.makePreferredSize(defaultPanel);
         GUIUtils.makePreferredSize(splitPane);
-        
+
         this.add(splitPane);
         progressMonitor = new ProgressMonitor(this, "Reading", "Please wait", 0, ValuesSearchTask.DEFAULT_RECORDS_TO_LOAD);
         new ValuesSearchTask().execute();
-        
+
     }
 
     void setViewPanel(JPanel panel) {
@@ -164,6 +166,7 @@ public class FieldSplittedLog extends JPanel {
                     } else {
                         Filter<Record> filter = new Filter<Record>() {
                             private Set<Cell> exceptedValues = new HashSet<Cell>(listModel.getValues());
+
                             public String toString() {
                                 return "Except " + exceptedValues;
                             }

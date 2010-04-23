@@ -1,8 +1,9 @@
 package org.lf.services;
 
-import java.util.*;
-
 import org.lf.plugins.DisplayPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DisplayPluginRepository {
     private static List<DisplayPlugin> displayPlugins = new ArrayList<DisplayPlugin>();
@@ -20,7 +21,7 @@ public class DisplayPluginRepository {
     public static List<DisplayPlugin> getApplicablePlugins(Object arg) {
         List<DisplayPlugin> res = new ArrayList<DisplayPlugin>();
         for (DisplayPlugin plugin : displayPlugins) {
-            if(plugin.getInputType().isInstance(arg))
+            if (plugin.getInputType().isInstance(arg))
                 res.add(plugin);
         }
         return res;

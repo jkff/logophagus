@@ -1,17 +1,15 @@
 package org.lf.plugins.analysis.highlight;
 
-import org.lf.logs.Format;
+import com.sun.istack.internal.Nullable;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.plugins.AttributeInstance;
-
-import com.sun.istack.internal.Nullable;
 
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class Highlighter implements AttributeInstance<HighlighterConcept,Highlighter> {
+public class Highlighter implements AttributeInstance<HighlighterConcept, Highlighter> {
     private final Collection<Highlighter> parents;
     private RecordColorer colorer;
 
@@ -26,16 +24,16 @@ public class Highlighter implements AttributeInstance<HighlighterConcept,Highlig
     RecordColorer getRecordColorer() {
         return colorer;
     }
-    
+
     @Nullable
     public Color getHighlightColor(Record rec) {
         if (colorer != null && colorer.getColor(rec) != null)
             return colorer.getColor(rec);
-        if (parents == null) 
+        if (parents == null)
             return null;
-        for(Highlighter p : parents) {
+        for (Highlighter p : parents) {
             Color c = p.getHighlightColor(rec);
-            if (c!= null) return c;
+            if (c != null) return c;
         }
         return null;
     }

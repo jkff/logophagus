@@ -1,6 +1,8 @@
 package org.lf.io.zlib;
 
-import com.sun.jna.*;
+import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 
 /**
  * Created on: 27.03.2010 19:29:34

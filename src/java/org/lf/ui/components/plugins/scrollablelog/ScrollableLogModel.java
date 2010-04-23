@@ -1,51 +1,48 @@
 package org.lf.ui.components.plugins.scrollablelog;
 
-import static org.lf.util.CollectionFactory.pair;
-
-import java.io.IOException;
-import java.util.Observable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
-
-
+import com.sun.istack.internal.Nullable;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.parser.Position;
 import org.lf.util.Pair;
 
-import com.sun.istack.internal.Nullable;
+import java.io.IOException;
+import java.util.Observable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.lf.util.CollectionFactory.pair;
 
 public class ScrollableLogModel extends Observable {
     private final ExecutorService executor;
-    private final CyclicBuffer<Pair<Record,Position>> recBuffer;
+    private final CyclicBuffer<Pair<Record, Position>> recBuffer;
     private final int regionSize;
     private final Log log;
     private Position logBeginPos;
     private Position logEndPos;
     private boolean readingDone;
-    private AtomicInteger progress = new AtomicInteger(0);
-    
+    private volatile float progress = 0F;
+
     private abstract class Navigator implements Runnable {
         //adds records to model. startPos record included
-        final int addRecordsToModel(Position startPos ,int recordsCount, boolean isForward, int progressIncrement) throws IOException {
+        final int addRecordsToModel(Position startPos, int recordsCount, boolean isForward, float progressIncrement) throws IOException {
             Position temp = startPos;
             int counter = 1;
-            for ( ; counter <= recordsCount; ++counter ) {
+            for (; counter <= recordsCount; ++counter) {
                 if (isForward) {
                     pushEnd(pair(log.readRecord(temp), temp));
                     if (logEndPos.equals(temp))
                         break;
-                    temp =  log.next(temp);    
+                    temp = log.next(temp);
                 } else {
                     pushBegin(pair(log.readRecord(temp), temp));
                     if (logBeginPos.equals(temp))
                         break;
-                    temp =  log.prev(temp);    
+                    temp = log.prev(temp);
                 }
-                progress.set(getProgress() + progressIncrement);
+                progress += progressIncrement;
             }
-            return counter; 
+            return counter;
         }
     }
 
@@ -56,7 +53,7 @@ public class ScrollableLogModel extends Observable {
         private final int recordsToRead;
 
         public RelativePosNavigator(boolean isForward, int recordsToRead) {
-            this.fromWhere = getPosition(isForward ? getRecordCount() - 1 : 0) ;
+            this.fromWhere = getPosition(isForward ? getRecordCount() - 1 : 0);
             this.isForward = isForward;
             this.recordsToRead = recordsToRead;
         }
@@ -64,7 +61,7 @@ public class ScrollableLogModel extends Observable {
         @Override
         public void run() {
             try {
-                progress.set(0);
+                progress = 0;
                 Position tempPos;
                 if (isForward) {
                     if (logEndPos.equals(fromWhere)) return;
@@ -73,11 +70,11 @@ public class ScrollableLogModel extends Observable {
                     if (logBeginPos.equals(fromWhere)) return;
                     tempPos = log.prev(fromWhere);
                 }
-                addRecordsToModel(tempPos, recordsToRead, isForward, 100 / recordsToRead);
+                addRecordsToModel(tempPos, recordsToRead, isForward, 100F / recordsToRead);
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                progress.set(100);
+                progress = 100F;
                 setReadingDone(true);
             }
         }
@@ -86,28 +83,31 @@ public class ScrollableLogModel extends Observable {
     private class AbsolutePosNavigator extends Navigator {
         private final boolean isForward;
         private Position fromWhere;
-        //if this constructor is used then reading will be done from log start 
+
+        //if this constructor is used then reading will be done from log start
         public AbsolutePosNavigator() {
             this.isForward = true;
             this.fromWhere = null;
         }
+
         public AbsolutePosNavigator(Position fromWhere, boolean isForward) {
             this.fromWhere = fromWhere;
             this.isForward = isForward;
         }
+
         @Override
         public void run() {
             try {
-                progress.set(0);
-                if (logBeginPos == null)    logBeginPos = log.first();
-                if (logBeginPos == null)    return;
-                if (logEndPos == null)        logEndPos = log.last();
-                if (logEndPos == null)      return;
-                if (fromWhere == null)      fromWhere = logBeginPos;
+                progress = 0;
+                if (logBeginPos == null) logBeginPos = log.first();
+                if (logBeginPos == null) return;
+                if (logEndPos == null) logEndPos = log.last();
+                if (logEndPos == null) return;
+                if (fromWhere == null) fromWhere = logBeginPos;
                 clear();
 
-                int readedRecords = addRecordsToModel(fromWhere, regionSize, isForward, 100/regionSize);
-                if (readedRecords != regionSize) { 
+                int recordsRead = addRecordsToModel(fromWhere, regionSize, isForward, 100F / regionSize);
+                if (recordsRead != regionSize) {
                     //now we will read missing records moving in reverse direction
                     Position tempPos;
                     if (isForward) {
@@ -117,12 +117,12 @@ public class ScrollableLogModel extends Observable {
                         if (logEndPos.equals(fromWhere)) return;
                         tempPos = log.next(fromWhere);
                     }
-                    addRecordsToModel(tempPos, regionSize - readedRecords, !isForward, 100/regionSize);
+                    addRecordsToModel(tempPos, regionSize - recordsRead, !isForward, 100F / regionSize);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                progress.set(100);
+                progress = 100F;
                 setReadingDone(true);
             }
         }
@@ -133,7 +133,7 @@ public class ScrollableLogModel extends Observable {
         this.log = log;
         this.regionSize = regionSize;
         this.readingDone = true;
-        this.executor= Executors.newSingleThreadExecutor();
+        this.executor = Executors.newSingleThreadExecutor();
         this.recBuffer = new CyclicBuffer<Pair<Record, Position>>(regionSize);
         this.start();
     }
@@ -208,34 +208,21 @@ public class ScrollableLogModel extends Observable {
         return recBuffer.size();
     }
 
-    synchronized public int getRegionSize() {
-        return regionSize;
-    }
-
     synchronized public boolean isReadingDone() {
         return readingDone;
     }
 
     synchronized public boolean isAtBegin() {
-        if (!readingDone) return false;
-        if (recBuffer.size() == 0) return false;
-        if (recBuffer.get(0).second.equals(logBeginPos) ) return true;
-        return false;
+        return readingDone && recBuffer.size() != 0 && recBuffer.get(0).second.equals(logBeginPos);
     }
 
     synchronized public boolean isAtEnd() {
-        if (!readingDone) return false;
-        if (recBuffer.size() == 0) return false;
-        if (recBuffer.get(recBuffer.size() - 1).second.equals(logEndPos) ) return true;
-        return false;
+        return readingDone && recBuffer.size() != 0 && recBuffer.get(recBuffer.size() - 1).second.equals(logEndPos);
     }
 
-    public int getProgress() {
-        return progress.get();
-    }
 
-    Log getLog() {
-        return this.log;
+    public float getProgress() {
+        return progress;
     }
 
     synchronized private void pushBegin(Pair<Record, Position> pair) {
@@ -255,7 +242,6 @@ public class ScrollableLogModel extends Observable {
         setChanged();
         notifyObservers("CLEAR");
     }
-
 
 
 }

@@ -1,4 +1,4 @@
-package org.lf.ui.components.dialog;
+package org.lf.ui.components.common;
 
 import org.lf.ui.util.GUIUtils;
 
@@ -10,7 +10,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ControllableListView<T> extends JPanel implements ListDataListener{
+public class ControllableListView<T> extends JPanel implements ListDataListener {
     private final JList list;
     private final ControllableListModel<T> listModel = new ControllableListModel<T>();
     private final JButton addButton;
@@ -19,7 +19,7 @@ public class ControllableListView<T> extends JPanel implements ListDataListener{
     private final JButton removeButton;
 
     public ControllableListView() {
-        this(null);    
+        this(null);
     }
 
     public ControllableListView(ListCellRenderer listRenderer) {
@@ -87,14 +87,14 @@ public class ControllableListView<T> extends JPanel implements ListDataListener{
         addRemoveBox.add(Box.createHorizontalStrut(12));
         addRemoveBox.add(removeButton);
         GUIUtils.fixMaxHeightSize(addRemoveBox);
-        
+
         this.add(upDownListBox);
         this.add(Box.createVerticalStrut(5));
         this.add(addRemoveBox);
 
-        GUIUtils.createRecommendedButtonMargin(new JButton[]{addButton, removeButton});
-        GUIUtils.makeSameWidth(new JComponent[]{addButton, removeButton});
-        GUIUtils.makeSameWidth(new JComponent[]{upButton, downButton});
+        GUIUtils.createRecommendedButtonMargin(addButton, removeButton);
+        GUIUtils.makeSameWidth(addButton, removeButton);
+        GUIUtils.makeSameWidth(upButton, downButton);
 
         this.revalidate();
 
@@ -103,6 +103,8 @@ public class ControllableListView<T> extends JPanel implements ListDataListener{
     }
 
     public void setAddButtonActionListener(ActionListener ae) {
+        if (addButton.getActionListeners().length != 0)
+            addButton.removeActionListener(addButton.getActionListeners()[0]);
         addButton.addActionListener(ae);
     }
 

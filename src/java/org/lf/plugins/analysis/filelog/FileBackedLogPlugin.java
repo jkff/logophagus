@@ -1,9 +1,13 @@
 package org.lf.plugins.analysis.filelog;
 
+import com.sun.istack.internal.Nullable;
+import org.joda.time.format.DateTimeFormat;
+import org.lf.io.GzipRandomAccessIO;
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
-import org.lf.io.GzipRandomAccessIO;
+import org.lf.logs.Field;
 import org.lf.logs.FileBackedLog;
+import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.parser.Parser;
 import org.lf.plugins.AnalysisPlugin;
@@ -11,14 +15,11 @@ import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.Bookmarks;
 import org.lf.services.ProgramProperties;
-
-import com.sun.istack.internal.Nullable;
-import org.lf.ui.components.dialog.ParserSetup;
+import org.lf.ui.components.dialog.ParserSetupDialog;
 import org.lf.ui.util.ProgressDialog;
 import org.lf.util.ProgressListener;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
     public Entity applyTo(Entity[] args) {
         JFileChooser fileOpen = new JFileChooser(ProgramProperties.getWorkingDir());
         int state = fileOpen.showOpenDialog(null);
-        if (state != JFileChooser.APPROVE_OPTION) 
+        if (state != JFileChooser.APPROVE_OPTION)
             return null;
         File f = fileOpen.getSelectedFile();
         if (!f.isFile())
@@ -44,15 +45,16 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 
         Parser parser = null;
         try {
-            parser = new ParserSetup(f.getCanonicalPath()).showSetupDialog();
+            parser = new ParserSetupDialog().showSetupDialog();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (parser == null) return null; 
+
+        if (parser == null) return null;
         try {
             RandomAccessFileIO io;
-            if(f.getName().endsWith(".gz") || f.getName().endsWith("zip")) {
-                final GzipRandomAccessIO cio = new GzipRandomAccessIO(f.getAbsolutePath(), 1 << 20, 100);
+            if (f.getName().endsWith(".gz") || f.getName().endsWith("zip")) {
+                final GzipRandomAccessIO cio = new GzipRandomAccessIO(f.getAbsolutePath(), 1 << 20, 20);
                 final ProgressDialog d = new ProgressDialog(
                         Frame.getFrames()[0],
                         "Indexing compressed file for random access", "",
@@ -65,10 +67,10 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
                             cio.init(new ProgressListener<Double>() {
                                 public boolean reportProgress(final Double donePart) {
                                     d.setProgress(donePart);
-                                    if(donePart == 1.0)
+                                    if (donePart == 1.0)
                                         d.setVisible(false);
                                     boolean isCanceled = d.isCanceled();
-                                    if(isCanceled)
+                                    if (isCanceled)
                                         d.setVisible(false);
                                     return !isCanceled;
                                 }
@@ -79,22 +81,26 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
                     }
                 }).start();
                 d.setVisible(true);
-                if(d.isCanceled())
+                if (d.isCanceled())
                     return null;
                 io = cio;
             } else {
                 io = new MappedFile(f.getAbsolutePath());
             }
-            
 
 
 //            Log log = new FileBackedLog(io, new CSVParser(new Format(fields, -1, null)));
 //            [2200-01-02 06:27:46,148] DEBUG [pool-798] Search performed in 0 with 507 hits
-//            String[] regexes = new String[]{"\\[(.+)\\]\\s+(\\w+)\\s+\\[(.+)\\]\\s+(.+)\\s*"};
-            
-//            Format singleFormat = new Format(fields, 0,
-//                    DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS"));
-            
+            String[] regexes = new String[]{"\\[(.+)\\]\\s+(\\w+)\\s+\\[(.+)\\]\\s+(.+)\\s*"};
+            Field[] fields = new Field[]{
+                    new Field("Time"),
+                    new Field("Level"),
+                    new Field("pool"),
+                    new Field("Message")
+            };
+            Format singleFormat = new Format(fields, 0,
+                    DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS"));
+//            parser = new RegexpParser(regexes, new Format[]{singleFormat}, '\n',  1);
             Log log = new FileBackedLog(io, parser);
 
             Attributes atr = new Attributes();

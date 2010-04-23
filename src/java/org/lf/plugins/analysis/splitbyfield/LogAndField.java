@@ -13,7 +13,7 @@ public class LogAndField {
         this.field = field;
     }
 
-    public String toString(){
-        return log.toString() + " => split by " + field + " field" ;
+    public String toString() {
+        return log.toString() + " => split by " + field + " field";
     }
 }

@@ -1,11 +1,11 @@
 package org.lf.plugins.display;
 
-import javax.swing.JComponent;
-
 import org.lf.logs.Log;
 import org.lf.plugins.DisplayPlugin;
 import org.lf.plugins.Entity;
 import org.lf.ui.components.plugins.scrollablelog.ScrollableLogView;
+
+import javax.swing.*;
 
 public class ViewScrollableLogPlugin implements DisplayPlugin {
 

@@ -1,9 +1,5 @@
 package org.lf.parser.regex;
 
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.lf.logs.Field;
 import org.lf.logs.Format;
 import org.lf.logs.Record;
@@ -11,25 +7,26 @@ import org.lf.logs.RecordImpl;
 import org.lf.parser.*;
 import org.lf.util.Triple;
 
-class RegexpParser implements Parser {
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class RegexpParser implements Parser {
     private final Format[] regexpFormats;
     private final Pattern[] patterns;
     private final char recordDelimiter;
     private final int maxLinesPerRecord;
 
-    private abstract class ReadableSink extends Sink {
-        public abstract String getReceivedChars();
-    }
-
     private class OrderedReadableSink extends ReadableSink {
         private final boolean isForward;
+
         public OrderedReadableSink(boolean isForward) {
             this.isForward = isForward;
         }
 
         @Override
         public String getReceivedChars() {
-            if(isForward)
+            if (isForward)
                 return getContents().toString();
             StringBuilder rev = new StringBuilder();
             rev.append(getContents());
@@ -40,7 +37,7 @@ class RegexpParser implements Parser {
 
     public RegexpParser(String[] regexps, Format[] regexpFormats, char recordDelimiter, int maxLinesPerRecord) {
         this.patterns = new Pattern[regexps.length];
-        for(int i = 0; i < regexps.length; ++i) {
+        for (int i = 0; i < regexps.length; ++i) {
             patterns[i] = Pattern.compile(regexps[i]);
         }
 
@@ -53,7 +50,7 @@ class RegexpParser implements Parser {
     private long cachedOffset;
     // Long - offset, Integer - index of pattern that matched (-1 means no pattern matched),
     // Object is a Matcher if a pattern matched, or a String (raw input line) if none matched 
-    private Triple<Long,Integer,Object> cachedOffsetIndexMatch;
+    private Triple<Long, Integer, Object> cachedOffsetIndexMatch;
 
     @Override
     public synchronized long findNextRecord(ScrollableInputStream is) throws IOException {
@@ -61,7 +58,7 @@ class RegexpParser implements Parser {
     }
 
     private synchronized Triple<Long, Integer, Object> findOIMforward(ScrollableInputStream is) throws IOException {
-        if(!is.isSameSource(cachedStream) || is.getOffset() != cachedOffset) {
+        if (!is.isSameSource(cachedStream) || is.getOffset() != cachedOffset) {
             cachedStream = is;
             cachedOffset = is.getOffset();
             cachedOffsetIndexMatch = getRecordFromCharStream(forward(is), new OrderedReadableSink(true));
@@ -81,12 +78,12 @@ class RegexpParser implements Parser {
         Triple<Long, Integer, Object> offsetIndexMatch = findOIMforward(is);
 
         if (offsetIndexMatch.second == -1) {
-            String wholeString = (String)offsetIndexMatch.third;
+            String wholeString = (String) offsetIndexMatch.third;
             return new RecordImpl(new String[]{wholeString}, Format.UNKNOWN_FORMAT);
         }
 
         Field[] fields = regexpFormats[offsetIndexMatch.second].getFields();
-        String[] cells = new String[regexpFormats[offsetIndexMatch.second].getFields().length ];
+        String[] cells = new String[regexpFormats[offsetIndexMatch.second].getFields().length];
         for (int i = 0; i < fields.length; ++i) {
             cells[i] = ((Matcher) offsetIndexMatch.third).group(i + 1);
         }
@@ -96,7 +93,7 @@ class RegexpParser implements Parser {
     private Triple<Long, Integer, Object> getRecordFromCharStream(CharStream cs, ReadableSink sink) throws IOException {
         long firstLineBreakOffset = 0;
         long offset = 0;
-        for(int i = 0 ; i < maxLinesPerRecord; ++i) {
+        for (int i = 0; i < maxLinesPerRecord; ++i) {
             long temp = getLineFromCharStream(cs, sink);
             if (temp == 0)
                 break;
@@ -107,7 +104,7 @@ class RegexpParser implements Parser {
             String str = sink.getReceivedChars();
             for (int j = 0; j < patterns.length; ++j) {
                 Matcher m = patterns[j].matcher(str);
-                if (m.matches()) 
+                if (m.matches())
                     return new Triple<Long, Integer, Object>(offset, j, m);
             }
         }
@@ -117,12 +114,12 @@ class RegexpParser implements Parser {
     private long getLineFromCharStream(CharStream cs, Sink sink) throws IOException {
         long offset = 0;
         int c;
-        while(true) {
+        while (true) {
             ++offset;
             c = cs.next();
             if (c == -1 || c == recordDelimiter)
                 return offset;
-            sink.onChar((char)c);
+            sink.onChar((char) c);
         }
     }
 
@@ -137,11 +134,7 @@ class RegexpParser implements Parser {
     private CharStream backward(final ScrollableInputStream is) {
         return new CharStream() {
             public int next() throws IOException {
-                if (is.scrollBack(1) == 0)
-                    return -1;
-                int res = is.read();
-                is.scrollBack(1);
-                return res;
+                return is.readBack();
             }
         };
     }

@@ -5,13 +5,18 @@ import com.sun.jna.Native;
 
 interface ZLib extends Library {
 
-    public static ZLib INSTANCE = (ZLib) Native.loadLibrary("zlib1", ZLib.class);
+    public static ZLib INSTANCE = (ZLib) Native.loadLibrary(System.getProperty("os.name").equals("Windows") ? "zlib1" : "libz", ZLib.class);
 
     int inflatePrime(z_stream stream, int bits, int value);
+
     int inflateSetDictionary(z_stream stream, byte[] dictionary, int length);
+
     int inflateInit2_(z_stream stream, int windowBits, String version, int streamSize);
+
     int inflate(z_stream stream, int flush);
+
     int inflateEnd(z_stream stream);
+
     String zlibVersion();
 
     public static final int Z_OK = 0;
@@ -28,4 +33,5 @@ interface ZLib extends Library {
     public static final int Z_NO_FLUSH = 0;
 
     public static final int STREAM_SIZE = new z_stream().size();
+
 }

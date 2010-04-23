@@ -98,8 +98,9 @@ public class BufferPool<B, K, H> {
     // buf a buffer with key 'newKey' is.
     // Does nothing if 'newKey' maps into 'buf',
     // otherwise frees 'buf' and allocates a new buffer.
+
     public Buffer move(Buffer buf, K newKey) throws IOException, InterruptedException {
-        if(hashKey.apply(newKey).equals(buf.hash)) {
+        if (hashKey.apply(newKey).equals(buf.hash)) {
             return buf;
         } else {
             releaseBuffer(buf);

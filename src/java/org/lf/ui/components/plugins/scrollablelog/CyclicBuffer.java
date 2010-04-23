@@ -14,7 +14,7 @@ class CyclicBuffer<T> {
 
     void pushBegin(T t) {
         if (ts.size() == maxSize)
-            ts.remove(maxSize-1);
+            ts.remove(maxSize - 1);
         ts.add(0, t);
     }
 

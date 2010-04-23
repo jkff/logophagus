@@ -11,7 +11,7 @@ public class Comparators {
             }
         };
     }
-    
+
     public static <T extends Comparable<? super T>> Comparator<T> inverse(final Comparator<T> other) {
         return new Comparator<T>() {
             @Override
@@ -20,5 +20,5 @@ public class Comparators {
             }
         };
     }
-    
+
 }

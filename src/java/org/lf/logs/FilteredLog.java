@@ -1,17 +1,16 @@
 package org.lf.logs;
 
-import java.io.IOException;
-
+import com.sun.istack.internal.Nullable;
 import org.joda.time.DateTime;
 import org.lf.parser.Position;
 import org.lf.util.Filter;
 
-import com.sun.istack.internal.Nullable;
+import java.io.IOException;
 
 
 public class FilteredLog implements Log {
     private final Filter<Record> filter;
-    private FilteredPosition cachedfilteredFirst;
+    private FilteredPosition cachedFilteredFirst;
     private final Log underlyingLog;
 
     private class FilteredPosition implements Position {
@@ -72,15 +71,15 @@ public class FilteredLog implements Log {
         pos = isForward ? underlyingLog.next(pos) : underlyingLog.prev(pos);
         while (true) {
             if (filter.accepts(underlyingLog.readRecord(pos))) return pos;
-            if (pos.equals(borderPos))                         return null;
+            if (pos.equals(borderPos)) return null;
             pos = isForward ? underlyingLog.next(pos) : underlyingLog.prev(pos);
         }
     }
 
     @Override
     @Nullable
-    public Position next(Position pos) throws  IOException {
-        FilteredPosition fPos = (FilteredPosition)pos;
+    public Position next(Position pos) throws IOException {
+        FilteredPosition fPos = (FilteredPosition) pos;
         Position res = seek(fPos.underlyingPos, true);
         return res == null ? null : new FilteredPosition(res);
     }
@@ -88,7 +87,7 @@ public class FilteredLog implements Log {
     @Override
     @Nullable
     public Position prev(Position pos) throws IOException {
-        FilteredPosition fPos = (FilteredPosition)pos;
+        FilteredPosition fPos = (FilteredPosition) pos;
         Position res = seek(fPos.underlyingPos, false);
         return res == null ? null : new FilteredPosition(res);
     }
@@ -96,20 +95,20 @@ public class FilteredLog implements Log {
     @Override
     @Nullable
     synchronized public Position first() throws IOException {
-        if (cachedfilteredFirst != null)
-            return cachedfilteredFirst;
+        if (cachedFilteredFirst != null)
+            return cachedFilteredFirst;
         Position pos = underlyingLog.first();
         if (pos == null) return null;
         if (filter.accepts(underlyingLog.readRecord(pos))) {
-            cachedfilteredFirst = new FilteredPosition(pos);
-            return cachedfilteredFirst;
+            cachedFilteredFirst = new FilteredPosition(pos);
+            return cachedFilteredFirst;
         }
         pos = seek(pos, true);
+        cachedFilteredFirst = null;
         if (pos != null) {
-            cachedfilteredFirst = new FilteredPosition(pos);
-            return cachedfilteredFirst;
+            cachedFilteredFirst = new FilteredPosition(pos);
         }
-        return null;
+        return cachedFilteredFirst;
     }
 
     @Override
@@ -128,14 +127,14 @@ public class FilteredLog implements Log {
     @Nullable
     public Record readRecord(Position pos) throws IOException {
         if (pos == null) return null;
-        FilteredPosition fPos = (FilteredPosition)pos;
+        FilteredPosition fPos = (FilteredPosition) pos;
         Record rec = underlyingLog.readRecord(fPos.underlyingPos);
         if (filter.accepts(rec))
             return rec;
         return null;
     }
 
-    public String toString(){
+    public String toString() {
         return underlyingLog.toString() + " => filter : " + filter.toString();
     }
 
@@ -150,7 +149,7 @@ public class FilteredLog implements Log {
             throw new IllegalArgumentException("Position from a foreign log: " + pos);
         if (filter.accepts(underlyingLog.readRecord(pos)))
             return new FilteredPosition(pos);
-        Position res = seek(pos,true);
+        Position res = seek(pos, true);
         if (res != null) return new FilteredPosition(res);
         res = seek(pos, false);
         if (res != null) return new FilteredPosition(res);
@@ -164,6 +163,6 @@ public class FilteredLog implements Log {
 
     @Override
     public DateTime getTime(Position pos) throws IOException {
-        return underlyingLog.getTime(((FilteredPosition)pos).underlyingPos);
+        return underlyingLog.getTime(((FilteredPosition) pos).underlyingPos);
     }
 }
