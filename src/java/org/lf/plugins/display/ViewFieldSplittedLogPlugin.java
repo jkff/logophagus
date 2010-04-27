@@ -1,6 +1,5 @@
 package org.lf.plugins.display;
 
-import org.lf.plugins.DisplayPlugin;
 import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.splitbyfield.LogAndField;
 

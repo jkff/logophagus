@@ -4,7 +4,10 @@ import org.lf.logs.Field;
 import org.lf.logs.Format;
 import org.lf.logs.Record;
 import org.lf.logs.RecordImpl;
-import org.lf.parser.*;
+import org.lf.parser.CharStream;
+import org.lf.parser.Parser;
+import org.lf.parser.ScrollableInputStream;
+import org.lf.parser.Sink;
 import org.lf.util.Triple;
 
 import java.io.IOException;
@@ -16,6 +19,10 @@ public class RegexpParser implements Parser {
     private final Pattern[] patterns;
     private final char recordDelimiter;
     private final int maxLinesPerRecord;
+
+    private abstract class ReadableSink extends Sink {
+        public abstract String getReceivedChars();
+    }
 
     private class OrderedReadableSink extends ReadableSink {
         private final boolean isForward;

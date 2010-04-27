@@ -19,7 +19,6 @@ public class MappedFile implements RandomAccessFileIO {
 
     // File is divided into parts of equal size = bufSize (last part size may
     // differ from others, so buffers do not overlap
-    private static final int MAX_BUFFERS_COUNT = 20;
     private static final long BUF_SIZE = 1000000;
     private static final Function<Long, Long> TRUNCATE_BUF = new Function<Long, Long>() {
         public Long apply(Long offset) {
@@ -67,7 +66,7 @@ public class MappedFile implements RandomAccessFileIO {
                 return null;
             }
         };
-        this.bufferPool = new BufferPool<byte[], Long, Long>(MAX_BUFFERS_COUNT, TRUNCATE_BUF, LOAD_BUF, DO_NOTHING);
+        this.bufferPool = new BufferPool<byte[], Long, Long>(this, TRUNCATE_BUF, LOAD_BUF, DO_NOTHING);
     }
 
     public ScrollableInputStream getInputStreamFrom(final long offset) throws IOException {

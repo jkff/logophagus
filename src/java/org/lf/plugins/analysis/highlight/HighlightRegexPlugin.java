@@ -3,9 +3,9 @@ package org.lf.plugins.analysis.highlight;
 import com.sun.istack.internal.Nullable;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
-import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
+import org.lf.plugins.analysis.AnalysisPlugin;
 import org.lf.services.ProgramProperties;
 
 import javax.swing.*;

@@ -2,9 +2,9 @@ package org.lf.plugins.analysis.merge;
 
 import org.lf.logs.Log;
 import org.lf.logs.TimeMergeLogs;
-import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
+import org.lf.plugins.analysis.AnalysisPlugin;
 import org.lf.services.ProgramProperties;
 
 import javax.swing.*;

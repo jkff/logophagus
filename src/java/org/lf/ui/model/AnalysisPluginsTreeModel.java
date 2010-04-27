@@ -1,48 +1,45 @@
 package org.lf.ui.model;
 
-import org.lf.plugins.AnalysisPlugin;
-import org.lf.plugins.DisplayPlugin;
 import org.lf.plugins.Entity;
+import org.lf.plugins.analysis.AnalysisPlugin;
+import org.lf.plugins.display.DisplayPlugin;
+import org.lf.plugins.extension.ExtensionPoint;
+import org.lf.plugins.extension.ExtensionPointsManager;
+import org.lf.plugins.extension.builtin.AnalysisPluginExtension;
 import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
 
 import javax.swing.tree.*;
 import java.util.List;
-import java.util.Observable;
 
 import static org.lf.util.CollectionFactory.newLinkedList;
 
-public class LogsHierarchy extends Observable {
-    private final DefaultTreeModel treeModel;
-    private final TreePath rootPath;
-    private TreePath lastNewPath;
+public class AnalysisPluginsTreeModel extends DefaultTreeModel {
+    private final ExtensionPoint<AnalysisPluginExtension> extensionPoint = new ExtensionPoint<AnalysisPluginExtension>() {
+        @Override
+        public void addExtension(AnalysisPluginExtension extension) {
+            AnalysisPluginRepository.register(extension);
+        }
+    };
 
-    public LogsHierarchy() {
-        treeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
-        rootPath = new TreePath(treeModel.getRoot());
-        lastNewPath = rootPath;
-    }
-
-    public TreeModel getTreeModel() {
-        return treeModel;
+    public AnalysisPluginsTreeModel() {
+        super(new DefaultMutableTreeNode());
+        ExtensionPointsManager.registerExtensionPoint(AnalysisPluginExtension.ourID, this.extensionPoint);
     }
 
     public void addChildToRoot(MutableTreeNode child) {
-        addChildToNode(child, (MutableTreeNode) treeModel.getRoot());
+        addChildToNode(child, (MutableTreeNode) this.getRoot());
     }
 
     public void addChildToNode(MutableTreeNode child, MutableTreeNode parent) {
-        treeModel.insertNodeInto(child, parent, parent.getChildCount());
-        lastNewPath = new TreePath(((DefaultMutableTreeNode) child).getPath());
-        setChanged();
-        notifyObservers();
+        this.insertNodeInto(child, parent, parent.getChildCount());
+        this.nodesWereInserted(parent, new int[]{parent.getIndex(child)});
     }
 
-    public void removeNode(MutableTreeNode node) {
-        treeModel.removeNodeFromParent(node);
-        lastNewPath = rootPath;
-        setChanged();
-        notifyObservers();
+    public void removeNode(DefaultMutableTreeNode node) {
+        TreeNode parent = node.getParent();
+        this.removeNodeFromParent(node);
+        reload(parent);
     }
 
     public void removeNodesByPath(TreePath[] paths) {
@@ -53,7 +50,7 @@ public class LogsHierarchy extends Observable {
 
     public List<AnalysisPlugin> getApplicablePlugins(TreePath[] selPaths) {
         List<Entity> pluginArgs = getContentByPaths(selPaths);
-        Entity[] argsArray = (selPaths == null ? new Entity[0] : pluginArgs.toArray(new Entity[0]));
+        Entity[] argsArray = selPaths == null ? new Entity[0] : pluginArgs.toArray(new Entity[0]);
         return AnalysisPluginRepository.getApplicablePlugins(argsArray);
     }
 
@@ -62,18 +59,14 @@ public class LogsHierarchy extends Observable {
         Entity res = plugin.applyTo(data.toArray(new Entity[0]));
         if (res == null) return;
 
-        List<DisplayPlugin> availabaleDisplays = DisplayPluginRepository.getApplicablePlugins(res.data);
+        List<DisplayPlugin> availableDisplays = DisplayPluginRepository.getApplicablePlugins(res.data);
         MutableTreeNode childNode = new DefaultMutableTreeNode(
-                new NodeData(res, availabaleDisplays.get(0).createView(res), plugin.getIcon()));
+                new NodeData(res, availableDisplays.get(0).createView(res), plugin.getIcon()));
         if (data.size() == 1) {
             addChildToNode(childNode, (MutableTreeNode) (selPaths[0].getLastPathComponent()));
         } else {
             addChildToRoot(childNode);
         }
-    }
-
-    public TreePath getLastNewPath() {
-        return lastNewPath;
     }
 
     private List<Entity> getContentByPaths(TreePath[] selPaths) {

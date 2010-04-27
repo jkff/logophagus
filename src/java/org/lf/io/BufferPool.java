@@ -13,12 +13,44 @@ import java.util.Map;
  * of type 'H'.
  */
 public class BufferPool<B, K, H> {
-    private int maxBuffers;
+    public static final int MAX_BUFFERS = 50;
+
     private Function<K, H> hashKey;
     private Function<H, B> makeBuffer;
     private Function<Buffer, Void> releaseBuffer;
+    private final Object owner;
 
-    private Map<H, Buffer> hash2buf = new HashMap<H, Buffer>();
+    private final Map<HashWithOwner, Buffer> hash2buf = new HashMap<HashWithOwner, Buffer>();
+
+    private static class HashWithOwner {
+        public final Object hashOwner;
+        public final Object hash;
+
+        public HashWithOwner(Object hashOwner, Object hash) {
+            this.hashOwner = hashOwner;
+            this.hash = hash;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof HashWithOwner)) return false;
+
+            HashWithOwner that = (HashWithOwner) o;
+
+            if (hash != null ? !hash.equals(that.hash) : that.hash != null) return false;
+            if (hashOwner != null ? !hashOwner.equals(that.hashOwner) : that.hashOwner != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = hashOwner != null ? hashOwner.hashCode() : 0;
+            result = 31 * result + (hash != null ? hash.hashCode() : 0);
+            return result;
+        }
+    }
 
     public class Buffer {
         private int refCount;
@@ -32,11 +64,11 @@ public class BufferPool<B, K, H> {
         }
     }
 
-    public BufferPool(int maxBuffers, Function<K, H> hashKey, Function<H, B> makeBuffer, Function<Buffer, Void> releaseBuffer) {
-        this.maxBuffers = maxBuffers;
+    public BufferPool(Object owner, Function<K, H> hashKey, Function<H, B> makeBuffer, Function<Buffer, Void> releaseBuffer) {
         this.hashKey = hashKey;
         this.makeBuffer = makeBuffer;
         this.releaseBuffer = releaseBuffer;
+        this.owner = owner;
     }
 
     // Invariant : Every result of getBuffer() must be
@@ -45,52 +77,60 @@ public class BufferPool<B, K, H> {
     // Returns a buffer such that 'position' is inside its extent.
     // Blocks until a buffer is available.
 
-    public synchronized Buffer getBuffer(K key) throws InterruptedException {
+    public Buffer getBuffer(K key) throws InterruptedException {
         // ...Get an existing buffer if possible and increase its refCount
-        H hash = hashKey.apply(key);
+        synchronized (hash2buf) {
+            H hash = hashKey.apply(key);
 
-        if (hash2buf.containsKey(hash)) {
-            Buffer b = hash2buf.get(hash);
-            b.refCount++;
+            HashWithOwner mapKey = new HashWithOwner(owner, hash);
+
+            if (hash2buf.containsKey(mapKey)) {
+                Buffer b = (Buffer) hash2buf.get(mapKey);
+                b.refCount++;
+                return b;
+            }
+
+            // Wait till there's space in the buffer pool
+            if (hash2buf.size() >= MAX_BUFFERS) {
+                // No space: garbageCollect() and try again.
+                while (true) {
+                    garbageCollectBuffers();
+                    if (hash2buf.size() >= MAX_BUFFERS)
+                        hash2buf.wait();
+                    else
+                        return getBuffer(key);
+                }
+            }
+
+            B data = this.makeBuffer.apply(hash);
+
+            Buffer b = new Buffer(1, hash, data);
+            hash2buf.put(mapKey, b);
+
+            hash2buf.notifyAll();
             return b;
         }
-
-        // Wait till there's space in the buffer pool
-        if (hash2buf.size() >= maxBuffers) {
-            // No space: garbageCollect() and try again.
-            while (true) {
-                garbageCollectBuffers();
-                if (hash2buf.size() >= maxBuffers)
-                    wait();
-                else
-                    return getBuffer(key);
-            }
-        }
-
-        B data = this.makeBuffer.apply(hash);
-
-        Buffer b = new Buffer(1, hash, data);
-        hash2buf.put(hash, b);
-
-        notifyAll();
-        return b;
     }
 
-    private synchronized void garbageCollectBuffers() {
-        for (Iterator<H> it = hash2buf.keySet().iterator(); it.hasNext();) {
-            H hash = it.next();
-            Buffer b = hash2buf.get(hash);
-            if (b.refCount == 0) {
-                it.remove();
+    private void garbageCollectBuffers() {
+        synchronized (hash2buf) {
+            for (Iterator<HashWithOwner> it = hash2buf.keySet().iterator(); it.hasNext();) {
+                HashWithOwner key = it.next();
+                Buffer b = (Buffer) hash2buf.get(key);
+                if (b.refCount == 0) {
+                    it.remove();
+                }
             }
         }
     }
 
-    synchronized void releaseBuffer(Buffer buf) {
-        buf.refCount--;
-        if (buf.refCount == 0) {
-            this.releaseBuffer.apply(buf);
-            notifyAll();
+    void releaseBuffer(Buffer buf) {
+        synchronized (hash2buf) {
+            buf.refCount--;
+            if (buf.refCount == 0) {
+                this.releaseBuffer.apply(buf);
+                hash2buf.notifyAll();
+            }
         }
     }
 
@@ -100,11 +140,13 @@ public class BufferPool<B, K, H> {
     // otherwise frees 'buf' and allocates a new buffer.
 
     public Buffer move(Buffer buf, K newKey) throws IOException, InterruptedException {
-        if (hashKey.apply(newKey).equals(buf.hash)) {
-            return buf;
-        } else {
-            releaseBuffer(buf);
-            return getBuffer(newKey);
+        synchronized (hash2buf) {
+            if (hashKey.apply(newKey).equals(buf.hash)) {
+                return buf;
+            } else {
+                releaseBuffer(buf);
+                return getBuffer(newKey);
+            }
         }
     }
 }

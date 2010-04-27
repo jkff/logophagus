@@ -63,9 +63,9 @@ tree.analysisPlugins.add(new AnalysisPlugin() {
 
 PluginManager{
 
-	Plugin getPlugin("plugin full name");
+Plugin getPlugin("plugin full name");
 
-	ExtensionPoint getExtensionPoint("plugin full name", "extension point name");
+getExtensionPoint("plugin full name", "extension point name");
 
 }
 

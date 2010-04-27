@@ -10,9 +10,9 @@ import org.lf.logs.FileBackedLog;
 import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.parser.Parser;
-import org.lf.plugins.AnalysisPlugin;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
+import org.lf.plugins.analysis.AnalysisPlugin;
 import org.lf.plugins.analysis.Bookmarks;
 import org.lf.services.ProgramProperties;
 import org.lf.ui.components.dialog.ParserSetupDialog;
@@ -45,7 +45,9 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 
         Parser parser = null;
         try {
-            parser = new ParserSetupDialog().showSetupDialog();
+            ParserSetupDialog psd = new ParserSetupDialog();
+            parser = psd.showSetupDialog();
+            psd.dispose();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,7 +56,7 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
         try {
             RandomAccessFileIO io;
             if (f.getName().endsWith(".gz") || f.getName().endsWith("zip")) {
-                final GzipRandomAccessIO cio = new GzipRandomAccessIO(f.getAbsolutePath(), 1 << 20, 20);
+                final GzipRandomAccessIO cio = new GzipRandomAccessIO(f.getAbsolutePath(), 1 << 20);
                 final ProgressDialog d = new ProgressDialog(
                         Frame.getFrames()[0],
                         "Indexing compressed file for random access", "",

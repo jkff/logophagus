@@ -15,15 +15,13 @@ import java.util.Arrays;
 public class GzipRandomAccessIO implements RandomAccessFileIO {
     private String fileName;
     private int chunkSize;
-    private int numBuffers;
 
     private RandomAccessGzip.Index idx;
     private BufferPool<byte[], Long, Long> bufferPool;
 
-    public GzipRandomAccessIO(String fileName, int chunkSize, int numBuffers) {
+    public GzipRandomAccessIO(String fileName, int chunkSize) {
         this.fileName = fileName;
         this.chunkSize = chunkSize;
-        this.numBuffers = numBuffers;
     }
 
     public void init(final ProgressListener<Double> progressListener) throws IOException {
@@ -70,7 +68,7 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
                 return null;
             }
         };
-        this.bufferPool = new BufferPool<byte[], Long, Long>(numBuffers, TRUNCATE_BUF, LOAD_BUF, DO_NOTHING);
+        this.bufferPool = new BufferPool<byte[], Long, Long>(this, TRUNCATE_BUF, LOAD_BUF, DO_NOTHING);
     }
 
     @Override

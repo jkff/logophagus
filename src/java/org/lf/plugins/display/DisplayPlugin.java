@@ -1,4 +1,6 @@
-package org.lf.plugins;
+package org.lf.plugins.display;
+
+import org.lf.plugins.Entity;
 
 import javax.swing.*;
 

@@ -1,6 +1,6 @@
 package org.lf.services;
 
-import org.lf.plugins.DisplayPlugin;
+import org.lf.plugins.display.DisplayPlugin;
 
 import java.util.ArrayList;
 import java.util.List;

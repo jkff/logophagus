@@ -14,24 +14,25 @@ import org.lf.services.PluginException;
 import org.lf.ui.components.menu.LogophagusMenuBar;
 import org.lf.ui.components.pluginPanel.PluginPanel;
 import org.lf.ui.components.popup.TreeRightClickPopup;
-import org.lf.ui.components.tree.LogsHierarchyView;
-import org.lf.ui.model.LogsHierarchy;
+import org.lf.ui.components.tree.TreeSelectionController;
+import org.lf.ui.model.AnalysisPluginsTreeModel;
 import org.lf.ui.model.NodeData;
 
 import javax.swing.*;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.awt.event.ContainerAdapter;
-import java.awt.event.ContainerEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
 public class Logophagus extends JFrame {
-    private LogsHierarchy logsHierarchy;
+    private AnalysisPluginsTreeModel pluginsTreeModel;
 
     private JMenuBar menuBar;
-    private LogsHierarchyView logsTree;
+    private JTree pluginsTreeView;
     private PluginPanel pluginPanel;
 
     private Logophagus() {
@@ -42,9 +43,10 @@ public class Logophagus extends JFrame {
             JOptionPane.showMessageDialog(this, "OS look-and-feel theme is not available. Will use default instead", "Warning", JOptionPane.ERROR_MESSAGE);
         }
 
-        logsHierarchy = new LogsHierarchy();
-        initComponents();
-        setVisible(true);
+        this.pluginsTreeModel = new AnalysisPluginsTreeModel();
+        this.initComponents();
+        this.setVisible(true);
+        this.pack();
     }
 
     private void initComponents() {
@@ -59,7 +61,7 @@ public class Logophagus extends JFrame {
 
         JPanel treePanel = new JPanel(new BorderLayout());
         treePanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 4));
-        treePanel.add(new JScrollPane(getLogsHierarchyView()));
+        treePanel.add(new JScrollPane(getAnalysisPluginTreeView()));
         treePanel.setVisible(true);
 
         splitPane.setLeftComponent(treePanel);
@@ -69,7 +71,7 @@ public class Logophagus extends JFrame {
 
     private JMenuBar getLogophagusMenuBar() {
         if (menuBar != null) return menuBar;
-        menuBar = new LogophagusMenuBar(logsHierarchy);
+        menuBar = new LogophagusMenuBar(pluginsTreeModel);
         return menuBar;
     }
 
@@ -80,34 +82,26 @@ public class Logophagus extends JFrame {
         return pluginPanel;
     }
 
-    private LogsHierarchyView getLogsHierarchyView() {
-        if (logsTree != null) return logsTree;
-        logsTree = new LogsHierarchyView(logsHierarchy);
-        logsTree.setRootVisible(false);
-        logsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-        logsTree.addMouseListener(new TreeMouseListener());
-        logsTree.addTreeSelectionListener(getPluginPanel());
-        TreeCellRenderer renderer = new MyTreeCellRenderer();
-        logsTree.setCellRenderer(renderer);
-        logsTree.setAutoscrolls(true);
-        logsTree.addContainerListener(new ContainerAdapter() {
-            @Override
-            public void componentAdded(ContainerEvent ce) {
-                logsTree.setSelectionPath(logsHierarchy.getLastNewPath());
-                logsTree.scrollPathToVisible(logsHierarchy.getLastNewPath());
-            }
-        });
-        return logsTree;
+    private JTree getAnalysisPluginTreeView() {
+        if (pluginsTreeView != null) return pluginsTreeView;
+        pluginsTreeView = new JTree(pluginsTreeModel);
+        pluginsTreeView.setRootVisible(false);
+        pluginsTreeView.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+        pluginsTreeView.addMouseListener(new TreeMouseListener());
+        pluginsTreeView.addTreeSelectionListener(getPluginPanel());
+        pluginsTreeView.setCellRenderer(new AnalysisPluginTreeCellRenderer());
+        new TreeSelectionController(pluginsTreeView);
+        return pluginsTreeView;
     }
 
     public static void main(String[] args) {
         try {
-            AnalysisPluginRepository.register(FileBackedLogPlugin.class);
-            AnalysisPluginRepository.register(FilterBySubstringPlugin.class);
-            AnalysisPluginRepository.register(SideBySidePlugin.class);
+            AnalysisPluginRepository.register(new FileBackedLogPlugin());
+            AnalysisPluginRepository.register(new FilterBySubstringPlugin());
+            AnalysisPluginRepository.register(new SideBySidePlugin());
 //            AnalysisPluginRepository.register(SplitByFieldValuesPlugin.class);
-            AnalysisPluginRepository.register(HighlightRegexPlugin.class);
-            AnalysisPluginRepository.register(MergeLogsPlugin.class);
+            AnalysisPluginRepository.register(new HighlightRegexPlugin());
+            AnalysisPluginRepository.register(new MergeLogsPlugin());
 
             DisplayPluginRepository.register(ViewScrollableLogPlugin.class);
             DisplayPluginRepository.register(ViewSideBySidePlugin.class);
@@ -121,7 +115,7 @@ public class Logophagus extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new Logophagus().pack();
+                new Logophagus();
             }
         });
     }
@@ -129,31 +123,30 @@ public class Logophagus extends JFrame {
     private class TreeMouseListener extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
-            TreePath selPath = logsTree.getPathForLocation(e.getX(), e.getY());
+            TreePath selPath = pluginsTreeView.getPathForLocation(e.getX(), e.getY());
             if (e.getButton() == MouseEvent.BUTTON1) {
                 if (e.isControlDown()) {
-                    logsTree.addSelectionPath(selPath);
+                    pluginsTreeView.addSelectionPath(selPath);
                 } else {
-                    logsTree.setSelectionPath(selPath);
+                    pluginsTreeView.setSelectionPath(selPath);
                 }
             } else if (e.getButton() == MouseEvent.BUTTON3) {
                 boolean isAtSelection = false;
-                if (logsTree.getSelectionPaths() != null)
-                    for (TreePath cur : logsTree.getSelectionPaths()) {
+                if (pluginsTreeView.getSelectionPaths() != null)
+                    for (TreePath cur : pluginsTreeView.getSelectionPaths())
                         if (cur.equals(selPath)) {
                             isAtSelection = true;
                             break;
                         }
-                    }
                 if (!isAtSelection)
-                    logsTree.setSelectionPath(selPath);
-                JPopupMenu popMenu = new TreeRightClickPopup(logsHierarchy, logsTree.getSelectionPaths());
-                popMenu.show(logsTree, e.getX(), e.getY());
+                    pluginsTreeView.setSelectionPath(selPath);
+                JPopupMenu popMenu = new TreeRightClickPopup(pluginsTreeModel, pluginsTreeView.getSelectionPaths());
+                popMenu.show(pluginsTreeView, e.getX(), e.getY());
             }
         }
     }
 
-    private class MyTreeCellRenderer extends DefaultTreeCellRenderer {
+    private class AnalysisPluginTreeCellRenderer extends DefaultTreeCellRenderer {
 
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,

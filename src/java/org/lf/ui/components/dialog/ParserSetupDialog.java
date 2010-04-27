@@ -116,7 +116,7 @@ public class ParserSetupDialog extends JDialog implements PropertyChangeListener
         } catch (IllegalAccessException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-
+        okButton.setEnabled(parserAdjuster.isValidAdjust());
         adjusterBox.removeAll();
         adjusterBox.add(parserAdjuster);
         adjusterBox.revalidate();

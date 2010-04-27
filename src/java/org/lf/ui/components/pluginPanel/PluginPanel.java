@@ -20,14 +20,15 @@ public class PluginPanel extends JPanel implements TreeSelectionListener {
     @Override
     public void valueChanged(TreeSelectionEvent event) {
         this.removeAll();
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
+        JTree tree = (JTree) event.getSource();
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         if (node != null) {
             NodeData nodeData = (NodeData) node.getUserObject();
             if (nodeData != null)
                 this.add(nodeData.component);
         }
+        this.revalidate();
         this.repaint();
-        this.updateUI();
     }
 
 }

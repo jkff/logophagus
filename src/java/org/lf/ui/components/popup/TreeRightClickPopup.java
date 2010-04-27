@@ -1,7 +1,7 @@
 package org.lf.ui.components.popup;
 
-import org.lf.plugins.AnalysisPlugin;
-import org.lf.ui.model.LogsHierarchy;
+import org.lf.plugins.analysis.AnalysisPlugin;
+import org.lf.ui.model.AnalysisPluginsTreeModel;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
@@ -12,14 +12,14 @@ import java.util.List;
 
 public class TreeRightClickPopup extends JPopupMenu {
 
-    public TreeRightClickPopup(final LogsHierarchy logsHierarchy, final TreePath[] selPaths) {
-        List<AnalysisPlugin> plugins = logsHierarchy.getApplicablePlugins(selPaths);
+    public TreeRightClickPopup(final AnalysisPluginsTreeModel pluginsTreeModel, final TreePath[] selPaths) {
+        List<AnalysisPlugin> plugins = pluginsTreeModel.getApplicablePlugins(selPaths);
         for (final AnalysisPlugin plugin : plugins) {
             JMenuItem itemPlugin = new JMenuItem(plugin.getName());
             itemPlugin.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
-                    logsHierarchy.applyPluginForPath(plugin, selPaths);
+                    pluginsTreeModel.applyPluginForPath(plugin, selPaths);
                 }
             });
             add(itemPlugin);
@@ -31,7 +31,7 @@ public class TreeRightClickPopup extends JPopupMenu {
             JMenuItem itemDelete = new JMenuItem("Delete");
             itemDelete.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent arg0) {
-                    logsHierarchy.removeNodesByPath(selPaths);
+                    pluginsTreeModel.removeNodesByPath(selPaths);
                 }
             });
             add(itemDelete);

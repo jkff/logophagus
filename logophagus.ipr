@@ -180,7 +180,12 @@
     <option name="projectName" value="logophagus" />
   </component>
   <component name="ProjectDictionaryState">
-    <dictionary name="ruslan" />
+    <dictionary name="ruslan">
+      <words>
+        <w>args</w>
+        <w>plugins</w>
+      </words>
+    </dictionary>
   </component>
   <component name="ProjectModuleManager">
     <modules>

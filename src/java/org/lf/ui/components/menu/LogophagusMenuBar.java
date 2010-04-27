@@ -1,7 +1,7 @@
 package org.lf.ui.components.menu;
 
 import org.lf.plugins.analysis.filelog.FileBackedLogPlugin;
-import org.lf.ui.model.LogsHierarchy;
+import org.lf.ui.model.AnalysisPluginsTreeModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -11,11 +11,10 @@ import java.util.Observer;
 
 
 public class LogophagusMenuBar extends JMenuBar implements Observer {
-    private LogsHierarchy logsTree;
+    private AnalysisPluginsTreeModel logsTreeModel;
 
-    public LogophagusMenuBar(LogsHierarchy logsTree) {
-        this.logsTree = logsTree;
-        this.logsTree.addObserver(this);
+    public LogophagusMenuBar(AnalysisPluginsTreeModel logsTreeModel) {
+        this.logsTreeModel = logsTreeModel;
         initComponents();
     }
 
@@ -24,7 +23,7 @@ public class LogophagusMenuBar extends JMenuBar implements Observer {
         JMenuItem fileOpen = new JMenuItem("Open");
         fileOpen.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                logsTree.applyPluginForPath(new FileBackedLogPlugin(), null);
+                logsTreeModel.applyPluginForPath(new FileBackedLogPlugin(), null);
             }
         });
 

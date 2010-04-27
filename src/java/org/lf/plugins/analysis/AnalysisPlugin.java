@@ -1,6 +1,7 @@
-package org.lf.plugins;
+package org.lf.plugins.analysis;
 
 import com.sun.istack.internal.Nullable;
+import org.lf.plugins.Entity;
 
 import javax.swing.*;
 
