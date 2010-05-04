@@ -21,8 +21,9 @@ import org.lf.util.ProgressListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
 public class FileBackedLogPlugin implements AnalysisPlugin {
 
@@ -94,7 +95,7 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
 
 //            Log log = new FileBackedLog(io, new CSVParser(new Format(fields, -1, null)));
 //            [2200-01-02 06:27:46,148] DEBUG [pool-798] Search performed in 0 with 507 hits
-            String[] regexes = new String[]{"\\[(.+)\\]\\s+(\\w+)\\s+\\[(.+)\\]\\s+(.+)\\s*"};
+            String[] regexes = new String[]{"\\[([^\\]]++)\\]\\s++(\\w++)\\s++\\[([^\\]]++)\\]\\s++(.++)"};
             Field[] fields = new Field[]{
                     new Field("Time"),
                     new Field("Level"),
@@ -129,5 +130,4 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
     public Icon getIcon() {
         return new ImageIcon(ProgramProperties.iconsPath + "log.gif");
     }
-
 }

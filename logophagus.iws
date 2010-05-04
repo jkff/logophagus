@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ChangeListManager" verified="true">
-    <list default="true" id="a78d41dc-7563-4190-81be-235faa908423" name="Default" comment="" />
+  <component name="ChangeListManager">
+    <list default="true" readonly="true" id="a78d41dc-7563-4190-81be-235faa908423" name="Default" comment="" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="logophagus.iws" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -60,39 +60,11 @@
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="BufferScrollableInputStream.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="BufferScrollableInputStream.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/BufferScrollableInputStream.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="50" column="0" selection-start="1589" selection-end="1589" vertical-scroll-proportion="0.3201581">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ScrollableInputStream.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/ScrollableInputStream.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="27" selection-start="1131" selection-end="1131" vertical-scroll-proportion="0.0">
-              <folding>
-                <marker date="1272970306000" expanded="true" signature="207:347" placeholder="/**...*/" />
-                <marker date="1272970306000" expanded="true" signature="422:561" placeholder="/**...*/" />
-                <marker date="1272970306000" expanded="true" signature="639:745" placeholder="/**...*/" />
-                <marker date="1272970306000" expanded="true" signature="821:1103" placeholder="/**...*/" />
-                <marker date="1272970306000" expanded="true" signature="1181:1474" placeholder="/**...*/" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="LineParser.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/line/LineParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="0" selection-start="544" selection-end="544" vertical-scroll-proportion="0.0">
-              <folding>
-                <marker date="1272970306000" expanded="false" signature="36:215" placeholder="..." />
-              </folding>
+            <state line="243" column="29" selection-start="7508" selection-end="7508" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -100,18 +72,7 @@
       <file leaf-file-name="RegexpParser.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/regex/RegexpParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="104" column="46" selection-start="4355" selection-end="4355" vertical-scroll-proportion="0.0">
-              <folding>
-                <marker date="1272970306000" expanded="false" signature="37:333" placeholder="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="LogophagusMenuBar.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/menu/LogophagusMenuBar.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="29" selection-start="698" selection-end="698" vertical-scroll-proportion="0.0">
+            <state line="20" column="20" selection-start="563" selection-end="563" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -120,18 +81,7 @@
       <file leaf-file-name="FileBackedLogPlugin.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/analysis/filelog/FileBackedLogPlugin.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="131" column="0" selection-start="4781" selection-end="4781" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Logophagus.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/Logophagus.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="67" column="33" selection-start="2662" selection-end="2662" vertical-scroll-proportion="0.0">
+            <state line="132" column="0" selection-start="4833" selection-end="4833" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -140,7 +90,61 @@
       <file leaf-file-name="BufferPool.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/BufferPool.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="96" column="45" selection-start="3116" selection-end="3116" vertical-scroll-proportion="0.0">
+            <state line="104" column="0" selection-start="3319" selection-end="3319" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RandomAccessGzip.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/zlib/RandomAccessGzip.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="42" column="32" selection-start="1315" selection-end="1315" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Object.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_18/src.zip!/java/lang/Object.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="364" column="29" selection-start="17907" selection-end="17907" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Unsafe.class" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_18/jre/lib/rt.jar!/sun/misc/Unsafe.class">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="159" column="23" selection-start="4445" selection-end="4445" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ZRan.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/zlib/ZRan.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="54" column="45" selection-start="1803" selection-end="1803" vertical-scroll-proportion="0.4425612">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GzipRandomAccessIO.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/GzipRandomAccessIO.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="57" column="0" selection-start="2067" selection-end="2067" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Function.class" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$PROJECT_DIR$/lib/jna.jar!/com/sun/jna/Function.class">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="47" column="23" selection-start="2464" selection-end="2464" vertical-scroll-proportion="-7.4166665">
               <folding />
             </state>
           </provider>
@@ -156,14 +160,11 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/display/ViewSideBySidePlugin.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/util/ProgressDialog.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/dialog/ParserSetupDialog.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/services/DisplayPluginRepository.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/menu/LogophagusMenuBar.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/popup/TreeRightClickPopup.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/io/zlib/ZLib.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/io/BufferPool.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/io/MappedFile.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/io/GzipRandomAccessIO.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/parser/ScrollableInputStream.java" />
@@ -172,6 +173,9 @@
         <option value="$PROJECT_DIR$/src/java/org/lf/parser/line/LineParser.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/parser/regex/RegexpParser.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/plugins/analysis/filelog/FileBackedLogPlugin.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/io/BufferPool.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/io/zlib/RandomAccessGzip.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/io/zlib/ZRan.java" />
       </list>
     </option>
   </component>
@@ -222,6 +226,55 @@
     </navigator>
     <panes>
       <pane id="Favorites" />
+      <pane id="ProjectPane">
+        <subPane />
+      </pane>
+      <pane id="Scope">
+        <subPane />
+        <subPane subId="Problems" />
+        <subPane subId="All">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Logophagus">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="org">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="lf">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Logophagus">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="org">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="lf">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="io">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -311,6 +364,32 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="components" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="logophagus" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="logophagus" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="org.lf" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ui" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="components" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="plugins" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -472,55 +551,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="ProjectPane">
-        <subPane />
-      </pane>
-      <pane id="Scope">
-        <subPane />
-        <subPane subId="Problems" />
-        <subPane subId="All">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="Logophagus">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="org">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="lf">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="Logophagus">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="org">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="lf">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="io">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -542,6 +572,9 @@
     <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
+    <key name="IntroduceConstantDialog.RECENTS_KEY">
+      <recent name="org.lf.io.zlib.RandomAccessGzip.IndexImpl" />
+    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="org.lf.plugins.extension" />
       <recent name="org.lf.plugins.display" />
@@ -552,6 +585,7 @@
   </component>
   <component name="RunManager" selected="Application.Logophagus">
     <configuration default="false" name="ParserSetupDialog" type="Application" factoryName="Application" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" />
       <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="org.lf.ui.components.dialog.ParserSetupDialog" />
       <option name="VM_PARAMETERS" />
@@ -569,6 +603,7 @@
       <method />
     </configuration>
     <configuration default="false" name="org.lf in Logophagus" type="JUnit" factoryName="JUnit" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" />
       <extension name="snapshooter" />
       <module name="Logophagus" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -591,6 +626,7 @@
       <method />
     </configuration>
     <configuration default="false" name="Logophagus" type="Application" factoryName="Application" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" />
       <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="org.lf.ui.Logophagus" />
       <option name="VM_PARAMETERS" value="" />
@@ -603,11 +639,40 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="logophagus" />
       <envs />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="52772" />
+        <option name="TRANSPORT" value="0" />
+        <option name="LOCAL" value="true" />
+      </RunnerSettings>
       <RunnerSettings RunnerId="Profile ">
         <option name="myExternalizedOptions" value="&#10;additional-options2=onexit\=snapshot&#10;" />
       </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Profile " />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="FileBackedLogPlugin" type="Application" factoryName="Application" temporary="true">
+      <extension name="coverage" enabled="false" merge="false">
+        <pattern>
+          <option name="PATTERN" value="org.lf.plugins.analysis.filelog.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <extension name="snapshooter" />
+      <option name="MAIN_CLASS_NAME" value="org.lf.plugins.analysis.filelog.FileBackedLogPlugin" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="logophagus" />
+      <envs />
+      <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
@@ -620,39 +685,6 @@
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
-    <configuration default="true" type="TestNG" factoryName="TestNG">
-      <extension name="snapshooter" />
-      <module name="" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="SUITE_NAME" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="GROUP_NAME" />
-      <option name="TEST_OBJECT" value="CLASS" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" />
-      <option name="OUTPUT_DIRECTORY" />
-      <option name="ANNOTATION_TYPE" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <option name="USE_DEFAULT_REPORTERS" value="false" />
-      <option name="PROPERTIES_FILE" />
-      <envs />
-      <properties />
-      <listeners />
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Make" enabled="true" />
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
@@ -675,6 +707,7 @@
       </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" />
       <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" />
       <option name="VM_PARAMETERS" />
@@ -695,6 +728,7 @@
       </method>
     </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" />
       <extension name="snapshooter" />
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -719,10 +753,11 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <list size="3">
+    <list size="4">
       <item index="0" class="java.lang.String" itemvalue="Application.ParserSetupDialog" />
       <item index="1" class="java.lang.String" itemvalue="JUnit.org.lf in Logophagus" />
       <item index="2" class="java.lang.String" itemvalue="Application.Logophagus" />
+      <item index="3" class="java.lang.String" itemvalue="Application.FileBackedLogPlugin" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -731,7 +766,7 @@
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
   <component name="SpellCheckerSettings" BundledDictionaries="0" Folders="6" Folder0="$PROJECT_DIR$/../../distr/dictionary/stardict-eng_rus_comp-2.4.2" Folder1="$PROJECT_DIR$/../../distr/dictionary/stardict-eng_rus_full-2.4.2" Folder2="$PROJECT_DIR$/../../distr/dictionary/stardict-magus-2.4.2" Folder3="$PROJECT_DIR$/../../distr/dictionary/stardict-rus_eng_full-2.4.2" Folder4="$PROJECT_DIR$/../../distr/dictionary/stardict-rus_eng_short-2.4.2" Folder5="/usr/share/myspell/dicts" Dictionaries="22" Dictionary0="/usr/share/myspell/dicts/hyph_ga_IE.dic" Dictionary1="/usr/share/myspell/dicts/hyph_sk_SK.dic" Dictionary2="/usr/share/myspell/dicts/hyph_pt_BR.dic" Dictionary3="/usr/share/myspell/dicts/en_ZA.dic" Dictionary4="/usr/share/myspell/dicts/hyph_ro_RO.dic" Dictionary5="/usr/share/myspell/dicts/hyph_es_ES.dic" Dictionary6="/usr/share/myspell/dicts/hyph_uk_UA.dic" Dictionary7="/usr/share/myspell/dicts/hyph_fr_BE.dic" Dictionary8="/usr/share/myspell/dicts/en_AU.dic" Dictionary9="/usr/share/myspell/dicts/hyph_el_GR.dic" Dictionary10="/usr/share/myspell/dicts/hyph_fi_FI.dic" Dictionary11="/usr/share/myspell/dicts/hyph_is_IS.dic" Dictionary12="/usr/share/myspell/dicts/hyph_en_CA.dic" Dictionary13="/usr/share/myspell/dicts/hyph_pt_PT.dic" Dictionary14="/usr/share/myspell/dicts/hyph_de_CH.dic" Dictionary15="/usr/share/myspell/dicts/en-AU.dic" Dictionary16="/usr/share/myspell/dicts/hyph_id_ID.dic" Dictionary17="/usr/share/myspell/dicts/hyph_sv_SE.dic" Dictionary18="/usr/share/myspell/dicts/hyph_da_DK.dic" Dictionary19="/usr/share/myspell/dicts/hyph_nl_NL.dic" Dictionary20="/usr/share/myspell/dicts/hyph_cs_CZ.dic" Dictionary21="/usr/share/myspell/dicts/hyph_fr_FR.dic" />
-  <component name="SvnConfiguration">
+  <component name="SvnConfiguration" maxAnnotateRevisions="500">
     <option name="USER" value="" />
     <option name="PASSWORD" value="" />
     <option name="LAST_MERGED_REVISION" />
@@ -748,24 +783,24 @@
     <supportedVersion>125</supportedVersion>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="25" width="1366" height="718" extended-state="0" />
+    <frame x="-8" y="-8" width="1616" height="1176" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32685512" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3263158" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2754173" sideWeight="0.5410122" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18342152" sideWeight="0.35532996" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3263158" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24961948" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18361153" sideWeight="0.36379018" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20223881" sideWeight="0.5441696" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21272494" sideWeight="0.55119616" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4434629" sideWeight="0.33840948" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.44210526" sideWeight="0.33840948" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32852808" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24961948" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32685512" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32952815" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39954337" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962063" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
@@ -782,6 +817,8 @@
     <option name="PERFORM_ADD_REMOVE_IN_BACKGROUND" value="true" />
     <option name="PERFORM_ROLLBACK_IN_BACKGROUND" value="false" />
     <option name="CHECK_LOCALLY_CHANGED_CONFLICTS_IN_BACKGROUND" value="true" />
+    <option name="ENABLE_BACKGROUND_PROCESSES" value="false" />
+    <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="LAST_COMMIT_MESSAGE" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
@@ -800,120 +837,112 @@
   <component name="XDebuggerManager">
     <breakpoint-manager />
   </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/analysis/highlight/HighlightRegexPlugin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="13" selection-start="377" selection-end="377" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/extension/ExtensionPoint.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="35" selection-start="138" selection-end="138" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/MappedFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="68" column="41" selection-start="2401" selection-end="2401" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/GzipRandomAccessIO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="70" column="41" selection-start="2452" selection-end="2452" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/BufferPool.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="96" column="45" selection-start="3116" selection-end="3116" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/Logophagus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="67" column="33" selection-start="2662" selection-end="2662" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/ScrollableInputStream.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="27" selection-start="1131" selection-end="1131" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1272970306000" expanded="true" signature="207:347" placeholder="/**...*/" />
-            <marker date="1272970306000" expanded="true" signature="422:561" placeholder="/**...*/" />
-            <marker date="1272970306000" expanded="true" signature="639:745" placeholder="/**...*/" />
-            <marker date="1272970306000" expanded="true" signature="821:1103" placeholder="/**...*/" />
-            <marker date="1272970306000" expanded="true" signature="1181:1474" placeholder="/**...*/" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/FileBackedLog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="96" column="0" selection-start="2592" selection-end="2592" vertical-scroll-proportion="0.16698657">
-          <folding />
-        </state>
+        <state line="34" column="27" selection-start="1131" selection-end="1131" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/line/LineParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="0" selection-start="544" selection-end="544" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1272970306000" expanded="false" signature="36:215" placeholder="..." />
-          </folding>
-        </state>
+        <state line="17" column="0" selection-start="544" selection-end="544" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/csv/CSVParser.java">
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/menu/LogophagusMenuBar.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="6" selection-start="328" selection-end="328" vertical-scroll-proportion="-5.332016">
+        <state line="23" column="29" selection-start="698" selection-end="698" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/Logophagus.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="67" column="33" selection-start="2662" selection-end="2662" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/regex/RegexpParserAdjuster.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="80" column="19" selection-start="2783" selection-end="2783" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/regex/RegexpParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="46" selection-start="4355" selection-end="4355" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1272970306000" expanded="false" signature="37:333" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/menu/LogophagusMenuBar.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="29" selection-start="698" selection-end="698" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar:///usr/lib/jvm/jdk1.6.0_18/src.zip!/java/lang/System.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="436" column="30" selection-start="17188" selection-end="17188" vertical-scroll-proportion="0.24184261">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar:///usr/lib/jvm/jdk1.6.0_18/src.zip!/java/lang/String.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="334" column="14" selection-start="12027" selection-end="12027" vertical-scroll-proportion="0.35573122">
+        <state line="20" column="20" selection-start="563" selection-end="563" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/analysis/filelog/FileBackedLogPlugin.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="131" column="0" selection-start="4781" selection-end="4781" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="132" column="0" selection-start="4833" selection-end="4833" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/jna.jar!/com/sun/jna/Memory.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="75" column="31" selection-start="2919" selection-end="2919" vertical-scroll-proportion="0.33333334">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/lib/jna.jar!/com/sun/jna/Function.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="23" selection-start="2464" selection-end="2464" vertical-scroll-proportion="-7.4166665">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_18/src.zip!/java/lang/Object.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="364" column="29" selection-start="17907" selection-end="17907" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_18/jre/lib/rt.jar!/sun/misc/Unsafe.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="159" column="23" selection-start="4445" selection-end="4445" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/GzipRandomAccessIO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="57" column="0" selection-start="2067" selection-end="2067" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/BufferPool.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="104" column="0" selection-start="3319" selection-end="3319" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/BufferScrollableInputStream.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="0" selection-start="1589" selection-end="1589" vertical-scroll-proportion="0.3201581">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="243" column="29" selection-start="7508" selection-end="7508" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/zlib/RandomAccessGzip.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="32" selection-start="1315" selection-end="1315" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/zlib/ZRan.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="54" column="45" selection-start="1803" selection-end="1803" vertical-scroll-proportion="0.4425612">
+          <folding />
         </state>
       </provider>
     </entry>

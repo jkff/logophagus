@@ -15,9 +15,8 @@ import java.util.List;
  * from the examples to zlib 1.2.3.
  */
 class ZRan {
-    private static final int SPAN = 1048576;
-    private static final int WINSIZE = 32768;
-    private static final int CHUNK = 16384;
+    private static final int WINSIZE = 65536;
+    private static final int CHUNK = 65536;
 
     static class Point {
         long out;
@@ -50,6 +49,7 @@ class ZRan {
         List<Point> index;       /* access points being generated */
         z_stream strm = new z_stream();
         Memory input = new Memory(CHUNK);
+        ByteBuffer bb = input.getByteBuffer(0, CHUNK);
         Memory window = new Memory(WINSIZE);
         byte[] buf = new byte[CHUNK];
 
@@ -75,11 +75,11 @@ class ZRan {
                     return null;
 
                 /* get some compressed data from input file */
-                ByteBuffer bb = input.getByteBuffer(0, CHUNK);
                 strm.avail_in = in.read(buf, 0, CHUNK);
                 if (strm.avail_in == -1) {
                     throw new IOException("zlib: data error");
                 }
+                bb.position(0);
                 bb.put(buf, 0, strm.avail_in);
                 strm.next_in = input;
 
@@ -134,6 +134,7 @@ class ZRan {
         z_stream strm = new z_stream();
         Point here;
         Memory input = new Memory(CHUNK);
+        ByteBuffer bb = input.getByteBuffer(0, CHUNK);
         Memory discard = new Memory(WINSIZE);
 
         byte[] bbuf = new byte[CHUNK];
@@ -193,11 +194,11 @@ class ZRan {
                 /* uncompress until avail_out filled, or end of stream */
                 do {
                     if (strm.avail_in == 0) {
-                        ByteBuffer bb = input.getByteBuffer(0, CHUNK);
                         strm.avail_in = f.read(bbuf);
                         if (strm.avail_in == -1) {
                             throw new IOException("End of stream");
                         }
+                        bb.position(0);
                         bb.put(bbuf, 0, strm.avail_in);
                         strm.next_in = input;
                     }

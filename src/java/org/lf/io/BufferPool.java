@@ -125,10 +125,10 @@ public class BufferPool<K, H> {
     }
 
     void releaseBuffer(Buffer buf) {
-        synchronized (hash2buf) {
-            buf.refCount--;
-            if (buf.refCount == 0) {
-                this.releaseBuffer.apply(buf);
+        buf.refCount--;
+        if (buf.refCount == 0) {
+            this.releaseBuffer.apply(buf);
+            synchronized (hash2buf) {
                 hash2buf.notifyAll();
             }
         }

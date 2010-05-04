@@ -6,6 +6,7 @@ import org.lf.util.ProgressListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 public class RandomAccessGzip {
@@ -16,12 +17,18 @@ public class RandomAccessGzip {
     }
 
     private static class IndexImpl implements Index {
-        List<ZRan.Point> idx;
-        long decompressedSize;
+        private static final int BUF_SIZE = 1048576;
+
+        private final List<ZRan.Point> idx;
+        private final long decompressedSize;
+        private final Memory mem;
+        private final ByteBuffer memBuf;
 
         private IndexImpl(List<ZRan.Point> idx, long decompressedSize) {
             this.idx = idx;
             this.decompressedSize = decompressedSize;
+            this.mem = new Memory(BUF_SIZE);
+            this.memBuf = mem.getByteBuffer(0, BUF_SIZE);
         }
 
         @Override
@@ -30,11 +37,19 @@ public class RandomAccessGzip {
         }
 
         @Override
-        public int read(RandomAccessFile f, long origin, byte[] buf, int offset, int len) throws IOException {
-            Memory mem = new Memory(len);
-            int n = ZRan.extract(f, idx, origin, mem, len);
-            mem.getByteBuffer(0, len).get(buf, offset, len);
-            return n;
+        public synchronized int read(RandomAccessFile f, long origin, byte[] buf, int offset, int len) throws IOException {
+            int total = 0;
+            while(len > 0) {
+                int n = ZRan.extract(f, idx, origin, mem, Math.min(len, BUF_SIZE));
+                if(n == 0)
+                    break;
+                total += n;
+                memBuf.position(0);
+                memBuf.get(buf, offset, n);
+                offset += n;
+                len -= n;
+            }
+            return total;
         }
     }
 
