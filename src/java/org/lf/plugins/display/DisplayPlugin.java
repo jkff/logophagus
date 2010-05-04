@@ -5,7 +5,7 @@ import org.lf.plugins.Entity;
 import javax.swing.*;
 
 public interface DisplayPlugin {
-    Class getInputType();
+    boolean isApplicableFor(Object o);
 
     JComponent createView(Entity entity);
 }

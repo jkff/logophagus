@@ -5,18 +5,18 @@ import org.lf.parser.Parser;
 import javax.swing.*;
 
 public abstract class ParserAdjuster extends JPanel {
-    private boolean validAdjust;
+    private boolean validAdjustment;
 
-    public boolean isValidAdjust() {
-        return validAdjust;
+    public boolean isValidAdjustment() {
+        return validAdjustment;
     }
 
     public abstract Parser getParser();
 
     protected void setValidAdjust(boolean isValid) {
-        boolean oldVal = validAdjust;
-        validAdjust = isValid;
-        firePropertyChange("validAdjust", oldVal, validAdjust);
+        boolean oldVal = validAdjustment;
+        validAdjustment = isValid;
+        firePropertyChange("validAdjustment", oldVal, validAdjustment);
     }
 
 }

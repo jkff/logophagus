@@ -39,6 +39,7 @@ public class ProgressDialog extends JDialog {
         Dimension dim = owner == null ? Toolkit.getDefaultToolkit().getScreenSize() : owner.getSize();
         setLocationRelativeTo(owner);
         setLocation((dim.width - getWidth()) / 2, (dim.height - getHeight()) / 2);
+        setVisible(false);
     }
 
     public boolean isCanceled() {

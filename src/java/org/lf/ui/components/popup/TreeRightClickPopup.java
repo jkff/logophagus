@@ -5,6 +5,7 @@ import org.lf.ui.model.AnalysisPluginsTreeModel;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 public class TreeRightClickPopup extends JPopupMenu {
 
     public TreeRightClickPopup(final AnalysisPluginsTreeModel pluginsTreeModel, final TreePath[] selPaths) {
+        this.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         List<AnalysisPlugin> plugins = pluginsTreeModel.getApplicablePlugins(selPaths);
         for (final AnalysisPlugin plugin : plugins) {
             JMenuItem itemPlugin = new JMenuItem(plugin.getName());

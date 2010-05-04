@@ -8,14 +8,14 @@ import java.io.IOException;
  * Created on: 26.03.2010 21:49:58
  */
 public class BufferScrollableInputStream extends ScrollableInputStream {
-    private BufferPool<byte[], Long, Long>.Buffer buf;
+    private BufferPool<Long, Long>.Buffer buf;
 
     private int offsetInBuffer;
     private boolean isOpen;
-    private BufferPool<byte[], Long, Long> bufferPool;
+    private BufferPool<Long, Long> bufferPool;
     private long fileSize;
 
-    public BufferScrollableInputStream(BufferPool<byte[], Long, Long> bufferPool, long fileSize, long offset) throws IOException {
+    public BufferScrollableInputStream(BufferPool<Long, Long> bufferPool, long fileSize, long offset) throws IOException {
         try {
             this.buf = bufferPool.getBuffer(offset);
         } catch (InterruptedException e) {
@@ -38,6 +38,47 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
             throw new IOException("InterruptedException in bufferPool.move()");
         }
         this.offsetInBuffer = (int) (newOffset - this.buf.hash);
+    }
+
+    @Override
+    public byte[] readForwardUntil(byte b) throws IOException {
+        ensureOpen();
+        long curFilePos = this.offsetInBuffer + this.buf.hash;
+        byte cur;
+        do {
+            if (this.offsetInBuffer == this.buf.data.length - 1) {
+                cur = this.buf.data[this.offsetInBuffer];
+                if (!shiftNextBuffer()) break;
+            } else
+                cur = this.buf.data[this.offsetInBuffer++];
+        } while (cur != b);
+
+        long delta = this.offsetInBuffer + this.buf.hash - curFilePos;
+        scrollTo(curFilePos);
+        byte[] result = new byte[(int) delta];
+        read(result);
+        return result;
+    }
+
+    @Override
+    public byte[] readBackwardUntil(byte b) throws IOException {
+        ensureOpen();
+        long curFilePos = this.offsetInBuffer + this.buf.hash;
+        byte cur;
+        do {
+            if (this.offsetInBuffer == 0) {
+                if (!shiftPrevBuffer()) break;
+                this.offsetInBuffer = this.buf.data.length;
+            }
+            cur = this.buf.data[--this.offsetInBuffer];
+        } while (cur != b);
+
+        long delta = curFilePos - this.offsetInBuffer - this.buf.hash;
+
+        byte[] result = new byte[(int) delta];
+        read(result);
+        scrollBack(delta);
+        return result;
     }
 
     //relative scroll

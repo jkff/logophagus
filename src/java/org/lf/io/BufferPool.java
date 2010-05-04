@@ -12,15 +12,15 @@ import java.util.Map;
  * where two keys may map into the same hash (and thus the same buffer)
  * of type 'H'.
  */
-public class BufferPool<B, K, H> {
+public class BufferPool<K, H> {
     public static final int MAX_BUFFERS = 50;
 
     private Function<K, H> hashKey;
-    private Function<H, B> makeBuffer;
+    private Function<H, byte[]> makeBuffer;
     private Function<Buffer, Void> releaseBuffer;
     private final Object owner;
 
-    private final Map<HashWithOwner, Buffer> hash2buf = new HashMap<HashWithOwner, Buffer>();
+    private static final Map<HashWithOwner, Object> hash2buf = new HashMap<HashWithOwner, Object>();
 
     private static class HashWithOwner {
         public final Object hashOwner;
@@ -55,16 +55,16 @@ public class BufferPool<B, K, H> {
     public class Buffer {
         private int refCount;
         public final H hash;
-        public final B data;
+        public final byte[] data;
 
-        private Buffer(int refCount, H hash, B data) {
+        private Buffer(int refCount, H hash, byte[] data) {
             this.refCount = refCount;
             this.hash = hash;
             this.data = data;
         }
     }
 
-    public BufferPool(Object owner, Function<K, H> hashKey, Function<H, B> makeBuffer, Function<Buffer, Void> releaseBuffer) {
+    public BufferPool(Object owner, Function<K, H> hashKey, Function<H, byte[]> makeBuffer, Function<Buffer, Void> releaseBuffer) {
         this.hashKey = hashKey;
         this.makeBuffer = makeBuffer;
         this.releaseBuffer = releaseBuffer;
@@ -102,7 +102,7 @@ public class BufferPool<B, K, H> {
                 }
             }
 
-            B data = this.makeBuffer.apply(hash);
+            byte[] data = this.makeBuffer.apply(hash);
 
             Buffer b = new Buffer(1, hash, data);
             hash2buf.put(mapKey, b);

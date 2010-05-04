@@ -117,7 +117,7 @@ public class CSVParserAdjuster extends ParserAdjuster {
 
     @Override
     public Parser getParser() {
-        if (!isValidAdjust()) return null;
+        if (!isValidAdjustment()) return null;
         JTextField[] fields = new JTextField[]{
                 recordDelimiterField,
                 fieldDelimiterField,

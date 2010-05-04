@@ -15,8 +15,9 @@ public class ViewFieldSplittedLogPlugin implements DisplayPlugin {
     }
 
     @Override
-    public Class getInputType() {
-        return LogAndField.class;
+    public boolean isApplicableFor(Object o) {
+        return o != null &&
+                LogAndField.class.isAssignableFrom(o.getClass());
     }
 
 }

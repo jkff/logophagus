@@ -4,10 +4,8 @@ import org.lf.logs.Field;
 import org.lf.logs.Format;
 import org.lf.logs.Record;
 import org.lf.logs.RecordImpl;
-import org.lf.parser.CharStream;
 import org.lf.parser.Parser;
 import org.lf.parser.ScrollableInputStream;
-import org.lf.parser.Sink;
 import org.lf.util.Triple;
 
 import java.io.IOException;
@@ -19,28 +17,6 @@ public class RegexpParser implements Parser {
     private final Pattern[] patterns;
     private final char recordDelimiter;
     private final int maxLinesPerRecord;
-
-    private abstract class ReadableSink extends Sink {
-        public abstract String getReceivedChars();
-    }
-
-    private class OrderedReadableSink extends ReadableSink {
-        private final boolean isForward;
-
-        public OrderedReadableSink(boolean isForward) {
-            this.isForward = isForward;
-        }
-
-        @Override
-        public String getReceivedChars() {
-            if (isForward)
-                return getContents().toString();
-            StringBuilder rev = new StringBuilder();
-            rev.append(getContents());
-            rev.reverse();
-            return rev.toString();
-        }
-    }
 
     public RegexpParser(String[] regexps, Format[] regexpFormats, char recordDelimiter, int maxLinesPerRecord) {
         this.patterns = new Pattern[regexps.length];
@@ -57,32 +33,32 @@ public class RegexpParser implements Parser {
     private long cachedOffset;
     // Long - offset, Integer - index of pattern that matched (-1 means no pattern matched),
     // Object is a Matcher if a pattern matched, or a String (raw input line) if none matched 
-    private Triple<Long, Integer, Object> cachedOffsetIndexMatch;
+    private Triple<Integer, Integer, Object> cachedOffsetIndexMatch;
 
     @Override
     public synchronized long findNextRecord(ScrollableInputStream is) throws IOException {
         return findOIMforward(is).first;
     }
 
-    private synchronized Triple<Long, Integer, Object> findOIMforward(ScrollableInputStream is) throws IOException {
+    private synchronized Triple<Integer, Integer, Object> findOIMforward(ScrollableInputStream is) throws IOException {
         if (!is.isSameSource(cachedStream) || is.getOffset() != cachedOffset) {
             cachedStream = is;
             cachedOffset = is.getOffset();
-            cachedOffsetIndexMatch = getRecordFromCharStream(forward(is), new OrderedReadableSink(true));
+            cachedOffsetIndexMatch = getRecordFromCharStream(is, true);
         }
         return cachedOffsetIndexMatch;
     }
 
     @Override
     public long findPrevRecord(ScrollableInputStream is) throws IOException {
-        if (is.scrollBack(1) == 0)
-            return 0;
-        return getRecordFromCharStream(backward(is), new OrderedReadableSink(false)).first;
+//        if (is.scrollBack(1) == 0)
+//            return 0;
+        return getRecordFromCharStream(is, false).first;
     }
 
     @Override
     public Record readRecord(ScrollableInputStream is) throws IOException {
-        Triple<Long, Integer, Object> offsetIndexMatch = findOIMforward(is);
+        Triple<Integer, Integer, Object> offsetIndexMatch = findOIMforward(is);
 
         if (offsetIndexMatch.second == -1) {
             String wholeString = (String) offsetIndexMatch.third;
@@ -97,53 +73,44 @@ public class RegexpParser implements Parser {
         return new RecordImpl(cells, regexpFormats[offsetIndexMatch.second]);
     }
 
-    private Triple<Long, Integer, Object> getRecordFromCharStream(CharStream cs, ReadableSink sink) throws IOException {
-        long firstLineBreakOffset = 0;
-        long offset = 0;
+    private Triple<Integer, Integer, Object> getRecordFromCharStream(ScrollableInputStream is, boolean isForward) throws IOException {
+        byte[] firstLineBytes = null;
+        String firstLineString = null;
+        byte[] curBytes = null;
+        String curBytesString;
+
         for (int i = 0; i < maxLinesPerRecord; ++i) {
-            long temp = getLineFromCharStream(cs, sink);
-            if (temp == 0)
-                break;
-            offset += temp;
-            if (i == 0)
-                firstLineBreakOffset = offset;
+            byte b[] = isForward ? is.readForwardUntil((byte) recordDelimiter) : is.readBackwardUntil((byte) recordDelimiter);
+            if (i == 0) {
+                //empty line skip                
+                if ((isForward && b.length == 2) || (!isForward && b.length == 1))
+                    return getRecordFromCharStream(is, isForward);
+                firstLineBytes = b;
+                curBytes = b;
+            } else {
+                byte[] temp = new byte[b.length + (curBytes == null ? 0 : curBytes.length)];
+                if (isForward) {
+                    System.arraycopy(curBytes, 0, temp, 0, curBytes.length);
+                    System.arraycopy(b, 0, temp, curBytes.length, b.length);
+                } else {
+                    System.arraycopy(b, 0, temp, 0, b.length);
+                    System.arraycopy(curBytes, 0, temp, b.length, curBytes.length);
+                }
+                curBytes = temp;
+            }
 
-            String str = sink.getReceivedChars();
+            int length = curBytes[curBytes.length - 1] == '\n' ? curBytes.length - 1 : curBytes.length;
+            curBytesString = new String(curBytes, 0, length);
+
+            if (i == 0) firstLineString = curBytesString;
+
             for (int j = 0; j < patterns.length; ++j) {
-                Matcher m = patterns[j].matcher(str);
+                Matcher m = patterns[j].matcher(curBytesString);
                 if (m.matches())
-                    return new Triple<Long, Integer, Object>(offset, j, m);
+                    return new Triple<Integer, Integer, Object>(curBytes.length, j, m);
             }
         }
-        return new Triple<Long, Integer, Object>(firstLineBreakOffset, -1, sink.getReceivedChars());
-    }
-
-    private long getLineFromCharStream(CharStream cs, Sink sink) throws IOException {
-        long offset = 0;
-        int c;
-        while (true) {
-            ++offset;
-            c = cs.next();
-            if (c == -1 || c == recordDelimiter)
-                return offset;
-            sink.onChar((char) c);
-        }
-    }
-
-    private CharStream forward(final ScrollableInputStream is) {
-        return new CharStream() {
-            public int next() throws IOException {
-                return is.read();
-            }
-        };
-    }
-
-    private CharStream backward(final ScrollableInputStream is) {
-        return new CharStream() {
-            public int next() throws IOException {
-                return is.readBack();
-            }
-        };
+        return new Triple<Integer, Integer, Object>(firstLineBytes.length, -1, firstLineString);
     }
 
     @Override

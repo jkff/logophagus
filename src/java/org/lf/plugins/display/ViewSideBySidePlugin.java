@@ -9,7 +9,7 @@ import org.lf.ui.components.plugins.scrollablelog.ScrollableLogView;
 import javax.swing.*;
 
 public class ViewSideBySidePlugin implements DisplayPlugin {
-
+    @Override
     public JComponent createView(Entity entity) {
         LogsPair p = (LogsPair) entity.data;
         JPanel panel = new JPanel();
@@ -22,8 +22,9 @@ public class ViewSideBySidePlugin implements DisplayPlugin {
         return new JScrollPane(panel);
     }
 
-    public Class getInputType() {
-        return LogsPair.class;
+    public boolean isApplicableFor(Object o) {
+        return o != null &&
+                LogsPair.class.isAssignableFrom(o.getClass());
     }
 
 }

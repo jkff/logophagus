@@ -17,7 +17,7 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
     private int chunkSize;
 
     private RandomAccessGzip.Index idx;
-    private BufferPool<byte[], Long, Long> bufferPool;
+    private BufferPool<Long, Long> bufferPool;
 
     public GzipRandomAccessIO(String fileName, int chunkSize) {
         this.fileName = fileName;
@@ -68,7 +68,7 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
                 return null;
             }
         };
-        this.bufferPool = new BufferPool<byte[], Long, Long>(this, TRUNCATE_BUF, LOAD_BUF, DO_NOTHING);
+        this.bufferPool = new BufferPool<Long, Long>(this, TRUNCATE_BUF, LOAD_BUF, DO_NOTHING);
     }
 
     @Override

@@ -3,9 +3,6 @@ package org.lf.ui.model;
 import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.AnalysisPlugin;
 import org.lf.plugins.display.DisplayPlugin;
-import org.lf.plugins.extension.ExtensionPoint;
-import org.lf.plugins.extension.ExtensionPointsManager;
-import org.lf.plugins.extension.builtin.AnalysisPluginExtension;
 import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
 
@@ -15,16 +12,9 @@ import java.util.List;
 import static org.lf.util.CollectionFactory.newLinkedList;
 
 public class AnalysisPluginsTreeModel extends DefaultTreeModel {
-    private final ExtensionPoint<AnalysisPluginExtension> extensionPoint = new ExtensionPoint<AnalysisPluginExtension>() {
-        @Override
-        public void addExtension(AnalysisPluginExtension extension) {
-            AnalysisPluginRepository.register(extension);
-        }
-    };
 
     public AnalysisPluginsTreeModel() {
         super(new DefaultMutableTreeNode());
-        ExtensionPointsManager.registerExtensionPoint(AnalysisPluginExtension.ourID, this.extensionPoint);
     }
 
     public void addChildToRoot(MutableTreeNode child) {

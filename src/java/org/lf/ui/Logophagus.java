@@ -10,7 +10,6 @@ import org.lf.plugins.display.ViewScrollableLogPlugin;
 import org.lf.plugins.display.ViewSideBySidePlugin;
 import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
-import org.lf.services.PluginException;
 import org.lf.ui.components.menu.LogophagusMenuBar;
 import org.lf.ui.components.pluginPanel.PluginPanel;
 import org.lf.ui.components.popup.TreeRightClickPopup;
@@ -66,7 +65,8 @@ public class Logophagus extends JFrame {
 
         splitPane.setLeftComponent(treePanel);
         splitPane.setDividerLocation(250);
-        this.setContentPane(splitPane);
+        splitPane.setVisible(true);
+        this.add(splitPane);
     }
 
     private JMenuBar getLogophagusMenuBar() {
@@ -95,22 +95,16 @@ public class Logophagus extends JFrame {
     }
 
     public static void main(String[] args) {
-        try {
-            AnalysisPluginRepository.register(new FileBackedLogPlugin());
-            AnalysisPluginRepository.register(new FilterBySubstringPlugin());
-            AnalysisPluginRepository.register(new SideBySidePlugin());
+        AnalysisPluginRepository.register(new FileBackedLogPlugin());
+        AnalysisPluginRepository.register(new FilterBySubstringPlugin());
+        AnalysisPluginRepository.register(new SideBySidePlugin());
 //            AnalysisPluginRepository.register(SplitByFieldValuesPlugin.class);
-            AnalysisPluginRepository.register(new HighlightRegexPlugin());
-            AnalysisPluginRepository.register(new MergeLogsPlugin());
+        AnalysisPluginRepository.register(new HighlightRegexPlugin());
+        AnalysisPluginRepository.register(new MergeLogsPlugin());
 
-            DisplayPluginRepository.register(ViewScrollableLogPlugin.class);
-            DisplayPluginRepository.register(ViewSideBySidePlugin.class);
-            DisplayPluginRepository.register(ViewFieldSplittedLogPlugin.class);
-
-        } catch (PluginException e) {
-            System.out.println("Can't register plugin:" + e);
-            e.printStackTrace();
-        }
+        DisplayPluginRepository.register(new ViewScrollableLogPlugin());
+        DisplayPluginRepository.register(new ViewSideBySidePlugin());
+        DisplayPluginRepository.register(new ViewFieldSplittedLogPlugin());
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override

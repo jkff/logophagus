@@ -9,6 +9,7 @@ import org.lf.ui.components.common.ParserAdjuster;
 import org.lf.ui.util.GUIUtils;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -27,8 +28,8 @@ public class ParserSetupDialog extends JDialog implements PropertyChangeListener
     private JButton okButton;
 
 
-    public ParserSetupDialog() throws IOException {
-        super((JFrame) null, "Parser setup");
+    public ParserSetupDialog(Window owner) throws IOException {
+        super(owner, "Parser setup");
 
         Box mainPanel = Box.createVerticalBox();
         mainPanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
@@ -102,7 +103,7 @@ public class ParserSetupDialog extends JDialog implements PropertyChangeListener
 
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        okButton.setEnabled(parserAdjuster.isValidAdjust());
+        okButton.setEnabled(parserAdjuster.isValidAdjustment());
     }
 
     private void update() {
@@ -110,13 +111,13 @@ public class ParserSetupDialog extends JDialog implements PropertyChangeListener
             parserAdjuster.removePropertyChangeListener(this);
         try {
             parserAdjuster = (ParserAdjuster) parserNameToClass.get(parserChooser.getSelectedItem()).newInstance();
-            parserAdjuster.addPropertyChangeListener("validAdjust", this);
+            parserAdjuster.addPropertyChangeListener("validAdjustment", this);
         } catch (InstantiationException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IllegalAccessException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        okButton.setEnabled(parserAdjuster.isValidAdjust());
+        okButton.setEnabled(parserAdjuster.isValidAdjustment());
         adjusterBox.removeAll();
         adjusterBox.add(parserAdjuster);
         adjusterBox.revalidate();

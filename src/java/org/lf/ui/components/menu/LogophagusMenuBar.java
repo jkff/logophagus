@@ -4,6 +4,7 @@ import org.lf.plugins.analysis.filelog.FileBackedLogPlugin;
 import org.lf.ui.model.AnalysisPluginsTreeModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Observable;
@@ -20,6 +21,7 @@ public class LogophagusMenuBar extends JMenuBar implements Observer {
 
     private void initComponents() {
         JMenu menuFile = new JMenu("File");
+        menuFile.getPopupMenu().setBorder(BorderFactory.createLineBorder(Color.GRAY));
         JMenuItem fileOpen = new JMenuItem("Open");
         fileOpen.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {

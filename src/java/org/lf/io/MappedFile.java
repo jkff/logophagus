@@ -12,7 +12,7 @@ import java.nio.channels.FileChannel;
 
 
 public class MappedFile implements RandomAccessFileIO {
-    private BufferPool<byte[], Long, Long> bufferPool;
+    private BufferPool<Long, Long> bufferPool;
 
     private File file;
     private final long fileSize;
@@ -66,7 +66,7 @@ public class MappedFile implements RandomAccessFileIO {
                 return null;
             }
         };
-        this.bufferPool = new BufferPool<byte[], Long, Long>(this, TRUNCATE_BUF, LOAD_BUF, DO_NOTHING);
+        this.bufferPool = new BufferPool<Long, Long>(this, TRUNCATE_BUF, LOAD_BUF, DO_NOTHING);
     }
 
     public ScrollableInputStream getInputStreamFrom(final long offset) throws IOException {
