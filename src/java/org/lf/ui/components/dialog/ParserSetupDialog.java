@@ -103,7 +103,7 @@ public class ParserSetupDialog extends JDialog implements PropertyChangeListener
 
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        okButton.setEnabled(parserAdjuster.isValidAdjustment());
+        okButton.setEnabled(parserAdjuster.isAdjustmentValid());
     }
 
     private void update() {
@@ -111,13 +111,13 @@ public class ParserSetupDialog extends JDialog implements PropertyChangeListener
             parserAdjuster.removePropertyChangeListener(this);
         try {
             parserAdjuster = (ParserAdjuster) parserNameToClass.get(parserChooser.getSelectedItem()).newInstance();
-            parserAdjuster.addPropertyChangeListener("validAdjustment", this);
+            parserAdjuster.addPropertyChangeListener("adjustmentValid", this);
         } catch (InstantiationException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IllegalAccessException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        okButton.setEnabled(parserAdjuster.isValidAdjustment());
+        okButton.setEnabled(parserAdjuster.isAdjustmentValid());
         adjusterBox.removeAll();
         adjusterBox.add(parserAdjuster);
         adjusterBox.revalidate();

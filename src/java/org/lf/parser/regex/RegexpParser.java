@@ -8,6 +8,7 @@ import org.lf.parser.Parser;
 import org.lf.parser.ScrollableInputStream;
 import org.lf.util.Triple;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,7 +32,7 @@ public class RegexpParser implements Parser {
 
     private ScrollableInputStream cachedStream;
     private long cachedOffset;
-    // Long - offset, Integer - index of pattern that matched (-1 means no pattern matched),
+    // Integer - relative offset, Integer - index of pattern that matched (-1 means no pattern matched),
     // Object is a Matcher if a pattern matched, or a String (raw input line) if none matched 
     private Triple<Integer, Integer, Object> cachedOffsetIndexMatch;
 
@@ -51,8 +52,7 @@ public class RegexpParser implements Parser {
 
     @Override
     public long findPrevRecord(ScrollableInputStream is) throws IOException {
-//        if (is.scrollBack(1) == 0)
-//            return 0;
+        if (is.scrollBack(1) == 0) return 0;
         return getRecordFromCharStream(is, false).first;
     }
 
@@ -74,43 +74,33 @@ public class RegexpParser implements Parser {
     }
 
     private Triple<Integer, Integer, Object> getRecordFromCharStream(ScrollableInputStream is, boolean isForward) throws IOException {
-        byte[] firstLineBytes = null;
+        int firstLineLength = 0;
         String firstLineString = null;
-        byte[] curBytes = null;
+        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         String curBytesString;
 
         for (int i = 0; i < maxLinesPerRecord; ++i) {
             byte b[] = isForward ? is.readForwardUntil((byte) recordDelimiter) : is.readBackwardUntil((byte) recordDelimiter);
             if (i == 0) {
-                //empty line skip                
-                if ((isForward && b.length == 2) || (!isForward && b.length == 1))
-                    return getRecordFromCharStream(is, isForward);
-                firstLineBytes = b;
-                curBytes = b;
+                firstLineLength = b.length;
+                byteArray.write(b);
             } else {
-                byte[] temp = new byte[b.length + (curBytes == null ? 0 : curBytes.length)];
-                if (isForward) {
-                    System.arraycopy(curBytes, 0, temp, 0, curBytes.length);
-                    System.arraycopy(b, 0, temp, curBytes.length, b.length);
-                } else {
-                    System.arraycopy(b, 0, temp, 0, b.length);
-                    System.arraycopy(curBytes, 0, temp, b.length, curBytes.length);
-                }
-                curBytes = temp;
+                if (isForward) byteArray.write(b);
+                else byteArray.write(b, 0, b.length);
             }
 
-            int length = curBytes[curBytes.length - 1] == '\n' ? curBytes.length - 1 : curBytes.length;
-            curBytesString = new String(curBytes, 0, length);
-
+            curBytesString = byteArray.toString("utf-8");
             if (i == 0) firstLineString = curBytesString;
 
             for (int j = 0; j < patterns.length; ++j) {
-                Matcher m = patterns[j].matcher(curBytesString);
+                int length = curBytesString.length();
+                Matcher m = patterns[j].matcher(curBytesString.charAt(length - 1) == '\n' ?
+                        curBytesString.substring(0, length - 1) : curBytesString);
                 if (m.matches())
-                    return new Triple<Integer, Integer, Object>(curBytes.length, j, m);
+                    return new Triple<Integer, Integer, Object>(byteArray.size(), j, m);
             }
         }
-        return new Triple<Integer, Integer, Object>(firstLineBytes.length, -1, firstLineString);
+        return new Triple<Integer, Integer, Object>(firstLineLength, -1, firstLineString);
     }
 
     @Override

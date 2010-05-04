@@ -117,7 +117,7 @@ public class CSVParserAdjuster extends ParserAdjuster {
 
     @Override
     public Parser getParser() {
-        if (!isValidAdjustment()) return null;
+        if (!isAdjustmentValid()) return null;
         JTextField[] fields = new JTextField[]{
                 recordDelimiterField,
                 fieldDelimiterField,
@@ -163,7 +163,7 @@ public class CSVParserAdjuster extends ParserAdjuster {
             clearFormatButton.setEnabled(true);
             setFormatButton.setEnabled(false);
         }
-        setValidAdjust(isValidAdjust);
+        setAdjustmentValid(isValidAdjust);
     }
 
     private void resetFormat() {

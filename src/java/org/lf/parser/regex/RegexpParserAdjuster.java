@@ -68,7 +68,7 @@ public class RegexpParserAdjuster extends ParserAdjuster {
 
     @Override
     public Parser getParser() {
-        if (!isValidAdjustment()) return null;
+        if (!isAdjustmentValid()) return null;
 
         int size = formatsView.getListModel().getSize();
         String[] patterns = new String[size];
@@ -94,8 +94,8 @@ public class RegexpParserAdjuster extends ParserAdjuster {
 
     private void updateComponents() {
         if (formatsView.getListModel().getSize() != 0)
-            setValidAdjust(true);
+            setAdjustmentValid(true);
         else
-            setValidAdjust(false);
+            setAdjustmentValid(false);
     }
 }

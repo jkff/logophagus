@@ -39,9 +39,9 @@ public class RandomAccessGzip {
         @Override
         public synchronized int read(RandomAccessFile f, long origin, byte[] buf, int offset, int len) throws IOException {
             int total = 0;
-            while(len > 0) {
+            while (len > 0) {
                 int n = ZRan.extract(f, idx, origin, mem, Math.min(len, BUF_SIZE));
-                if(n == 0)
+                if (n == 0)
                     break;
                 total += n;
                 memBuf.position(0);

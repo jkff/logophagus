@@ -143,8 +143,14 @@ public class Logophagus extends JFrame {
     private class AnalysisPluginTreeCellRenderer extends DefaultTreeCellRenderer {
 
         @Override
-        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
-                                                      boolean leaf, int row, boolean hasFocus) {
+        public Component getTreeCellRendererComponent(
+                JTree tree,
+                Object value,
+                boolean sel,
+                boolean expanded,
+                boolean leaf,
+                int row,
+                boolean hasFocus) {
             NodeData nodeValue = (NodeData) ((DefaultMutableTreeNode) value).getUserObject();
             JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             if (nodeValue != null)

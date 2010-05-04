@@ -16,14 +16,14 @@ import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.AnalysisPlugin;
 import org.lf.plugins.analysis.Bookmarks;
 import org.lf.services.ProgramProperties;
+import org.lf.ui.components.dialog.ParserSetupDialog;
 import org.lf.ui.util.ProgressDialog;
 import org.lf.util.ProgressListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
-import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
+import java.io.File;
+import java.io.IOException;
 
 public class FileBackedLogPlugin implements AnalysisPlugin {
 

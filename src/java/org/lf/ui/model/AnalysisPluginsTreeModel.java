@@ -6,7 +6,10 @@ import org.lf.plugins.display.DisplayPlugin;
 import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
 
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
 import java.util.List;
 
 import static org.lf.util.CollectionFactory.newLinkedList;
@@ -23,13 +26,10 @@ public class AnalysisPluginsTreeModel extends DefaultTreeModel {
 
     public void addChildToNode(MutableTreeNode child, MutableTreeNode parent) {
         this.insertNodeInto(child, parent, parent.getChildCount());
-        this.nodesWereInserted(parent, new int[]{parent.getIndex(child)});
     }
 
     public void removeNode(DefaultMutableTreeNode node) {
-        TreeNode parent = node.getParent();
         this.removeNodeFromParent(node);
-        reload(parent);
     }
 
     public void removeNodesByPath(TreePath[] paths) {

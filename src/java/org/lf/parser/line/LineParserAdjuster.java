@@ -9,7 +9,7 @@ public class LineParserAdjuster extends ParserAdjuster {
 
     public LineParserAdjuster() {
         this.add(new JLabel("Select this parser if you want simply look at log"));
-        this.setValidAdjust(true);
+        this.setAdjustmentValid(true);
     }
 
     @Override

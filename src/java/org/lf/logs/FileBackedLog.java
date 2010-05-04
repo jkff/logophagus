@@ -19,7 +19,6 @@ public class FileBackedLog implements Log {
 
     private DateTime cachedTime;
     private Position posWithCachedTime;
-    private Record recWithCachedTime;
 
     private boolean hasTimeField;
 
@@ -88,9 +87,6 @@ public class FileBackedLog implements Log {
 
     @Override
     public Record readRecord(Position pos) throws IOException {
-        if (pos.equals(posWithCachedTime))
-            return recWithCachedTime;
-
         ScrollableInputStream is = null;
         try {
             is = file.getInputStreamFrom(((PhysicalPosition) pos).offsetBytes);
@@ -163,7 +159,6 @@ public class FileBackedLog implements Log {
 
     private DateTime getTimeImpl(Position pos) throws IOException {
         Record posRecord = readRecord(pos);
-        recWithCachedTime = posRecord;
         if (posRecord.getFormat().getTimeFieldIndex() != -1) {
             DateTimeFormatter dtf = posRecord.getFormat().getTimeFormat();
             return dtf.parseDateTime(posRecord.getCellValues()[posRecord.getFormat().getTimeFieldIndex()]);
