@@ -89,7 +89,7 @@ public class RegexpParser implements Parser {
                 else byteArray.write(b, 0, b.length);
             }
 
-            curBytesString = byteArray.toString("utf-8");
+            curBytesString = byteArray.toString("us-ascii");
             if (i == 0) firstLineString = curBytesString;
             int length = curBytesString.length();
 

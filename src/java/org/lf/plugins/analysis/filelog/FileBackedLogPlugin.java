@@ -10,6 +10,7 @@ import org.lf.logs.FileBackedLog;
 import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.parser.Parser;
+import org.lf.parser.line.LineParser;
 import org.lf.parser.regex.RegexpParser;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
@@ -135,6 +136,7 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
             Format singleFormat = new Format(fields, 0,
                     DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS"));
             parser = new RegexpParser(regexes, new Format[]{singleFormat}, '\n', 1);
+//            parser = new LineParser();
             Log log = new FileBackedLog(io, parser);
 
             Attributes atr = new Attributes();

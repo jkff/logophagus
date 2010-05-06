@@ -20,7 +20,7 @@
   </component>
   <component name="DebuggerManager">
     <line_breakpoints>
-      <breakpoint url="file://$PROJECT_DIR$/src/java/org/lf/io/BufferScrollableInputStream.java" line="77" class="org.lf.io.BufferScrollableInputStream" package="org.lf.io">
+      <breakpoint url="file://$PROJECT_DIR$/src/java/org/lf/io/BufferScrollableInputStream.java" line="79" class="org.lf.io.BufferScrollableInputStream" package="org.lf.io">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -103,17 +103,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AnalysisPluginTree.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/tree/AnalysisPluginTree.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="26" selection-start="700" selection-end="700" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="AnalysisPluginNode.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/tree/AnalysisPluginNode.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -154,15 +143,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NodeData.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/tree/NodeData.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="13" selection-start="103" selection-end="103" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="ScrollableLogView.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogView.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -172,10 +152,39 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RegexpParser.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="RegexpParser.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/regex/RegexpParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="71" column="13" selection-start="2802" selection-end="2802" vertical-scroll-proportion="0.17786561">
+            <state line="94" column="49" selection-start="3795" selection-end="3795" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FileBackedLogPlugin.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/analysis/filelog/FileBackedLogPlugin.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="147" column="80" selection-start="5533" selection-end="5533" vertical-scroll-proportion="0.0">
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BufferPool.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/BufferPool.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="136" column="13" selection-start="4456" selection-end="4456" vertical-scroll-proportion="0.5731225">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TimeMergeLogs.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/TimeMergeLogs.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="66" column="0" selection-start="1969" selection-end="1969" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -191,12 +200,10 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/java/org/lf/parser/regex/RegexpParser.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/plugins/analysis/sidebyside/SideBySidePlugin.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/plugins/analysis/highlight/HighlightRegexpPlugin.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/plugins/analysis/merge/MergeLogsPlugin.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/tree/AnalysisPluginTreeCellRenderer.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/analysis/filelog/FileBackedLogPlugin.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/tree/TreeSelectionController.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/tree/TreeContext.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/tree/AnalysisPluginRootNode.java" />
@@ -207,6 +214,8 @@
         <option value="$PROJECT_DIR$/src/java/org/lf/plugins/analysis/filtersubstr/FilterBySubstringPlugin.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/logs/Format.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/plugins/analysis/splitbyfield/SplitByFieldValuesPlugin.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/parser/regex/RegexpParser.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/analysis/filelog/FileBackedLogPlugin.java" />
       </list>
     </option>
   </component>
@@ -885,29 +894,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar:///usr/lib/jvm/jdk1.6.0_18/src.zip!/javax/swing/plaf/TreeUI.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="28" selection-start="1130" selection-end="1130" vertical-scroll-proportion="0.33200794">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar:///usr/lib/jvm/jdk1.6.0_18/src.zip!/javax/swing/JTree.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2145" column="28" selection-start="75274" selection-end="75274" vertical-scroll-proportion="0.48176584">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/tree/AnalysisPluginTree.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="26" selection-start="700" selection-end="700" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/tree/NodeData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="13" selection-start="103" selection-end="103" vertical-scroll-proportion="0.0">
@@ -1002,7 +988,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/regex/RegexpParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="71" column="13" selection-start="2802" selection-end="2802" vertical-scroll-proportion="0.17786561">
+        <state line="94" column="49" selection-start="3795" selection-end="3795" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/TimeMergeLogs.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="66" column="0" selection-start="1969" selection-end="1969" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/analysis/filelog/FileBackedLogPlugin.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="147" column="80" selection-start="5533" selection-end="5533" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/BufferPool.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="136" column="13" selection-start="4456" selection-end="4456" vertical-scroll-proportion="0.5731225">
           <folding />
         </state>
       </provider>

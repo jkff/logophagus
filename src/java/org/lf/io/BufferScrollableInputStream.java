@@ -67,10 +67,12 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
         byte cur;
         do {
             if (this.offsetInBuffer == 0) {
-                if (!shiftPrevBuffer()) break;
+                if (!shiftPrevBuffer())
+                    break;
                 this.offsetInBuffer = this.buf.data.length;
             }
-            cur = this.buf.data[--this.offsetInBuffer];
+            --this.offsetInBuffer;
+            cur = this.buf.data[this.offsetInBuffer];
         } while (cur != b);
 
         long delta = curFilePos - this.offsetInBuffer - this.buf.hash;
