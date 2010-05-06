@@ -129,7 +129,13 @@ public class BufferPool<K, H> {
         if (buf.refCount == 0) {
             this.releaseBuffer.apply(buf);
             synchronized (hash2buf) {
-                hash2buf.notifyAll();
+                // No need to call notify() if surely noone is calling wait().
+                // It is so if there are enough buffers.
+                if(hash2buf.size() >= MAX_BUFFERS) {
+                    // After 1 buffer has been released, only 1 buffer can be acquired,
+                    // t.i. only 1 thread should be waked up
+                    hash2buf.notify();
+                }
             }
         }
     }

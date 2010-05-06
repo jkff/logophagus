@@ -8,7 +8,7 @@ import org.lf.parser.ScrollableInputStream;
 
 import java.io.IOException;
 
-class LineParser implements Parser {
+public class LineParser implements Parser {
     private ScrollableInputStream cachedStream;
     private Long cachedOffset;
     private byte[] cachedBytes;
@@ -19,7 +19,7 @@ class LineParser implements Parser {
     public Record readRecord(ScrollableInputStream is) throws IOException {
         byte b[] = readForwardUntilBorder(is);
         int length = b[b.length - 1] == '\n' ? b.length - 1 : b.length;
-        return new RecordImpl(new String[]{new String(b, 0, length, "utf-8")}, Format.UNKNOWN_FORMAT);
+        return new RecordImpl(new String[]{new String(b, 0, length, "us-ascii")}, Format.UNKNOWN_FORMAT);
 
     }
 

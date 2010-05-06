@@ -10,13 +10,14 @@ import org.lf.logs.FileBackedLog;
 import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.parser.Parser;
+import org.lf.parser.Position;
+import org.lf.parser.line.LineParser;
 import org.lf.parser.regex.RegexpParser;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
 import org.lf.plugins.analysis.AnalysisPlugin;
 import org.lf.plugins.analysis.Bookmarks;
 import org.lf.services.ProgramProperties;
-import org.lf.ui.components.dialog.ParserSetupDialog;
 import org.lf.ui.util.ProgressDialog;
 import org.lf.util.ProgressListener;
 
@@ -104,7 +105,8 @@ public class FileBackedLogPlugin implements AnalysisPlugin {
             };
             Format singleFormat = new Format(fields, 0,
                     DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS"));
-            parser = new RegexpParser(regexes, new Format[]{singleFormat}, '\n', 1);
+//            parser = new RegexpParser(regexes, new Format[]{singleFormat}, '\n', 1);
+            parser = new LineParser();
             Log log = new FileBackedLog(io, parser);
 
             Attributes atr = new Attributes();
