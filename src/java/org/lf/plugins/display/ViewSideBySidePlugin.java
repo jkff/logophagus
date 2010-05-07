@@ -23,8 +23,7 @@ public class ViewSideBySidePlugin implements DisplayPlugin {
     }
 
     public boolean isApplicableFor(Object o) {
-        return o != null &&
-                LogsPair.class.isAssignableFrom(o.getClass());
+        return o instanceof LogsPair;
     }
 
 }

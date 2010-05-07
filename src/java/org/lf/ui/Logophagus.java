@@ -1,12 +1,11 @@
 package org.lf.ui;
 
-import org.lf.plugins.analysis.filelog.FileBackedLogPlugin;
-import org.lf.plugins.analysis.filtersubstr.FilterBySubstringPlugin;
+import org.lf.plugins.analysis.filelog.OpenLogFromFilePlugin;
+import org.lf.plugins.analysis.filtersubstr.FilterByCriteriaPlugin;
 import org.lf.plugins.analysis.highlight.HighlightRegexpPlugin;
 import org.lf.plugins.analysis.merge.MergeLogsPlugin;
-import org.lf.plugins.analysis.sidebyside.SideBySidePlugin;
+import org.lf.plugins.analysis.sidebyside.ViewSideBySidePlugin;
 import org.lf.plugins.display.ViewScrollableLogPlugin;
-import org.lf.plugins.display.ViewSideBySidePlugin;
 import org.lf.services.AnalysisPluginRepository;
 import org.lf.services.DisplayPluginRepository;
 import org.lf.ui.components.menu.LogophagusMenuBar;
@@ -76,15 +75,15 @@ public class Logophagus extends JFrame {
     }
 
     public static void main(String[] args) {
-        AnalysisPluginRepository.register(new FileBackedLogPlugin());
-        AnalysisPluginRepository.register(new FilterBySubstringPlugin());
-        AnalysisPluginRepository.register(new SideBySidePlugin());
+        AnalysisPluginRepository.register(new OpenLogFromFilePlugin());
+        AnalysisPluginRepository.register(new FilterByCriteriaPlugin());
+        AnalysisPluginRepository.register(new ViewSideBySidePlugin());
 //            AnalysisPluginRepository.register(SplitByFieldValuesPlugin.class);
         AnalysisPluginRepository.register(new HighlightRegexpPlugin());
         AnalysisPluginRepository.register(new MergeLogsPlugin());
 
         DisplayPluginRepository.register(new ViewScrollableLogPlugin());
-        DisplayPluginRepository.register(new ViewSideBySidePlugin());
+        DisplayPluginRepository.register(new org.lf.plugins.display.ViewSideBySidePlugin());
 //        DisplayPluginRepository.register(new ViewFieldSplittedLogPlugin());
 
         SwingUtilities.invokeLater(new Runnable() {

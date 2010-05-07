@@ -10,7 +10,6 @@ import org.lf.logs.FileBackedLog;
 import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.parser.Parser;
-import org.lf.parser.line.LineParser;
 import org.lf.parser.regex.RegexpParser;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
@@ -18,7 +17,6 @@ import org.lf.plugins.analysis.AnalysisPlugin;
 import org.lf.plugins.analysis.Bookmarks;
 import org.lf.plugins.analysis.TreeAction;
 import org.lf.services.ProgramProperties;
-import org.lf.ui.components.tree.AnalysisPluginNode;
 import org.lf.ui.components.tree.NodeData;
 import org.lf.ui.components.tree.TreeContext;
 import org.lf.ui.util.ProgressDialog;
@@ -30,23 +28,20 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
-public class FileBackedLogPlugin implements AnalysisPlugin {
+public class OpenLogFromFilePlugin implements AnalysisPlugin {
 
     @Override
     public TreeAction getActionFor(final TreeContext context) {
         if (context.selectedNodes.length != 0) return null;
-        Action action = new AbstractAction() {
+        return new TreeAction(new AbstractAction(getName()) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Entity entity = getEntity();
                 if (entity == null) return;
                 NodeData nodeData = new NodeData(entity, getIcon());
-                context.root.add(new AnalysisPluginNode(nodeData));
+                context.addChildToRoot(nodeData, true);
             }
-        };
-
-        action.putValue(Action.NAME, getName());
-        return new TreeAction(action);
+        });
     }
 
     public String getName() {

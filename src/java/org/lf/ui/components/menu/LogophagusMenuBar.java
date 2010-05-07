@@ -1,6 +1,6 @@
 package org.lf.ui.components.menu;
 
-import org.lf.plugins.analysis.filelog.FileBackedLogPlugin;
+import org.lf.plugins.analysis.filelog.OpenLogFromFilePlugin;
 import org.lf.ui.components.tree.AnalysisPluginTree;
 import org.lf.ui.components.tree.TreeContext;
 
@@ -21,7 +21,7 @@ public class LogophagusMenuBar extends JMenuBar {
     private void initComponents() {
         JMenu menuFile = new JMenu("File");
         menuFile.getPopupMenu().setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        JMenuItem fileOpen = new JMenuItem(new FileBackedLogPlugin().getActionFor(new TreeContext(tree)).getAction());
+        JMenuItem fileOpen = new JMenuItem(new OpenLogFromFilePlugin().getActionFor(new TreeContext(tree)).getAction());
 
 
         JMenuItem fileClose = new JMenuItem("Close");

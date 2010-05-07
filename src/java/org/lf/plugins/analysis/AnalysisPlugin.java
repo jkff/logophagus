@@ -6,6 +6,7 @@ import org.lf.ui.components.tree.TreeContext;
 import javax.swing.*;
 
 
+// TODO Rename to TreePlugin
 public interface AnalysisPlugin {
     @Nullable
     TreeAction getActionFor(TreeContext context);

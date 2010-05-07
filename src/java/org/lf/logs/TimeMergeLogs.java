@@ -27,28 +27,34 @@ public class TimeMergeLogs implements Log {
         private DateTime prevTime;
         private Integer index;
 
-        private CurPrevIndex(Position cur, Position prev, Integer index) {
+        private CurPrevIndex(Position cur, Position prev, DateTime curTime, DateTime prevTime, Integer index) {
             this.cur = cur;
             this.prev = prev;
+            this.curTime = curTime;
+            this.prevTime = prevTime;
             this.index = index;
         }
 
         public DateTime getCurTime() {
-            if (curTime == null) try {
-                curTime = logs[index].getTime(cur);
-            } catch (IOException e) {
-                // Ignore
-                e.printStackTrace();
+            if (curTime == null) {
+                try {
+                    curTime = logs[index].getTime(cur);
+                } catch (IOException e) {
+                    // Ignore
+                    e.printStackTrace();
+                }
             }
             return curTime;
         }
 
         public DateTime getPrevTime() {
-            if (prevTime == null) try {
-                prevTime = logs[index].getTime(prev);
-            } catch (IOException e) {
-                // Ignore
-                e.printStackTrace();
+            if (prevTime == null) {
+                try {
+                    prevTime = logs[index].getTime(prev);
+                } catch (IOException e) {
+                    // Ignore
+                    e.printStackTrace();
+                }
             }
             return prevTime;
         }
@@ -176,7 +182,7 @@ public class TimeMergeLogs implements Log {
             List<CurPrevIndex> p = newList();
             for (int i = 0; i < logs.length; ++i) {
                 Position firstPos = logsBorders[i].first;
-                p.add(new CurPrevIndex(firstPos, null, i));
+                p.add(new CurPrevIndex(firstPos, null, null, null, i));
             }
             cachedFirst = new MergedPosition(fromList(p, COMPARE_CPI_ON_CUR), fromList(p, COMPARE_CPI_ON_PREV));
         }
@@ -190,7 +196,7 @@ public class TimeMergeLogs implements Log {
             List<CurPrevIndex> p = newList();
             for (int i = 0; i < logs.length; ++i) {
                 Position lastPos = logsBorders[i].second;
-                p.add(new CurPrevIndex(null, lastPos, i));
+                p.add(new CurPrevIndex(null, lastPos, null, null, i));
             }
             cachedLast = (MergedPosition) prev(new MergedPosition(fromList(p, COMPARE_CPI_ON_CUR), fromList(p, COMPARE_CPI_ON_PREV)));
         }
@@ -213,9 +219,10 @@ public class TimeMergeLogs implements Log {
         curSortedCopy.remove(cur);
         prevSortedCopy.remove(cur);
         //check if it's not the position of merged log end
-        if (cur.cur == null) return null;
+        if (cur.cur == null)
+            return null;
         Position nextPos = logsBorders[cur.index].second.equals(cur.cur) ? null : logs[cur.index].next(cur.cur);
-        CurPrevIndex newEntity = new CurPrevIndex(nextPos, cur.cur, cur.index);
+        CurPrevIndex newEntity = new CurPrevIndex(nextPos, cur.cur, null, cur.getCurTime(), cur.index);
         curSortedCopy.add(newEntity);
         prevSortedCopy.add(newEntity);
 
@@ -237,7 +244,7 @@ public class TimeMergeLogs implements Log {
         prevSortedCopy.remove(cur);
         if (cur.prev == null) return null;
         Position prevPos = logsBorders[cur.index].first.equals(cur.prev) ? null : logs[cur.index].prev(cur.prev);
-        CurPrevIndex newEntity = new CurPrevIndex(cur.prev, prevPos, cur.index);
+        CurPrevIndex newEntity = new CurPrevIndex(cur.prev, prevPos, cur.getPrevTime(), null, cur.index);
         curSortedCopy.add(newEntity);
         prevSortedCopy.add(newEntity);
         return new MergedPosition(curSortedCopy, prevSortedCopy);

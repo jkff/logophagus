@@ -16,7 +16,7 @@ import org.lf.util.Filter;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class FilterBySubstringPlugin implements AnalysisPlugin {
+public class FilterByCriteriaPlugin implements AnalysisPlugin {
     @Override
     public TreeAction getActionFor(final TreeContext context) {
         if (context.selectedNodes.length != 1 ||
@@ -26,31 +26,29 @@ public class FilterBySubstringPlugin implements AnalysisPlugin {
         final NodeData parentNodeData = context.selectedNodes[0].getNodeData();
 
 
-        Action substringAction = new AbstractAction() {
+        Action filterBySubstringAction = new AbstractAction("Substring") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Entity entity = getSubstringEntity(parentNodeData.entity);
                 if (entity == null) return;
                 NodeData nodeData = new NodeData(entity, getIcon());
-                context.selectedNodes[0].add(new AnalysisPluginNode(nodeData));
+                context.addChildTo(context.selectedNodes[0], nodeData, true);
             }
         };
 
-        Action formatAction = new AbstractAction() {
+        Action filterByFormatAction = new AbstractAction("Format") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Entity entity = getFormatEntity(parentNodeData.entity);
                 if (entity == null) return;
                 NodeData nodeData = new NodeData(entity, getIcon());
-                context.selectedNodes[0].add(new AnalysisPluginNode(nodeData));
+                context.addChildTo(context.selectedNodes[0], nodeData, true);
             }
         };
 
-        substringAction.putValue(Action.NAME, "substring");
-        formatAction.putValue(Action.NAME, "format");
         TreeAction root = new TreeAction("Filter by...");
-        root.addChild(new TreeAction(substringAction));
-        root.addChild(new TreeAction(formatAction));
+        root.addChild(new TreeAction(filterBySubstringAction));
+        root.addChild(new TreeAction(filterByFormatAction));
         return root;
 
     }

@@ -14,7 +14,6 @@ public class ViewScrollableLogPlugin implements DisplayPlugin {
 
     @Override
     public boolean isApplicableFor(Object o) {
-        return o != null &&
-                Log.class.isAssignableFrom(o.getClass());
+        return o instanceof Log;
     }
 }

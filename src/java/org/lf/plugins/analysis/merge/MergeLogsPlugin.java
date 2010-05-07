@@ -21,12 +21,14 @@ import java.util.List;
 public class MergeLogsPlugin implements AnalysisPlugin {
     @Override
     public TreeAction getActionFor(final TreeContext context) {
-        if (context.selectedNodes.length < 2) return null;
+        if (context.selectedNodes.length < 2)
+            return null;
         for (AnalysisPluginNode cur : context.selectedNodes) {
-            if (!(cur.getNodeData().entity.data instanceof Log)) return null;
+            if (!(cur.getNodeData().entity.data instanceof Log))
+                return null;
         }
 
-        Action action = new AbstractAction() {
+        Action action = new AbstractAction(getName()) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 List<Entity> list = new LinkedList<Entity>();
@@ -34,15 +36,15 @@ public class MergeLogsPlugin implements AnalysisPlugin {
                     list.add(cur.getNodeData().entity);
                 }
                 Entity entity = getEntity(list.toArray(new Entity[0]));
-                if (entity == null) return;
+                if (entity == null)
+                    return;
                 NodeData nodeData = new NodeData(entity, getIcon());
-                context.root.add(new AnalysisPluginNode(nodeData));
+                context.addChildToRoot(nodeData, true);
             }
         };
 
-        action.putValue(Action.NAME, getName());
+       
         return new TreeAction(action);
-
     }
 
     @Override

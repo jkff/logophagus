@@ -48,16 +48,14 @@ public class TreePopup extends JPopupMenu {
         if (tp != null) {
             if (this.getComponentCount() != 0)
                 addSeparator();
-            final JMenuItem itemDelete = new JMenuItem("Delete");
-            itemDelete.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent arg0) {
+            add(new JMenuItem(new AbstractAction("Delete") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
                     for (TreePath cur : tp) {
                         ((DefaultTreeModel) tree.getModel()).removeNodeFromParent((MutableTreeNode) cur.getLastPathComponent());
                     }
-
                 }
-            });
-            add(itemDelete);
+            }));
         }
         this.revalidate();
     }

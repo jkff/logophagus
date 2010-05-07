@@ -30,7 +30,7 @@ public class HighlightRegexpPlugin implements AnalysisPlugin {
                 Entity entity = getEntity(context.selectedNodes[0].getNodeData().entity);
                 if (entity == null) return;
                 NodeData nodeData = new NodeData(entity, getIcon());
-                context.selectedNodes[0].add(new AnalysisPluginNode(nodeData));
+                context.addChildTo(context.selectedNodes[0], nodeData, true);
             }
         };
 

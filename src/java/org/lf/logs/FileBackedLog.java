@@ -53,10 +53,6 @@ public class FileBackedLog implements Log {
         }
     }
 
-    public FileBackedLog(String fileName, Parser in) throws IOException {
-        this(new MappedFile(fileName), in);
-    }
-
     public FileBackedLog(RandomAccessFileIO io, Parser in) throws IOException {
         this.parser = in;
         this.file = io;
@@ -92,7 +88,8 @@ public class FileBackedLog implements Log {
             is = file.getInputStreamFrom(((PhysicalPosition) pos).offsetBytes);
             return parser.readRecord(is);
         } finally {
-            if (is != null) is.close();
+            if (is != null)
+                is.close();
         }
     }
 
@@ -107,7 +104,8 @@ public class FileBackedLog implements Log {
                 return null;
             return new PhysicalPosition(pp.offsetBytes + offset);
         } finally {
-            if (is != null) is.close();
+            if (is != null)
+                is.close();
         }
     }
 
@@ -122,7 +120,8 @@ public class FileBackedLog implements Log {
                 return null;
             return new PhysicalPosition(pp.offsetBytes - offset);
         } finally {
-            if (is != null) is.close();
+            if (is != null)
+                is.close();
         }
     }
 
@@ -144,7 +143,9 @@ public class FileBackedLog implements Log {
 
     @Override
     public synchronized DateTime getTime(Position pos) throws IOException {
-        if (!hasTimeField) return null;
+        if (!hasTimeField) {
+            return null;
+        }
 
         if (pos == posWithCachedTime) {
             return cachedTime;

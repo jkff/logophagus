@@ -48,6 +48,7 @@ public class Format {
 
     @Override
     public String toString() {
+        // TODO Remove laziness
         if (toString == null) {
             StringBuilder res = new StringBuilder();
             for (Field cur : fields)
