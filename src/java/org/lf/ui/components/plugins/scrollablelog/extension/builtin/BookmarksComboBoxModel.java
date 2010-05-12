@@ -1,16 +1,18 @@
 package org.lf.ui.components.plugins.scrollablelog.extension.builtin;
 
 
+import org.lf.plugins.tree.BookmarkListener;
 import org.lf.plugins.tree.Bookmarks;
 
 import javax.swing.*;
 
-class BookmarksComboBoxModel extends AbstractListModel implements MutableComboBoxModel {
+class BookmarksComboBoxModel extends AbstractListModel implements MutableComboBoxModel, BookmarkListener {
     private Bookmarks bookmarks;
     private Object selectedElement;
 
     public BookmarksComboBoxModel(Bookmarks bookmarks) {
         this.bookmarks = bookmarks;
+        this.bookmarks.addListener(this);
     }
 
     @Override
@@ -58,7 +60,8 @@ class BookmarksComboBoxModel extends AbstractListModel implements MutableComboBo
         return bookmarks.getSize();
     }
 
-    public void update() {
+    @Override
+    public void bookmarkAdd(String name) {
         fireContentsChanged(this, 0, getSize());
     }
 }

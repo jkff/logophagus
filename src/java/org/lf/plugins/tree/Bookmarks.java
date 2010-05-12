@@ -3,25 +3,25 @@ package org.lf.plugins.tree;
 import org.lf.logs.Log;
 import org.lf.parser.Position;
 import org.lf.plugins.AttributeInstance;
-import org.lf.util.CollectionFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.lf.util.CollectionFactory.newHashSet;
+import static org.lf.util.CollectionFactory.newLinkedHashMap;
 
-public class Bookmarks implements AttributeInstance<BookmarksConcept, Bookmarks> {
+public class Bookmarks implements AttributeInstance<BookmarksConcept, Bookmarks>, BookmarkListener {
     private final Bookmarks parent;
     private final Log log;
-
-    private Map<String, Position> name2pos = CollectionFactory.newLinkedHashMap();
+    private Map<String, Position> name2pos = newLinkedHashMap();
+    private List<BookmarkListener> bookmarksListeners = new CopyOnWriteArrayList<BookmarkListener>();
 
     public Bookmarks(Bookmarks parent, Log bookmarksOwner) {
         this.parent = parent;
         this.log = bookmarksOwner;
+        if (parent != null)
+            this.parent.addListener(this);
     }
 
     public List<String> getNames() {
@@ -30,6 +30,14 @@ public class Bookmarks implements AttributeInstance<BookmarksConcept, Bookmarks>
         if (parent != null)
             result.addAll(parent.getNames());
         return Arrays.asList(result.toArray(new String[0]));
+    }
+
+    public void addListener(BookmarkListener listener) {
+        bookmarksListeners.add(listener);
+    }
+
+    public void removeListener(BookmarkListener listener) {
+        bookmarksListeners.remove(listener);
     }
 
     //positions from name2pos are not converted.
@@ -59,6 +67,7 @@ public class Bookmarks implements AttributeInstance<BookmarksConcept, Bookmarks>
         if (getNames().contains(name))
             return false;
         name2pos.put(name, pos);
+        fireBookmarkAdd(name);
         return true;
     }
 
@@ -76,4 +85,15 @@ public class Bookmarks implements AttributeInstance<BookmarksConcept, Bookmarks>
         return log;
     }
 
+    @Override
+    public void bookmarkAdd(String name) {
+        fireBookmarkAdd(name);
+    }
+
+    private void fireBookmarkAdd(String name) {
+        Iterator<BookmarkListener> iter = bookmarksListeners.iterator();
+        while (iter.hasNext()) {
+            iter.next().bookmarkAdd(name);
+        }
+    }
 }

@@ -24,6 +24,7 @@ public class FilterByCriteriaPlugin implements TreePlugin {
 
         final NodeData parentNodeData = context.selectedNodes[0].getNodeData();
 
+        HierarchicalAction root = new HierarchicalAction("Filter by...");
 
         Action filterBySubstringAction = new AbstractAction("Substring") {
             @Override
@@ -34,16 +35,21 @@ public class FilterByCriteriaPlugin implements TreePlugin {
                 context.addChildTo(context.selectedNodes[0], nodeData, true);
             }
         };
+        root.addChild(new HierarchicalAction(filterBySubstringAction));
 
-        Action filterByFormatAction = new AbstractAction("Format") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Entity entity = getFormatEntity(parentNodeData.entity);
-                if (entity == null) return;
-                NodeData nodeData = new NodeData(entity, getIcon());
-                context.addChildTo(context.selectedNodes[0], nodeData, true);
-            }
-        };
+
+        final Entity entity = getFormatEntity(parentNodeData.entity);
+        if (entity != null) {
+            Action filterByFormatAction = new AbstractAction("Format") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (entity == null) return;
+                    NodeData nodeData = new NodeData(entity, getIcon());
+                    context.addChildTo(context.selectedNodes[0], nodeData, true);
+                }
+            };
+            root.addChild(new HierarchicalAction(filterByFormatAction));
+        }
 
         Action filterByRegexpAction = new AbstractAction("Regexp") {
             @Override
@@ -54,11 +60,7 @@ public class FilterByCriteriaPlugin implements TreePlugin {
                 context.addChildTo(context.selectedNodes[0], nodeData, true);
             }
         };
-
-        HierarchicalAction root = new HierarchicalAction("Filter by...");
-        root.addChild(new HierarchicalAction(filterBySubstringAction));
         root.addChild(new HierarchicalAction(filterByRegexpAction));
-        root.addChild(new HierarchicalAction(filterByFormatAction));
 
         return root;
 
@@ -123,7 +125,7 @@ public class FilterByCriteriaPlugin implements TreePlugin {
             System.arraycopy(formats, 0, formatsWithUnknown, 1, formats.length);
         }
 
-
+        if (formatsWithUnknown.length == 1) return null;
         final Format selected = (Format) JOptionPane.showInputDialog(
                 null,
                 "Select field",

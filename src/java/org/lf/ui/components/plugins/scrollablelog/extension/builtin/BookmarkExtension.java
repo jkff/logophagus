@@ -1,6 +1,7 @@
 package org.lf.ui.components.plugins.scrollablelog.extension.builtin;
 
 import org.lf.parser.Position;
+import org.lf.plugins.tree.BookmarkListener;
 import org.lf.plugins.tree.Bookmarks;
 import org.lf.ui.components.plugins.scrollablelog.ScrollableLogView;
 import org.lf.ui.components.plugins.scrollablelog.extension.SLKeyListener;
@@ -10,7 +11,9 @@ import org.lf.util.HierarchicalAction;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 public class BookmarkExtension implements SLToolbarExtension, SLPopupExtension, SLKeyListener {
@@ -18,17 +21,19 @@ public class BookmarkExtension implements SLToolbarExtension, SLPopupExtension, 
     @Override
     public JComponent getToolbarElement(ScrollableLogView.Context context) {
         JLabel label = new JLabel("Bookmarks");
-        BookmarksComboBoxModel model = new BookmarksComboBoxModel(context.getAttributes().getValue(Bookmarks.class));
+        final Bookmarks bookmarks = context.getAttributes().getValue(Bookmarks.class);
+        BookmarksComboBoxModel model = new BookmarksComboBoxModel(bookmarks);
         final JComboBox bookmarksList = new JComboBox(model);
         bookmarksList.setPrototypeDisplayValue("0123456789");
-        bookmarksList.addActionListener(new ComboBoxActionListener(context));
-        //update bookmarks before any actions
-        bookmarksList.addFocusListener(new FocusAdapter() {
+        bookmarks.addListener(new BookmarkListener() {
             @Override
-            public void focusGained(FocusEvent e) {
-                ((BookmarksComboBoxModel) bookmarksList.getModel()).update();
+            public void bookmarkAdd(String name) {
+                bookmarksList.setEnabled(true);
+                bookmarks.removeListener(this);
             }
         });
+        if (bookmarks.getSize() == 0) bookmarksList.setEnabled(false);
+        bookmarksList.addActionListener(new ComboBoxActionListener(context));
         Box box = Box.createHorizontalBox();
         box.add(label);
         box.add(Box.createHorizontalStrut(3));

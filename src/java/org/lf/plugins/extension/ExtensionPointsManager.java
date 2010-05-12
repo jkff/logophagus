@@ -2,20 +2,23 @@ package org.lf.plugins.extension;
 
 import com.sun.istack.internal.Nullable;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.lf.util.CollectionFactory.newHashMap;
-import static org.lf.util.CollectionFactory.newList;
 
 public class ExtensionPointsManager {
     private final static Map<ExtensionPointID, ExtensionPoint> extIDToExtPoint = newHashMap();
-    private final static List<ExtensionTracer> listeners = newList();
+    private final static List<ExtensionTracer> listeners = new CopyOnWriteArrayList<ExtensionTracer>();
 
     public static <T> void registerExtensionPoint(ExtensionPointID<T> extID, ExtensionPoint<T> extPoint) {
         extIDToExtPoint.put(extID, extPoint);
-        for (ExtensionTracer cur : listeners) {
-            cur.extensionAdd(extID);
+
+        Iterator<ExtensionTracer> iter = listeners.iterator();
+        while (iter.hasNext()) {
+            iter.next().extensionAdd(extID);
         }
     }
 

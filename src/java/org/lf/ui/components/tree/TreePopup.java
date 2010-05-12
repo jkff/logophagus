@@ -56,6 +56,7 @@ public class TreePopup extends JPopupMenu {
                 }
             }));
         }
+
         this.revalidate();
     }
 
