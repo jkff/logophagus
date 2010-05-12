@@ -2,7 +2,6 @@ package org.lf.logs;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
-import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
 import org.lf.parser.Parser;
 import org.lf.parser.Position;

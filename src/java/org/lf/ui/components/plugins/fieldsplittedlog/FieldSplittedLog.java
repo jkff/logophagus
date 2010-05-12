@@ -5,7 +5,7 @@ import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.parser.Position;
 import org.lf.plugins.Attributes;
-import org.lf.plugins.analysis.splitbyfield.LogAndField;
+import org.lf.plugins.tree.splitbyfield.LogAndField;
 import org.lf.ui.util.GUIUtils;
 import org.lf.util.Filter;
 

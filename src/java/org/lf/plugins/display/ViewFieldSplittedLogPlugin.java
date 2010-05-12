@@ -1,7 +1,7 @@
 package org.lf.plugins.display;
 
 import org.lf.plugins.Entity;
-import org.lf.plugins.analysis.splitbyfield.LogAndField;
+import org.lf.plugins.tree.splitbyfield.LogAndField;
 
 import javax.swing.*;
 //import org.lf.ui.components.plugins.fieldsplittedlog.FieldSplittedLog;

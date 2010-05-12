@@ -48,15 +48,11 @@ public class Format {
 
     @Override
     public String toString() {
-        // TODO Remove laziness
-        if (toString == null) {
-            StringBuilder res = new StringBuilder();
-            for (Field cur : fields)
-                res.append(cur.name + ", ");
-            toString = res.toString();
-        }
-
-        return toString;
+        StringBuilder res = new StringBuilder();
+        for (Field cur : fields)
+            res.append(cur.name + ", ");
+        toString = res.toString();
+        return toString.substring(0, toString.length() - 2);
 
     }
 

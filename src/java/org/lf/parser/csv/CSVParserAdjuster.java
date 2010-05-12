@@ -180,10 +180,12 @@ public class CSVParserAdjuster extends ParserAdjuster {
         this.nameToCharacter.put("\\n", '\n');
         this.nameToCharacter.put("\\t", '\t');
         this.nameToCharacter.put("\\r", '\r');
+        this.nameToCharacter.put("\\s", ' ');
 
         this.characterToName.put('\n', "\\n");
         this.characterToName.put('\t', "\\t");
         this.characterToName.put('\r', "\\r");
+        this.characterToName.put(' ', "\\s");
     }
 
     private class LabelWithField extends JPanel {

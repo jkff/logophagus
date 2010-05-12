@@ -3,7 +3,7 @@ package org.lf.plugins.display;
 
 import org.lf.logs.Log;
 import org.lf.plugins.Entity;
-import org.lf.plugins.analysis.sidebyside.LogsPair;
+import org.lf.plugins.tree.sidebyside.LogsPair;
 import org.lf.ui.components.plugins.scrollablelog.ScrollableLogView;
 
 import javax.swing.*;

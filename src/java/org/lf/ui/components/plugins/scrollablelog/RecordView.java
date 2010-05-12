@@ -1,7 +1,8 @@
 package org.lf.ui.components.plugins.scrollablelog;
 
+import org.lf.logs.Format;
 import org.lf.logs.Record;
-import org.lf.plugins.analysis.highlight.Highlighter;
+import org.lf.plugins.tree.highlight.RecordColorer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,11 +11,14 @@ import java.util.List;
 import static org.lf.util.CollectionFactory.newList;
 
 public class RecordView extends JPanel implements ListCellRenderer {
-    private final Highlighter highlighter;
+    private RecordColorer colorer;
     private final List<JLabel> cells;
+    private final Font defaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+    private final Font timeFont = new Font(Font.MONOSPACED, Font.BOLD, 12);
 
-    public RecordView(Highlighter highlighter) {
-        this.highlighter = highlighter;
+
+    public RecordView(RecordColorer colorer) {
+        this.colorer = colorer;
         this.cells = newList();
 
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 3, 3));
@@ -35,13 +39,20 @@ public class RecordView extends JPanel implements ListCellRenderer {
 
         for (int i = 0; i < cellValues.length; ++i) cells.get(i).setText(" " + cellValues[i] + " ");
         for (int i = 0; i < cells.size(); ++i) cells.get(i).setVisible(i < cellValues.length);
+        for (int i = 0; i < cells.size(); ++i) cells.get(i).setFont(defaultFont);
+        if (record.getFormat().getTimeFieldIndex() != -1)
+            cells.get(record.getFormat().getTimeFieldIndex()).setFont(timeFont);
 
         Color background, foreground;
         if (isSelected) {
             background = UIManager.getColor("List.selectionBackground");
             foreground = UIManager.getColor("List.selectionForeground");
         } else {
-            Color c = (highlighter == null) ? null : highlighter.getHighlightColor(record);
+
+            Color c = (colorer == null) ? null : colorer.getColor(record);
+            if (c == null && record.getFormat() == Format.UNKNOWN_FORMAT)
+                c = Color.PINK;
+
             background = (c == null) ? ((index % 2 == 0) ? new Color(244, 244, 244) : Color.WHITE) : c;
             foreground = UIManager.getColor("List.foreground");
         }
@@ -68,9 +79,10 @@ public class RecordView extends JPanel implements ListCellRenderer {
         if (recSize <= vRecSize) return;
         for (int i = 0; i < (recSize - vRecSize); ++i) {
             JLabel label = new JLabel();
-            label.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+            label.setFont(defaultFont);
             this.cells.add(label);
             this.add(label);
         }
     }
+
 }

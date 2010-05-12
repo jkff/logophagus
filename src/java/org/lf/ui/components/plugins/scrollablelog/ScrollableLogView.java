@@ -1,39 +1,60 @@
 package org.lf.ui.components.plugins.scrollablelog;
 
 
-import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.parser.Position;
 import org.lf.plugins.Attributes;
-import org.lf.plugins.analysis.Bookmarks;
-import org.lf.plugins.analysis.highlight.Highlighter;
-import org.lf.plugins.analysis.highlight.RecordColorer;
+import org.lf.plugins.tree.highlight.Highlighter;
+import org.lf.plugins.tree.highlight.RecordColorer;
+import org.lf.ui.components.plugins.scrollablelog.extension.SLKeyListener;
+import org.lf.ui.components.plugins.scrollablelog.extension.SLPluginsRepository;
+import org.lf.ui.components.plugins.scrollablelog.extension.SLToolbarExtension;
 import org.lf.ui.util.GUIUtils;
+import org.lf.util.Removable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 
 public class ScrollableLogView extends JPanel implements Observer {
-    private final JButton addBookmark;
-    private final JComboBox bookmarksList;
-
-    private final JButton startButton;
-    private final JButton endButton;
+    private final JToolBar toolbar;
 
     private final JList recordsList;
     private final JScrollPane scrollableRecords;
     private final JProgressBar progressBar;
-
+    private final LogPopup popup;
     private final Attributes attributes;
 
-    private ScrollableLogModel logSegmentModel;
+    private final ScrollableLogModel logSegmentModel;
+    private final AccumulativeColorer recordColorer;
+
+    public Context context = new Context();
+
+    public class Context {
+        public ScrollableLogModel getModel() {
+            return ScrollableLogView.this.logSegmentModel;
+        }
+
+        public int[] getSelectedIndexes() {
+            return ScrollableLogView.this.recordsList.getSelectedIndices();
+        }
+
+        public Removable addRecordColorer(RecordColorer rc) {
+            return ScrollableLogView.this.recordColorer.addFirst(rc);
+        }
+
+
+        public Attributes getAttributes() {
+            return ScrollableLogView.this.attributes;
+        }
+
+        public void updateRecords() {
+            recordsList.repaint();
+        }
+    }
 
     public ScrollableLogView(Log log, Attributes attributes) {
         this(log, attributes, null);
@@ -41,95 +62,60 @@ public class ScrollableLogView extends JPanel implements Observer {
 
     public ScrollableLogView(final Log log, Attributes attributes, Position pos) {
         this.attributes = attributes;
-        this.logSegmentModel = null;
         this.logSegmentModel = new ScrollableLogModel(log, 50);
         this.logSegmentModel.start();
         // Create UI
-
-        this.bookmarksList = new JComboBox(new BookmarksComboBoxModel(attributes.getValue(Bookmarks.class)));
-        this.bookmarksList.setPrototypeDisplayValue("0123456789");
-        this.bookmarksList.addActionListener(new ComboBoxActionListener());
-        //update bookmarks before any actions
-        this.bookmarksList.addFocusListener(new BookmarkFocusListener());
-        GUIUtils.makePreferredSize(bookmarksList);
-
-        this.addBookmark = new JButton("Add bookmark");
-        this.addBookmark.addActionListener(new AddBookmarkActionListener());
-
-
-        this.startButton = new JButton("Start");
-        this.startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                if (!logSegmentModel.isReadingDone() || logSegmentModel.isAtBegin()) return;
-                logSegmentModel.start();
-            }
-        });
-
-        this.endButton = new JButton("End");
-        this.endButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!logSegmentModel.isReadingDone() || logSegmentModel.isAtEnd()) return;
-                logSegmentModel.end();
-            }
-        });
-
-        GUIUtils.createRecommendedButtonMargin(startButton, endButton, addBookmark);
-        GUIUtils.makePreferredSize(startButton);
-        GUIUtils.makePreferredSize(endButton);
-        GUIUtils.makeSameWidth(startButton, endButton);
 
         this.progressBar = new JProgressBar(0, 100);
         this.progressBar.setValue(0);
         this.progressBar.setStringPainted(true);
 
-        Box controlPanel = Box.createHorizontalBox();
-        controlPanel.add(startButton);
-        controlPanel.add(Box.createHorizontalStrut(5));
-        controlPanel.add(endButton);
-        controlPanel.add(Box.createHorizontalStrut(12));
-        controlPanel.add(addBookmark);
-        controlPanel.add(Box.createHorizontalStrut(5));
-        controlPanel.add(bookmarksList);
-        controlPanel.add(Box.createHorizontalGlue());
+        this.toolbar = new JToolBar();
+        this.toolbar.setFloatable(false);
 
-        GUIUtils.fixMaxHeightSize(controlPanel);
+        GUIUtils.fixMaxHeightSize(toolbar);
 
         RecordsListModel listModel = new RecordsListModel(logSegmentModel);
 
-        Highlighter customHighlighter = attributes.getValue(Highlighter.class);
-        Highlighter highlighter = new Highlighter(
-                customHighlighter == null ? new ArrayList<Highlighter>() : Arrays.asList(customHighlighter));
-        highlighter.setRecordColorer(new RecordColorer() {
-            public Color getColor(Record r) {
-                return r.getFormat() == Format.UNKNOWN_FORMAT ? Color.PINK : null;
-            }
-        });
-        RecordView cellRenderer = new RecordView(highlighter);
+        final Highlighter customHighlighter = attributes.getValue(Highlighter.class);
+
+        this.popup = new LogPopup(this.context);
+
+        recordColorer = new AccumulativeColorer();
+        if (customHighlighter != null)
+            recordColorer.add(new RecordColorer() {
+                @Override
+                public Color getColor(Record r) {
+                    return customHighlighter.getHighlightColor(r);
+                }
+            });
+
+        RecordView cellRenderer = new RecordView(recordColorer);
+
         this.recordsList = new JList(listModel);
         this.recordsList.setCellRenderer(cellRenderer);
         this.recordsList.addKeyListener(new ListKeyListener());
+        this.recordsList.setComponentPopupMenu(this.popup);
         this.recordsList.setVisible(true);
 
         scrollableRecords = new JScrollPane(this.recordsList);
         scrollableRecords.addMouseWheelListener(new ScrollBarMouseWheelListener());
         this.scrollableRecords.setVisible(true);
 
-//        RepaintManager.currentManager(recordsList).setDoubleBufferingEnabled(false);
-//        scrollableRecords.setDebugGraphicsOptions(DebugGraphics.FLASH_OPTION);
-
         BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
         this.setLayout(layout);
-        this.add(controlPanel);
+        this.add(toolbar);
         this.add(Box.createVerticalStrut(5));
         this.add(scrollableRecords);
         this.add(Box.createVerticalStrut(5));
         this.add(this.progressBar);
-        this.setVisible(true);
+
         update(logSegmentModel, null);
         this.logSegmentModel.addObserver(this);
-
+        installExtensions();
+        if (toolbar.getComponentCount() == 0)
+            toolbar.setVisible(false);
+        this.setVisible(true);
     }
 
     @Override
@@ -144,93 +130,47 @@ public class ScrollableLogView extends JPanel implements Observer {
         });
     }
 
+    private void installExtensions() {
+        SLKeyListener[] keyListeners = SLPluginsRepository.getRegisteredKeyListeners();
+        for (final SLKeyListener cur : keyListeners) {
+            this.recordsList.addKeyListener(new KeyListener() {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    cur.keyTyped(e, context);
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    cur.keyTyped(e, context);
+                }
+
+                @Override
+                public void keyReleased(KeyEvent e) {
+                    cur.keyTyped(e, context);
+                }
+            });
+        }
+
+        SLToolbarExtension[] toolbarExtensions = SLPluginsRepository.getRegisteredToolbarExtensions();
+        for (final SLToolbarExtension cur : toolbarExtensions) {
+            this.toolbar.add(cur.getToolbarElement(context));
+            this.toolbar.addSeparator();
+        }
+
+    }
+
     private void updateProgress() {
         progressBar.setValue((int) logSegmentModel.getProgress());
     }
 
     private void updateControls() {
         if (!logSegmentModel.isReadingDone() || logSegmentModel.getRecordCount() == 0) {
-            disableControls();
+            toolbar.setEnabled(false);
         } else {
-            enableControls();
-            if (logSegmentModel.isAtBegin())
-                startButton.setEnabled(false);
-            if (logSegmentModel.isAtEnd())
-                endButton.setEnabled(false);
+            toolbar.setEnabled(true);
         }
     }
 
-    private void enableControls() {
-        startButton.setEnabled(true);
-        endButton.setEnabled(true);
-        addBookmark.setEnabled(true);
-        bookmarksList.setEnabled(true);
-    }
-
-    private void disableControls() {
-        startButton.setEnabled(false);
-        endButton.setEnabled(false);
-        addBookmark.setEnabled(false);
-        bookmarksList.setEnabled(false);
-    }
-
-
-    //controllers
-    class AddBookmarkActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            while (true) {
-                String name = JOptionPane.showInputDialog(
-                        ScrollableLogView.this,
-                        "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE);
-                if (name == null || name.equals("")) return;
-
-                try {
-                    if (attributes.getValue(Bookmarks.class).getValue(name) != null) {
-                        JOptionPane.showMessageDialog(
-                                ScrollableLogView.this,
-                                "Bookmark with such name already exists. Please input a different name.");
-                    } else {
-                        int row = recordsList.getSelectedIndex();
-                        if (row == -1) row = 0;
-                        attributes.getValue(Bookmarks.class).addBookmark(name, logSegmentModel.getPosition(row));
-                        return;
-                    }
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
-
-    }
-
-    class ComboBoxActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (!logSegmentModel.isReadingDone()) return;
-            JComboBox cb = (JComboBox) e.getSource();
-            String selectedBookmark = (String) cb.getSelectedItem();
-            if (selectedBookmark == null) return;
-            Position pos;
-            try {
-                pos = attributes.getValue(Bookmarks.class).getValue(selectedBookmark);
-                logSegmentModel.shiftTo(pos);
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-            //TODO think about better solution
-            recordsList.setSelectedIndex(0);
-            scrollableRecords.scrollRectToVisible(new Rectangle(0, 0));
-        }
-    }
-
-    class BookmarkFocusListener extends FocusAdapter {
-        @Override
-        public void focusGained(FocusEvent e) {
-            ((BookmarksComboBoxModel) bookmarksList.getModel()).update();
-        }
-    }
 
     class ListKeyListener extends KeyAdapter {
         @Override
@@ -304,4 +244,6 @@ public class ScrollableLogView extends JPanel implements Observer {
             }
         }
     }
+
+
 }

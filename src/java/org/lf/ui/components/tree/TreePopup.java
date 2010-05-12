@@ -1,8 +1,8 @@
 package org.lf.ui.components.tree;
 
-import org.lf.plugins.analysis.AnalysisPlugin;
-import org.lf.plugins.analysis.TreeAction;
-import org.lf.services.AnalysisPluginRepository;
+import org.lf.plugins.tree.TreePlugin;
+import org.lf.services.TreePluginRepository;
+import org.lf.util.HierarchicalAction;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -10,7 +10,6 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 
@@ -31,9 +30,9 @@ public class TreePopup extends JPopupMenu {
     private void update() {
         this.removeAll();
         final TreeContext context = new TreeContext(tree);
-        List<AnalysisPlugin> plugins = AnalysisPluginRepository.getApplicablePlugins(context);
-        for (final AnalysisPlugin plugin : plugins) {
-            TreeAction treeAction = plugin.getActionFor(context);
+        List<TreePlugin> plugins = TreePluginRepository.getApplicablePlugins(context);
+        for (final TreePlugin plugin : plugins) {
+            HierarchicalAction treeAction = plugin.getActionFor(context);
             JMenuItem itemPlugin;
             if (treeAction.getAction() != null)
                 itemPlugin = new JMenuItem(treeAction.getAction());
@@ -61,9 +60,9 @@ public class TreePopup extends JPopupMenu {
     }
 
 
-    private void fillByChildren(JMenuItem item, TreeAction itemAction) {
-        TreeAction[] subActions = itemAction.getChildren();
-        for (TreeAction cur : subActions) {
+    private void fillByChildren(JMenuItem item, HierarchicalAction itemAction) {
+        HierarchicalAction[] subActions = itemAction.getChildren();
+        for (HierarchicalAction cur : subActions) {
             if (cur.getAction() != null)
                 item.add(new JMenuItem(cur.getAction()));
             else {

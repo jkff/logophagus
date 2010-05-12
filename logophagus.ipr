@@ -6,7 +6,7 @@
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
     <excludeFromCompile>
-      <file url="file://$PROJECT_DIR$/src/java/org/lf/plugins/analysis/splitbyfield/SplitByFieldValuesPlugin.java" />
+      <file url="file://$PROJECT_DIR$/src/java/org/lf/plugins/tree/splitbyfield/SplitByFieldValuesPlugin.java" />
       <file url="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/fieldsplittedlog/FieldSplittedLog.java" />
       <file url="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/fieldsplittedlog/FieldValuesCellRenderer.java" />
     </excludeFromCompile>
@@ -183,6 +183,8 @@
     <dictionary name="ruslan">
       <words>
         <w>args</w>
+        <w>colorer</w>
+        <w>colorers</w>
         <w>plugins</w>
       </words>
     </dictionary>

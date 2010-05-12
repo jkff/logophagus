@@ -8,20 +8,20 @@ import javax.swing.tree.TreePath;
 
 public class TreeContext {
     private final JTree tree;
-    public final AnalysisPluginNode[] selectedNodes;
+    public final TreePluginNode[] selectedNodes;
 
     public TreeContext(JTree tree) {
         this.tree = tree;
 
         TreePath[] tp = tree.getSelectionPaths();
         int length = tp == null ? 0 : tp.length;
-        selectedNodes = new AnalysisPluginNode[length];
+        selectedNodes = new TreePluginNode[length];
         for (int i = 0; i < length; ++i) {
-            selectedNodes[i] = new AnalysisPluginNode((DefaultMutableTreeNode) tp[i].getLastPathComponent());
+            selectedNodes[i] = new TreePluginNode((DefaultMutableTreeNode) tp[i].getLastPathComponent());
         }
     }
 
-    public void addChildTo(final AnalysisPluginNode parent, final NodeData child, final boolean shouldSelect) {
+    public void addChildTo(final TreePluginNode parent, final NodeData child, final boolean shouldSelect) {
         addChildToTreeNode(parent.underlyingNode, child, shouldSelect);
     }
 
@@ -37,7 +37,7 @@ public class TreeContext {
 
                 parentNode.add(childNode);
                 DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
-                model.nodesWereInserted(parentNode, new int[] {parentNode.getIndex(childNode)});
+                model.nodesWereInserted(parentNode, new int[]{parentNode.getIndex(childNode)});
                 if (shouldSelect) {
                     TreePath path = new TreePath(childNode.getPath());
                     tree.setSelectionPath(path);

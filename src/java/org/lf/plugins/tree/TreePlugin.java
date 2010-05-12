@@ -1,0 +1,16 @@
+package org.lf.plugins.tree;
+
+import com.sun.istack.internal.Nullable;
+import org.lf.ui.components.tree.TreeContext;
+import org.lf.util.HierarchicalAction;
+
+import javax.swing.*;
+
+public interface TreePlugin {
+    @Nullable
+    HierarchicalAction getActionFor(TreeContext context);
+
+    String getName();
+
+    Icon getIcon();
+}

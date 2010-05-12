@@ -19,6 +19,14 @@ public class RegexpParser implements Parser {
     private final char recordDelimiter;
     private final int maxLinesPerRecord;
 
+    private ScrollableInputStream cachedStream;
+
+    private long cachedOffset;
+
+    // Integer - relative offset, Integer - index of pattern that matched (-1 means no pattern matched),
+    // Object is a Matcher if a pattern matched, or a String (raw input line) if none matched
+    private Triple<Integer, Integer, Object> cachedOffsetIndexMatch;
+
     public RegexpParser(String[] regexps, Format[] regexpFormats, char recordDelimiter, int maxLinesPerRecord) {
         this.patterns = new Pattern[regexps.length];
         for (int i = 0; i < regexps.length; ++i) {
@@ -29,12 +37,6 @@ public class RegexpParser implements Parser {
         this.maxLinesPerRecord = maxLinesPerRecord;
         this.regexpFormats = regexpFormats;
     }
-
-    private ScrollableInputStream cachedStream;
-    private long cachedOffset;
-    // Integer - relative offset, Integer - index of pattern that matched (-1 means no pattern matched),
-    // Object is a Matcher if a pattern matched, or a String (raw input line) if none matched 
-    private Triple<Integer, Integer, Object> cachedOffsetIndexMatch;
 
     @Override
     public synchronized long findNextRecord(ScrollableInputStream is) throws IOException {
@@ -94,8 +96,11 @@ public class RegexpParser implements Parser {
             int length = curBytesString.length();
 
             for (int j = 0; j < patterns.length; ++j) {
-                Matcher m = patterns[j].matcher(curBytesString.charAt(length - 1) == '\n' ?
-                        curBytesString.substring(0, length - 1) : curBytesString);
+                Matcher m = patterns[j].matcher(
+                        curBytesString.length() != 0 &&
+                                curBytesString.charAt(length - 1) == '\n'
+                                ?
+                                curBytesString.substring(0, length - 1) : curBytesString);
                 if (m.matches())
                     return new Triple<Integer, Integer, Object>(byteArray.size(), j, m);
             }

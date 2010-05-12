@@ -1,7 +1,7 @@
 package org.lf.ui.components.menu;
 
-import org.lf.plugins.analysis.filelog.OpenLogFromFilePlugin;
-import org.lf.ui.components.tree.AnalysisPluginTree;
+import org.lf.plugins.tree.filelog.OpenLogFromFilePlugin;
+import org.lf.ui.components.tree.PluginTree;
 import org.lf.ui.components.tree.TreeContext;
 
 import javax.swing.*;
@@ -10,10 +10,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class LogophagusMenuBar extends JMenuBar {
-    private final AnalysisPluginTree tree;
+    private final PluginTree tree;
 
 
-    public LogophagusMenuBar(AnalysisPluginTree tree) {
+    public LogophagusMenuBar(PluginTree tree) {
         this.tree = tree;
         initComponents();
     }
