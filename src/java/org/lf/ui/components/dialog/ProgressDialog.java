@@ -1,4 +1,4 @@
-package org.lf.ui.util;
+package org.lf.ui.components.dialog;
 
 import javax.swing.*;
 import java.awt.*;

@@ -6,6 +6,7 @@ import org.lf.plugins.tree.filtersubstr.FilterByCriteriaPlugin;
 import org.lf.plugins.tree.highlight.HighlightRegexpPlugin;
 import org.lf.plugins.tree.merge.MergeLogsPlugin;
 import org.lf.plugins.tree.sidebyside.ViewSideBySidePlugin;
+import org.lf.plugins.tree.splitbyfield.SplitByFieldPlugin;
 import org.lf.services.DisplayPluginRepository;
 import org.lf.services.TreePluginRepository;
 import org.lf.ui.components.menu.LogophagusMenuBar;
@@ -79,7 +80,7 @@ public class Logophagus extends JFrame {
         TreePluginRepository.register(new OpenLogFromFilePlugin());
         TreePluginRepository.register(new FilterByCriteriaPlugin());
         TreePluginRepository.register(new ViewSideBySidePlugin());
-//            TreePluginRepository.register(SplitByFieldValuesPlugin.class);
+        TreePluginRepository.register(new SplitByFieldPlugin());
         TreePluginRepository.register(new HighlightRegexpPlugin());
         TreePluginRepository.register(new MergeLogsPlugin());
 

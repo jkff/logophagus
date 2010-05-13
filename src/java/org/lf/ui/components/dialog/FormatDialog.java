@@ -107,7 +107,7 @@ public class FormatDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 isOkPressed = true;
-                dispose();
+                setVisible(false);
             }
         });
 

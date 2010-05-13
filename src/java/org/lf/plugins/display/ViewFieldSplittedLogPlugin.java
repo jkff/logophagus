@@ -10,7 +10,7 @@ public class ViewFieldSplittedLogPlugin implements DisplayPlugin {
 
     @Override
     public JComponent createView(Entity entity) {
-        throw new UnsupportedOperationException("Fix SplitByFieldValuesPlugin and include it into compilation again");
+        throw new UnsupportedOperationException("Fix SplitByFieldPlugin and include it into compilation again");
 //        return new FieldSplittedLog((LogAndField)entity.data, entity.attributes);
     }
 

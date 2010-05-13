@@ -13,9 +13,9 @@ import org.lf.plugins.tree.Bookmarks;
 import org.lf.plugins.tree.TreePlugin;
 import org.lf.services.ProgramProperties;
 import org.lf.ui.components.dialog.ParserSetupDialog;
+import org.lf.ui.components.dialog.ProgressDialog;
 import org.lf.ui.components.tree.NodeData;
 import org.lf.ui.components.tree.TreeContext;
-import org.lf.ui.util.ProgressDialog;
 import org.lf.util.HierarchicalAction;
 import org.lf.util.ProgressListener;
 

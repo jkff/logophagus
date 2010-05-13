@@ -38,18 +38,16 @@ public class FilterByCriteriaPlugin implements TreePlugin {
         root.addChild(new HierarchicalAction(filterBySubstringAction));
 
 
-        final Entity entity = getFormatEntity(parentNodeData.entity);
-        if (entity != null) {
-            Action filterByFormatAction = new AbstractAction("Format") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (entity == null) return;
-                    NodeData nodeData = new NodeData(entity, getIcon());
-                    context.addChildTo(context.selectedNodes[0], nodeData, true);
-                }
-            };
-            root.addChild(new HierarchicalAction(filterByFormatAction));
-        }
+        Action filterByFormatAction = new AbstractAction("Format") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Entity entity = getFormatEntity(parentNodeData.entity);
+                if (entity == null) return;
+                NodeData nodeData = new NodeData(entity, getIcon());
+                context.addChildTo(context.selectedNodes[0], nodeData, true);
+            }
+        };
+        root.addChild(new HierarchicalAction(filterByFormatAction));
 
         Action filterByRegexpAction = new AbstractAction("Regexp") {
             @Override
