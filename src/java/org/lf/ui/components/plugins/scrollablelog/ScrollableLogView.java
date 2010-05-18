@@ -5,23 +5,35 @@ import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.parser.Position;
 import org.lf.plugins.Attributes;
+import org.lf.plugins.extension.ExtensionPointID;
+import org.lf.plugins.extension.ExtensionPointsManager;
+import org.lf.plugins.extension.ListExtensionPoint;
 import org.lf.plugins.tree.highlight.Highlighter;
 import org.lf.plugins.tree.highlight.RecordColorer;
-import org.lf.ui.components.plugins.scrollablelog.extension.SLKeyListener;
-import org.lf.ui.components.plugins.scrollablelog.extension.SLPluginsRepository;
-import org.lf.ui.components.plugins.scrollablelog.extension.SLToolbarExtension;
+import org.lf.ui.components.plugins.scrollablelog.extension.SLInitExtension;
 import org.lf.ui.util.GUIUtils;
+import org.lf.util.HierarchicalAction;
 import org.lf.util.Removable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class ScrollableLogView extends JPanel implements Observer {
-    private final JToolBar toolbar;
+import static org.lf.util.CollectionFactory.newList;
 
+public class ScrollableLogView extends JPanel implements Observer {
+    public static final ExtensionPointID<SLInitExtension> SL_INIT_EXTENSION_POINT_ID = ExtensionPointID.create();
+    private static final ListExtensionPoint<SLInitExtension> SL_INIT_EXTENSION_POINT = new ListExtensionPoint<SLInitExtension>();
+
+    static {
+        ExtensionPointsManager.registerExtensionPoint(SL_INIT_EXTENSION_POINT_ID, SL_INIT_EXTENSION_POINT);
+    }
+
+    private final JToolBar toolbar;
+    private final List<PopupElementProvider> pepList = newList();
     private final JList recordsList;
     private final JScrollPane scrollableRecords;
     private final JProgressBar progressBar;
@@ -31,7 +43,7 @@ public class ScrollableLogView extends JPanel implements Observer {
     private final ScrollableLogModel logSegmentModel;
     private final AccumulativeColorer recordColorer;
 
-    public Context context = new Context();
+    public final Context context;
 
     public class Context {
         public ScrollableLogModel getModel() {
@@ -46,9 +58,54 @@ public class ScrollableLogView extends JPanel implements Observer {
             return ScrollableLogView.this.recordColorer.addFirst(rc);
         }
 
+        public Removable addPopupElementProvider(final PopupElementProvider pep) {
+            pepList.add(pep);
+            return new Removable() {
+                @Override
+                public void remove() {
+                    pepList.remove(pep);
+                }
+            };
+        }
 
         public Attributes getAttributes() {
             return ScrollableLogView.this.attributes;
+        }
+
+        public Removable addKeyListener(final KeyListener kl) {
+            recordsList.addKeyListener(kl);
+            return new Removable() {
+                @Override
+                public void remove() {
+                    recordsList.removeKeyListener(kl);
+                }
+            };
+        }
+
+        public Removable addToolbarElement(final JComponent c) {
+            toolbar.add(c);
+            toolbar.addSeparator();
+            return new Removable() {
+                @Override
+                public void remove() {
+                    toolbar.remove(c);
+                }
+            };
+        }
+
+        public Removable addToolbarElement(final JComponent c, int index) {
+            toolbar.add(c, index);
+            return new Removable() {
+                @Override
+                public void remove() {
+                    toolbar.remove(c);
+                }
+            };
+
+        }
+
+        public int getToolbarElementIndex(JComponent c) {
+            return toolbar.getComponentIndex(c);
         }
 
         public void updateRecords() {
@@ -79,7 +136,7 @@ public class ScrollableLogView extends JPanel implements Observer {
 
         final Highlighter customHighlighter = attributes.getValue(Highlighter.class);
 
-        this.popup = new LogPopup(this.context);
+        this.popup = new LogPopup();
 
         recordColorer = new AccumulativeColorer();
         if (customHighlighter != null)
@@ -95,7 +152,16 @@ public class ScrollableLogView extends JPanel implements Observer {
         this.recordsList = new JList(listModel);
         this.recordsList.setCellRenderer(cellRenderer);
         this.recordsList.addKeyListener(new ListKeyListener());
-        this.recordsList.setComponentPopupMenu(this.popup);
+        this.recordsList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    recordsList.setSelectedIndex(recordsList.locationToIndex(e.getPoint()));
+                    popup.show(recordsList, e.getX(), e.getY());
+                }
+            }
+        });
+
         this.recordsList.setVisible(true);
 
         scrollableRecords = new JScrollPane(this.recordsList);
@@ -112,10 +178,17 @@ public class ScrollableLogView extends JPanel implements Observer {
 
         update(logSegmentModel, null);
         this.logSegmentModel.addObserver(this);
+        context = new Context();
         installExtensions();
         if (toolbar.getComponentCount() == 0)
             toolbar.setVisible(false);
         this.setVisible(true);
+    }
+
+    private void installExtensions() {
+        List<SLInitExtension> extensions = SL_INIT_EXTENSION_POINT.getItems();
+        for (SLInitExtension cur : extensions)
+            cur.init(context);
     }
 
     @Override
@@ -128,35 +201,6 @@ public class ScrollableLogView extends JPanel implements Observer {
                 recordsList.repaint();
             }
         });
-    }
-
-    private void installExtensions() {
-        SLKeyListener[] keyListeners = SLPluginsRepository.getRegisteredKeyListeners();
-        for (final SLKeyListener cur : keyListeners) {
-            this.recordsList.addKeyListener(new KeyListener() {
-                @Override
-                public void keyTyped(KeyEvent e) {
-                    cur.keyTyped(e, context);
-                }
-
-                @Override
-                public void keyPressed(KeyEvent e) {
-                    cur.keyTyped(e, context);
-                }
-
-                @Override
-                public void keyReleased(KeyEvent e) {
-                    cur.keyTyped(e, context);
-                }
-            });
-        }
-
-        SLToolbarExtension[] toolbarExtensions = SLPluginsRepository.getRegisteredToolbarExtensions();
-        for (final SLToolbarExtension cur : toolbarExtensions) {
-            this.toolbar.add(cur.getToolbarElement(context));
-            this.toolbar.addSeparator();
-        }
-
     }
 
     private void updateProgress() {
@@ -246,4 +290,47 @@ public class ScrollableLogView extends JPanel implements Observer {
     }
 
 
+    private class LogPopup extends JPopupMenu {
+
+        @Override
+        public void show(Component invoker, int x, int y) {
+            update();
+            if (this.getComponentCount() != 0)
+                super.show(invoker, x, y);
+        }
+
+        private void update() {
+            this.removeAll();
+
+
+            for (PopupElementProvider cur : pepList) {
+                HierarchicalAction treeAction = cur.getHierarchicalAction();
+                if (treeAction == null) continue;
+                JMenuItem itemPlugin;
+                if (treeAction.getAction() != null)
+                    itemPlugin = new JMenuItem(treeAction.getAction());
+                else {
+                    itemPlugin = new JMenu(treeAction.getName());
+                    fillByChildren(itemPlugin, treeAction);
+                }
+                add(itemPlugin);
+            }
+
+            this.revalidate();
+        }
+
+        private void fillByChildren(JMenuItem item, HierarchicalAction itemAction) {
+            HierarchicalAction[] subActions = itemAction.getChildren();
+            for (HierarchicalAction cur : subActions) {
+                if (cur.getAction() != null)
+                    item.add(new JMenuItem(cur.getAction()));
+                else {
+                    JMenuItem child = new JMenu(cur.getName());
+                    fillByChildren(child, cur);
+                    item.add(child);
+                }
+            }
+        }
+
+    }
 }

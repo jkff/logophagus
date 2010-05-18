@@ -1,4 +1,4 @@
-package org.lf.parser;
+package org.lf.io;
 
 import java.io.IOException;
 import java.io.InputStream;

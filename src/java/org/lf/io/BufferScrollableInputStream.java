@@ -1,7 +1,5 @@
 package org.lf.io;
 
-import org.lf.parser.ScrollableInputStream;
-
 import java.io.IOException;
 
 /**

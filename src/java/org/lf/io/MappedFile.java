@@ -1,6 +1,5 @@
 package org.lf.io;
 
-import org.lf.parser.ScrollableInputStream;
 import org.lf.util.Function;
 
 import java.io.File;

@@ -3,9 +3,9 @@ package org.lf.logs;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.lf.io.RandomAccessFileIO;
+import org.lf.io.ScrollableInputStream;
 import org.lf.parser.Parser;
 import org.lf.parser.Position;
-import org.lf.parser.ScrollableInputStream;
 
 import java.io.IOException;
 

@@ -1,10 +1,10 @@
 package org.lf.parser.line;
 
+import org.lf.io.ScrollableInputStream;
 import org.lf.logs.Format;
 import org.lf.logs.Record;
 import org.lf.logs.RecordImpl;
 import org.lf.parser.Parser;
-import org.lf.parser.ScrollableInputStream;
 
 import java.io.IOException;
 

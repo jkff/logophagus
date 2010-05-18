@@ -7,23 +7,34 @@ import org.lf.plugins.tree.highlight.RecordColorer;
 import org.lf.ui.components.dialog.LongTaskDialog;
 import org.lf.ui.components.dialog.SearchSetupDialog;
 import org.lf.ui.components.plugins.scrollablelog.ScrollableLogView;
-import org.lf.ui.components.plugins.scrollablelog.extension.SLKeyListener;
-import org.lf.ui.components.plugins.scrollablelog.extension.SLToolbarExtension;
+import org.lf.ui.components.plugins.scrollablelog.extension.SLInitExtension;
 import org.lf.util.Filter;
 import org.lf.util.Removable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SearchExtension implements SLKeyListener, SLToolbarExtension {
-    private Map<ScrollableLogView.Context, SearchContext> viewToSearchContext =
-            new WeakHashMap<ScrollableLogView.Context, SearchContext>();
+public class SearchExtension implements SLInitExtension {
+
+    @Override
+    public void init(final ScrollableLogView.Context context) {
+        final Action searchAction = getActionForContext(context);
+        JComponent component = new JButton(searchAction);
+        context.addToolbarElement(component);
+        context.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == (KeyEvent.CTRL_MASK | KeyEvent.VK_F)) {
+                    searchAction.actionPerformed(null);
+                }
+            }
+        });
+    }
 
     private class SearchContext {
         public final SearchSetupDialog.SearchContext dialogContext;
@@ -35,40 +46,20 @@ public class SearchExtension implements SLKeyListener, SLToolbarExtension {
         }
     }
 
-    @Override
-    public JComponent getToolbarElement(final ScrollableLogView.Context context) {
-        Action searchAction = getActionForContext(context);
-        return new JButton(searchAction);
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e, ScrollableLogView.Context context) {
-        if (e.getKeyCode() == (KeyEvent.CTRL_MASK | KeyEvent.VK_F)) {
-            getActionForContext(context).actionPerformed(null);
-        }
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e, ScrollableLogView.Context context) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e, ScrollableLogView.Context context) {
-    }
-
-
     private Action getActionForContext(final ScrollableLogView.Context context) {
         return new AbstractAction("Find") {
+            private SearchContext lastContext;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!context.getModel().isReadingDone() || context.getModel().getRecordCount() == 0)
                     return;
                 SearchSetupDialog dialog = new SearchSetupDialog(Frame.getFrames()[0], Dialog.ModalityType.APPLICATION_MODAL);
-                final SearchSetupDialog.SearchContext dialogSearchContext = viewToSearchContext.containsKey(context) ?
-                        dialog.showSetupDialog(viewToSearchContext.get(context).dialogContext) :
+                final SearchSetupDialog.SearchContext dialogSearchContext = lastContext != null ?
+                        dialog.showSetupDialog(lastContext.dialogContext) :
                         dialog.showSetupDialog();
-                if (viewToSearchContext.containsKey(context))
-                    viewToSearchContext.remove(context).highlighter.remove();
+                if (lastContext != null)
+                    lastContext.highlighter.remove();
 
                 if (!dialog.isOkPressed()) {
                     context.updateRecords();
@@ -85,7 +76,7 @@ public class SearchExtension implements SLKeyListener, SLToolbarExtension {
                     }
                 });
 
-                viewToSearchContext.put(context, new SearchContext(dialogSearchContext, removable));
+                lastContext = new SearchContext(dialogSearchContext, removable);
 
                 int indexes[] = context.getSelectedIndexes();
                 int fromIndex = indexes.length != 0 ? indexes[0] : 0;
@@ -98,10 +89,13 @@ public class SearchExtension implements SLKeyListener, SLToolbarExtension {
                         Dialog.ModalityType.APPLICATION_MODAL);
                 searchStateDialog.setSize(200, 100);
                 searchStateDialog.setResizable(false);
+
                 final AtomicBoolean found = new AtomicBoolean(false);
+
                 new Thread() {
                     @Override
                     public void run() {
+                        Object mutex;
                         try {
                             Position cur = pos[0];
                             Position border = dialogSearchContext.forwardNotBackward ? log.last() : log.first();
@@ -118,7 +112,7 @@ public class SearchExtension implements SLKeyListener, SLToolbarExtension {
                             }
                             pos[0] = cur;
                             while (!searchStateDialog.isVisible()) {
-                                //wait for dialog become visible
+                                //TODO make right                                
                             }
                             searchStateDialog.setVisible(false);
                         } catch (IOException e1) {
@@ -128,6 +122,7 @@ public class SearchExtension implements SLKeyListener, SLToolbarExtension {
 
                     }
                 }.start();
+
                 searchStateDialog.setVisible(true);
 
                 if (found.get())
@@ -140,7 +135,7 @@ public class SearchExtension implements SLKeyListener, SLToolbarExtension {
         };
     }
 
-    Filter<Record> getFilterFromSearchContext(final SearchSetupDialog.SearchContext searchContext) {
+    private Filter<Record> getFilterFromSearchContext(final SearchSetupDialog.SearchContext searchContext) {
         final String userInput = searchContext.caseSensitive ? searchContext.text : searchContext.text.toLowerCase();
         return new Filter<Record>() {
             @Override

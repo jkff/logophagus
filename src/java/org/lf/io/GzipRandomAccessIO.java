@@ -1,7 +1,6 @@
 package org.lf.io;
 
 import org.lf.io.zlib.RandomAccessGzip;
-import org.lf.parser.ScrollableInputStream;
 import org.lf.util.CountingInputStream;
 import org.lf.util.Function;
 import org.lf.util.ProgressListener;

@@ -3,6 +3,7 @@ package org.lf.plugins.tree.splitbyfield;
 
 import org.lf.logs.*;
 import org.lf.parser.Position;
+import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
 import org.lf.plugins.tree.TreePlugin;
 import org.lf.services.ProgramProperties;
@@ -57,8 +58,9 @@ public class SplitByFieldPlugin implements TreePlugin {
                                         if (rec.getFormat().getFields()[i].equals(curField) &&
                                                 !uniqueValues.contains(rec.getCellValues()[i])) {
                                             uniqueValues.add(rec.getCellValues()[i]);
-                                            Entity entity = new Entity(parentEntity.attributes,
-                                                    new FilteredLog(parentLog, getFilter(curField, rec.getCellValues()[i])));
+                                            Log log = new FilteredLog(parentLog, getFilter(curField, rec.getCellValues()[i]));
+                                            Attributes attr = parentEntity.attributes.createSuccessor(log);
+                                            Entity entity = new Entity(attr, log);
                                             context.addChildTo(parentNode, new NodeData(entity, getIcon()), false);
                                         }
                                     }

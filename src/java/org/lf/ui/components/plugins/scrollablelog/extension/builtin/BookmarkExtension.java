@@ -3,23 +3,43 @@ package org.lf.ui.components.plugins.scrollablelog.extension.builtin;
 import org.lf.parser.Position;
 import org.lf.plugins.tree.BookmarkListener;
 import org.lf.plugins.tree.Bookmarks;
+import org.lf.ui.components.plugins.scrollablelog.PopupElementProvider;
 import org.lf.ui.components.plugins.scrollablelog.ScrollableLogView;
-import org.lf.ui.components.plugins.scrollablelog.extension.SLKeyListener;
-import org.lf.ui.components.plugins.scrollablelog.extension.SLPopupExtension;
-import org.lf.ui.components.plugins.scrollablelog.extension.SLToolbarExtension;
+import org.lf.ui.components.plugins.scrollablelog.extension.SLInitExtension;
 import org.lf.util.HierarchicalAction;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
-public class BookmarkExtension implements SLToolbarExtension, SLPopupExtension, SLKeyListener {
+public class BookmarkExtension implements SLInitExtension {
 
     @Override
-    public JComponent getToolbarElement(ScrollableLogView.Context context) {
+    public void init(final ScrollableLogView.Context context) {
+        final HierarchicalAction action = getHierarchicalActionFor(context);
+        context.addToolbarElement(getToolbarElement(context));
+        context.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == (KeyEvent.CTRL_MASK | KeyEvent.VK_B)) {
+                    action.getAction().actionPerformed(null);
+                }
+            }
+        });
+
+        context.addPopupElementProvider(new PopupElementProvider() {
+            @Override
+            public HierarchicalAction getHierarchicalAction() {
+                return action;
+            }
+        });
+    }
+
+    private JComponent getToolbarElement(ScrollableLogView.Context context) {
         JLabel label = new JLabel("Bookmarks");
         final Bookmarks bookmarks = context.getAttributes().getValue(Bookmarks.class);
         BookmarksComboBoxModel model = new BookmarksComboBoxModel(bookmarks);
@@ -41,8 +61,7 @@ public class BookmarkExtension implements SLToolbarExtension, SLPopupExtension, 
         return box;
     }
 
-    @Override
-    public HierarchicalAction getHierarchicalActionFor(final ScrollableLogView.Context context) {
+    private HierarchicalAction getHierarchicalActionFor(final ScrollableLogView.Context context) {
         if (!context.getModel().isReadingDone()) return null;
         Action action = new AbstractAction("Add to bookmarks") {
             @Override
@@ -75,22 +94,6 @@ public class BookmarkExtension implements SLToolbarExtension, SLPopupExtension, 
         };
         return new HierarchicalAction(action);
     }
-
-    @Override
-    public void keyTyped(KeyEvent e, ScrollableLogView.Context context) {
-        if (e.getKeyCode() == (KeyEvent.CTRL_MASK | KeyEvent.VK_B)) {
-            getHierarchicalActionFor(context).getAction().actionPerformed(null);
-        }
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e, ScrollableLogView.Context context) {
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e, ScrollableLogView.Context context) {
-    }
-
 
     class ComboBoxActionListener implements ActionListener {
         private final ScrollableLogView.Context context;

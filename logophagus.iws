@@ -60,95 +60,93 @@
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Bookmarks.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/tree/Bookmarks.java">
+      <file leaf-file-name="OpenLogFromFilePlugin.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/tree/filelog/OpenLogFromFilePlugin.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="50" column="28" selection-start="1726" selection-end="1726" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ProgressDialog.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/dialog/ProgressDialog.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="88" selection-start="351" selection-end="413" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SplitByFieldPlugin.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/tree/splitbyfield/SplitByFieldPlugin.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="0" selection-start="1242" selection-end="1242" vertical-scroll-proportion="0.0">
+            <state line="136" column="33" selection-start="5221" selection-end="5221" vertical-scroll-proportion="0.0">
               <folding>
-                <marker date="1273745419000" expanded="false" signature="51:545" placeholder="..." />
+                <marker date="1274172136000" expanded="false" signature="45:847" placeholder="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Logophagus.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/Logophagus.java">
+      <file leaf-file-name="DisplayPlugin.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/display/DisplayPlugin.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="83" column="20" selection-start="3118" selection-end="3118" vertical-scroll-proportion="0.6403162">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="FilterByCriteriaPlugin.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/tree/filtersubstr/FilterByCriteriaPlugin.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="54" column="28" selection-start="2139" selection-end="2139" vertical-scroll-proportion="-12.0">
+            <state line="10" column="34" selection-start="203" selection-end="203" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SearchSetupDialog.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/dialog/SearchSetupDialog.java">
+      <file leaf-file-name="TreePluginRepository.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/services/TreePluginRepository.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="143" column="30" selection-start="4811" selection-end="4811" vertical-scroll-proportion="0.0">
+            <state line="28" column="29" selection-start="960" selection-end="960" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FormatDialog.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/dialog/FormatDialog.java">
+      <file leaf-file-name="Record.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/Record.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="140" column="0" selection-start="4529" selection-end="4594" vertical-scroll-proportion="0.0">
+            <state line="7" column="0" selection-start="119" selection-end="119" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CSVParserAdjuster.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/csv/CSVParserAdjuster.java">
+      <file leaf-file-name="Format.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/Format.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="78" column="49" selection-start="3242" selection-end="3242" vertical-scroll-proportion="0.0">
+            <state line="16" column="13" selection-start="500" selection-end="500" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ViewSideBySidePlugin.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/tree/sidebyside/ViewSideBySidePlugin.java">
+      <file leaf-file-name="Log.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/Log.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="71" selection-start="1377" selection-end="1377" vertical-scroll-proportion="0.0">
+            <state line="55" column="41" selection-start="2152" selection-end="2152" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BookmarksComboBoxModel.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/BookmarksComboBoxModel.java">
+      <file leaf-file-name="BufferScrollableInputStream.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/BufferScrollableInputStream.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="41" selection-start="490" selection-end="490" vertical-scroll-proportion="0.0">
+            <state line="154" column="0" selection-start="4936" selection-end="4936" vertical-scroll-proportion="-2.6120858">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CSVParser.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/csv/CSVParser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="109" column="0" selection-start="3658" selection-end="3658" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RegexpParserAdjuster.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/regex/RegexpParserAdjuster.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="73" column="35" selection-start="2500" selection-end="2500" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SearchExtension.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/SearchExtension.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="30" column="34" selection-start="1148" selection-end="1148" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -164,22 +162,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/SLPluginsRepository.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/SLPopupExtension.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/io/ScrollableInputStream.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/SLContext.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/SLInitExtension.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/PopupElementProvider.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/plugins/display/ViewScrollableLogPlugin.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/tree/BookmarkListener.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/tree/sidebyside/ViewSideBySidePlugin.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/BookmarksComboBoxModel.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/BookmarkExtension.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/tree/Bookmarks.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/tree/TreePopup.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/extension/ExtensionPointsManager.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/dialog/FormatDialog.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/parser/csv/CSVParserAdjuster.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/dialog/SearchSetupDialog.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/SearchExtension.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/tree/splitbyfield/SplitByFieldValuesPlugin.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/LogPopup.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/plugins/tree/splitbyfield/SplitByFieldPlugin.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/tree/filtersubstr/FilterByCriteriaPlugin.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/Logophagus.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/logs/FilteredLog.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogView.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/extension/ExtensionPointsManager.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/SearchExtension.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/BookmarkExtension.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/parser/regex/RegexpParserAdjuster.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/tree/filelog/OpenLogFromFilePlugin.java" />
       </list>
     </option>
   </component>
@@ -218,6 +216,10 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="ProjectPane">
+        <subPane />
+      </pane>
+      <pane id="Scope" />
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -244,116 +246,38 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logophagus" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logophagus" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="org.lf" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ui" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logophagus" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logophagus" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="org.lf" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugins" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logophagus" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logophagus" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="org.lf" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugins" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tree" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logophagus" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="logophagus" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="org.lf" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugins" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="tree" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="splitbyfield" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageElementNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="Favorites" />
-      <pane id="ProjectPane">
-        <subPane />
-      </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="GenerateAntBuildDialog.generateIdeaHomeProperty" value="false" />
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="project.structure.proportion" value="0.15" />
-    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="project.structure.last.edited" value="Project" />
     <property name="OverrideImplement.combined" value="true" />
-    <property name="recentsLimit" value="5" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="MemberChooser.showClasses" value="true" />
+    <property name="recentsLimit" value="5" />
+    <property name="GenerateAntBuildDialog.generateSingleFile" value="false" />
+    <property name="GenerateAntBuildDialog.inclineRuntiemClasspath" value="false" />
+    <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
+    <property name="GenerateAntBuildDialog.backupFiles" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
     <property name="dynamic.classpath" value="false" />
-    <property name="MemberChooser.copyJavadoc" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="org.lf.ui.components.plugins.scrollablelog" />
       <recent name="org.lf.plugins.tree" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="org.lf.io" />
     </key>
   </component>
   <component name="RunManager" selected="Application.Logophagus">
@@ -511,23 +435,23 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="25" width="1366" height="718" extended-state="0" />
+    <frame x="0" y="24" width="1366" height="720" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32685512" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32635254" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32685512" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32685512" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20298508" sideWeight="0.6607774" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21535023" sideWeight="0.6614311" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39929327" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32685512" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32635254" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32635254" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -562,101 +486,101 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar:///usr/lib/jvm/jdk1.6.0_18/src.zip!/java/awt/Frame.java">
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="969" column="43" selection-start="31990" selection-end="31990" vertical-scroll-proportion="0.78656125" />
+        <state line="174" column="80" selection-start="5881" selection-end="5881" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="jar:///usr/lib/jvm/jdk1.6.0_18/src.zip!/java/awt/Window.java">
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/extension/ExtensionPointsManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1421" column="27" selection-start="51111" selection-end="51111" vertical-scroll-proportion="0.92885375" />
+        <state line="19" column="19" selection-start="601" selection-end="601" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/display/ViewScrollableLogPlugin.java">
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/BookmarkExtension.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="41" selection-start="2357" selection-end="2357" vertical-scroll-proportion="0.0" />
+        <state line="34" column="51" selection-start="1327" selection-end="1327" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/TimeMergeLogs.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="29" column="55" selection-start="852" selection-end="852" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/FileBackedLog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="99" column="60" selection-start="2693" selection-end="2693" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/BufferPool.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="55" column="40" selection-start="1664" selection-end="1664" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/regex/RegexpParserAdjuster.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="73" column="35" selection-start="2500" selection-end="2500" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/SearchExtension.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="90" column="27" selection-start="3688" selection-end="3688" vertical-scroll-proportion="0.49407116" />
+        <state line="30" column="34" selection-start="1148" selection-end="1148" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/Field.java">
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/tree/filelog/OpenLogFromFilePlugin.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="19" selection-start="42" selection-end="42" vertical-scroll-proportion="0.10364683">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar:///usr/lib/jvm/jdk1.6.0_18/src.zip!/java/util/concurrent/atomic/AtomicReference.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="36" selection-start="946" selection-end="946" vertical-scroll-proportion="0.67754316">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/tree/Bookmarks.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="28" selection-start="1726" selection-end="1726" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/dialog/ProgressDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="88" selection-start="351" selection-end="413" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/dialog/SearchSetupDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="143" column="30" selection-start="4811" selection-end="4811" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/dialog/FormatDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="140" column="0" selection-start="4529" selection-end="4594" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/csv/CSVParserAdjuster.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="49" selection-start="3242" selection-end="3242" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/tree/sidebyside/ViewSideBySidePlugin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="71" selection-start="1377" selection-end="1377" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/BookmarksComboBoxModel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="41" selection-start="490" selection-end="490" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/tree/splitbyfield/SplitByFieldPlugin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="0" selection-start="1242" selection-end="1242" vertical-scroll-proportion="0.0">
+        <state line="136" column="33" selection-start="5221" selection-end="5221" vertical-scroll-proportion="0.0">
           <folding>
-            <marker date="1273745419000" expanded="false" signature="51:545" placeholder="..." />
+            <marker date="1274172136000" expanded="false" signature="45:847" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/tree/filtersubstr/FilterByCriteriaPlugin.java">
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/plugins/display/DisplayPlugin.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="28" selection-start="2139" selection-end="2139" vertical-scroll-proportion="-12.0">
+        <state line="10" column="34" selection-start="203" selection-end="203" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/Logophagus.java">
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/services/TreePluginRepository.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="83" column="20" selection-start="3118" selection-end="3118" vertical-scroll-proportion="0.6403162">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="28" column="29" selection-start="960" selection-end="960" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/Record.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="0" selection-start="119" selection-end="119" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/Format.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="13" selection-start="500" selection-end="500" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/Log.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="55" column="41" selection-start="2152" selection-end="2152" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/parser/csv/CSVParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="109" column="0" selection-start="3658" selection-end="3658" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/BufferScrollableInputStream.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="154" column="0" selection-start="4936" selection-end="4936" vertical-scroll-proportion="-2.6120858">
+          <folding />
         </state>
       </provider>
     </entry>

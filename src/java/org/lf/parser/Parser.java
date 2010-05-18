@@ -1,5 +1,6 @@
 package org.lf.parser;
 
+import org.lf.io.ScrollableInputStream;
 import org.lf.logs.Format;
 import org.lf.logs.Record;
 
