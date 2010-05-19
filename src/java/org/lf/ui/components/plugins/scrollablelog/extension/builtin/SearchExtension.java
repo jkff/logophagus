@@ -95,7 +95,7 @@ public class SearchExtension implements SLInitExtension {
                 new Thread() {
                     @Override
                     public void run() {
-                        Object mutex;
+//                        long startTime = new DateTime().getMillis();
                         try {
                             Position cur = pos[0];
                             Position border = dialogSearchContext.forwardNotBackward ? log.last() : log.first();
@@ -111,6 +111,7 @@ public class SearchExtension implements SLInitExtension {
                                 }
                             }
                             pos[0] = cur;
+//                            System.out.println(new DateTime().getMillis()-startTime);
                             while (!searchStateDialog.isVisible()) {
                                 //TODO make right                                
                             }

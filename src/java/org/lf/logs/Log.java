@@ -13,7 +13,7 @@ public interface Log {
     /**
      * @param pos can be:
      *            - position from this log(then it will be returned as the result)
-     *            - position of setupDialog log, for example setupDialog log of filtered log, or one of setupDialog logs in merged log
+     *            - position of parent log, for example parent log of filtered log, or one of parent logs in merged log
      *            - null -> then function returns null;
      * @return :
      *         - position 'pos' that can be used in methods this.readRecord(), this.prev(), this.next() and this.convertToNative()
@@ -22,6 +22,17 @@ public interface Log {
      */
     @Nullable
     public Position convertToNative(Position pos) throws IOException;
+
+    /**
+     * @param pos can be:
+     *            - position from this log
+     *            - null -> then function returns null;
+     * @return :
+     *         - position of parent log that corresponds to pos
+     *         - null if no parent log or impossible to convert position or pos is not from this log
+     */
+    @Nullable
+    public Position convertToParent(Position pos) throws IOException;
 
     /**
      * @return - position of first record in this log
@@ -73,8 +84,8 @@ public interface Log {
      * @param pos from this log of record whose time method return
      * @return DateTime of record obtained from this log
      *         if record has no time then first record with time before this one is used
-     *         if first record has no time then it uses the time of first record after it that has time
-     *         if no record in this log has time then null returned;
+     *         if there is no such record then it uses the time of first record after it that has time
+     *         if no record in this log has time then return null;
      * @throws IOException
      */
     @Nullable

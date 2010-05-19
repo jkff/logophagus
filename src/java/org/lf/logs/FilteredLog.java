@@ -157,6 +157,13 @@ public class FilteredLog implements Log {
     }
 
     @Override
+    public Position convertToParent(Position pos) throws IOException {
+        if (pos == null || pos.getCorrespondingLog() != this) return null;
+        FilteredPosition fPos = (FilteredPosition) pos;
+        return fPos.underlyingPos;
+    }
+
+    @Override
     public Format[] getFormats() {
         return underlyingLog.getFormats();
     }

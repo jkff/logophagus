@@ -27,7 +27,7 @@ public class ViewSideBySidePlugin implements TreePlugin {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Entity first = context.selectedNodes[0].getNodeData().entity;
-                Entity second = context.selectedNodes[0].getNodeData().entity;
+                Entity second = context.selectedNodes[1].getNodeData().entity;
                 Entity entity = new Entity(new Attributes(), new LogsPair(first, second));
                 NodeData nodeData = new NodeData(entity, getIcon());
                 context.addChildToRoot(nodeData, true);

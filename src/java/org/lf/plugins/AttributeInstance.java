@@ -7,8 +7,8 @@ public interface AttributeInstance<C extends AttributeConcept<C, I>, I extends A
     C getConcept();
 
     /**
-     * Create an instance of the same attribute whose setupDialog
-     * equals to 'this'.
+     * Create an instance of the same attribute whose Log
+     * equals to attributeOwner.
      */
     public I createChild(Log attributeOwner);
 }

@@ -24,12 +24,12 @@ public class LineParser implements Parser {
     }
 
     @Override
-    public long findNextRecord(ScrollableInputStream is) throws IOException {
+    public int findNextRecord(ScrollableInputStream is) throws IOException {
         return readForwardUntilBorder(is).length;
     }
 
     @Override
-    public long findPrevRecord(ScrollableInputStream is) throws IOException {
+    public int findPrevRecord(ScrollableInputStream is) throws IOException {
         if (is.scrollBack(1) == 0) return 0;
         byte stopByte = (byte) '\n';
         byte[] res = is.readBackwardUntil(stopByte);

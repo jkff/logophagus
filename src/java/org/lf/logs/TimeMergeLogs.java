@@ -287,6 +287,13 @@ public class TimeMergeLogs implements Log {
     }
 
     @Override
+    public Position convertToParent(Position pos) throws IOException {
+        if (pos == null || pos.getCorrespondingLog() != this) return null;
+        MergedPosition mPos = (MergedPosition) pos;
+        return mPos.cpisAscCur.first().cur;
+    }
+
+    @Override
     public Format[] getFormats() {
         return mergeFormats;
     }

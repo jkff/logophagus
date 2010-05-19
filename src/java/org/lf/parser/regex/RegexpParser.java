@@ -39,7 +39,7 @@ public class RegexpParser implements Parser {
     }
 
     @Override
-    public synchronized long findNextRecord(ScrollableInputStream is) throws IOException {
+    public synchronized int findNextRecord(ScrollableInputStream is) throws IOException {
         return findOIMforward(is).first;
     }
 
@@ -53,7 +53,7 @@ public class RegexpParser implements Parser {
     }
 
     @Override
-    public long findPrevRecord(ScrollableInputStream is) throws IOException {
+    public int findPrevRecord(ScrollableInputStream is) throws IOException {
         if (is.scrollBack(1) == 0) return 0;
         return getRecordFromCharStream(is, false).first;
     }

@@ -12,17 +12,16 @@ public interface Parser {
     /**
      * Find out the smallest positive offset from the current position in 'is'
      * such that there is a separator just before the offset and a record after
-     * it. This is the offset of the next record in 'is'.
+     * it. return that offset
      */
-    long findNextRecord(ScrollableInputStream is) throws IOException;
+    int findNextRecord(ScrollableInputStream is) throws IOException;
 
     /**
      * Find out the smallest (by absolute value) negative offset from the
      * current position in 'is' such that there is a separator just before the
-     * offset and a record after it. This is the offset of the previous record
-     * in 'is'.
+     * offset and a record after it. return that offset
      */
-    long findPrevRecord(ScrollableInputStream is) throws IOException;
+    int findPrevRecord(ScrollableInputStream is) throws IOException;
 
     /**
      * @return formats of records that readRecord() can return

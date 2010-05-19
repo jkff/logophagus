@@ -40,18 +40,18 @@ class CSVParser implements Parser {
         this.csvFormat = singleFormat;
     }
 
-    public long findNextRecord(ScrollableInputStream is) throws IOException {
+    public int findNextRecord(ScrollableInputStream is) throws IOException {
         return findBorder(forward(is), new Forward(), new Nop());
     }
 
-    public long findPrevRecord(ScrollableInputStream is) throws IOException {
+    public int findPrevRecord(ScrollableInputStream is) throws IOException {
         if (is.scrollBack(1) == 0)
             return 0;
         return findBorder(backward(is), new Backward(), new Nop());
     }
 
 
-    private long findBorder(
+    private int findBorder(
             CharStream stream,
             TransitionFunction<State, SymbolType> tf,
             Sink sink) throws IOException {

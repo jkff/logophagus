@@ -136,6 +136,11 @@ public class FileBackedLog implements Log {
     }
 
     @Override
+    public Position convertToParent(Position pos) throws IOException {
+        return null;
+    }
+
+    @Override
     public Format[] getFormats() {
         return parser.getFormats();
     }

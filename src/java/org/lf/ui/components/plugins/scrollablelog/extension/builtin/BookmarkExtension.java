@@ -20,13 +20,13 @@ public class BookmarkExtension implements SLInitExtension {
 
     @Override
     public void init(final ScrollableLogView.Context context) {
-        final HierarchicalAction action = getHierarchicalActionFor(context);
+
         context.addToolbarElement(getToolbarElement(context));
         context.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == (KeyEvent.CTRL_MASK | KeyEvent.VK_B)) {
-                    action.getAction().actionPerformed(null);
+                    getHierarchicalActionFor(context).getAction().actionPerformed(null);
                 }
             }
         });
@@ -34,7 +34,7 @@ public class BookmarkExtension implements SLInitExtension {
         context.addPopupElementProvider(new PopupElementProvider() {
             @Override
             public HierarchicalAction getHierarchicalAction() {
-                return action;
+                return getHierarchicalActionFor(context);
             }
         });
     }
