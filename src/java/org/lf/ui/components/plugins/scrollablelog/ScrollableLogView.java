@@ -198,6 +198,7 @@ public class ScrollableLogView extends JPanel implements Observer {
             public void run() {
                 updateControls();
                 updateProgress();
+                recordsList.revalidate();
                 recordsList.repaint();
             }
         });

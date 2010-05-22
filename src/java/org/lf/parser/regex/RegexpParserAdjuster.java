@@ -78,7 +78,7 @@ public class RegexpParserAdjuster extends ParserAdjuster {
             patterns[i] = cur.first;
             formats[i] = cur.second;
         }
-        return new RegexpParser(patterns, formats, '\n', 5);
+        return new RegexpParser(patterns, formats, '\n', new int[]{5});
     }
 
     private class PairRenderer extends DefaultListCellRenderer {
