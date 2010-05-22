@@ -61,8 +61,9 @@ public class RegexpParser implements Parser {
 
     @Override
     public int findPrevRecord(ScrollableInputStream is) throws IOException {
+        // scroll back to \n symbol
         if (is.scrollBack(1) == 0) return 0;
-        return getRecordFromCharStream(is, false).first;
+        return getRecordFromCharStream(is, false).first + 1;
     }
 
     @Override
@@ -95,32 +96,46 @@ public class RegexpParser implements Parser {
             else byteArray.write(b, 0, b.length);
 
             curBytesString = byteArray.toString("us-ascii");
+            int length = curBytesString.length();
 
             if (joinCount == 0) {
-                firstLineLength = b.length;
+                firstLineLength = !isForward ?
+                        curBytesString.charAt(0) == recordDelimiter ?
+                                length - 1
+                                :
+                                length
+                        :
+                        length;
                 firstLineString = curBytesString;
             }
 
-            int length = curBytesString.length();
 
             for (int i = 0; i < linesPerRecord.length; ++i) {
                 if (linesPerRecord[i] != joinCount + 1) continue;
 
-                Matcher m = patterns[i].matcher(
-                        curBytesString.length() != 0 &&
-                                curBytesString.charAt(length - 1) == '\n'
-                                ?
-                                curBytesString.substring(0, length - 1) : curBytesString);
-                if (m.matches())
+                Matcher m = patterns[i].matcher
+                        (
+                                curBytesString.length() != 0 && curBytesString.charAt(length - 1) == '\n'
+                                        ?
+                                        curBytesString.substring(0, length - 1)
+                                        :
+                                        curBytesString
+                        );
+                if (m.matches()) {
+                    if (isForward)
+                        return new Triple<Integer, Integer, Object>(byteArray.size(), i, m);
+                    if (curBytesString.charAt(0) == recordDelimiter)
+                        return new Triple<Integer, Integer, Object>(byteArray.size() - 1, i, m);
                     return new Triple<Integer, Integer, Object>(byteArray.size(), i, m);
-
-                if (b[isForward ? b.length - 1 : 0] != (byte) recordDelimiter) {
-                    if (!isForward) firstLineLength++;
-                    break;
                 }
+
+            }
+            // if there is no recordDelimiter at the joined lines end then the begin/end of file occurs
+            // and we can't continue to read next lines 
+            if (curBytesString.charAt(isForward ? curBytesString.length() - 1 : 0) != recordDelimiter) {
+                break;
             }
         }
-
         return new Triple<Integer, Integer, Object>(firstLineLength, -1, firstLineString);
     }
 

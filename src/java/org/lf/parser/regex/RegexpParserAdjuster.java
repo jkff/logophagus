@@ -4,9 +4,8 @@ import org.lf.logs.Format;
 import org.lf.parser.Parser;
 import org.lf.ui.components.common.ControllableListView;
 import org.lf.ui.components.common.ParserAdjuster;
-import org.lf.ui.components.dialog.FormatDialog;
 import org.lf.ui.util.GUIUtils;
-import org.lf.util.Pair;
+import org.lf.util.Triple;
 
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
@@ -15,10 +14,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static org.lf.util.CollectionFactory.pair;
+import static org.lf.util.CollectionFactory.triple;
 
 public class RegexpParserAdjuster extends ParserAdjuster {
-    private ControllableListView<Pair<String, Format>> formatsView;
+    private ControllableListView<Triple<String, Integer, Format>> formatsView;
 
     public RegexpParserAdjuster() {
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -27,7 +26,7 @@ public class RegexpParserAdjuster extends ParserAdjuster {
         JLabel info = new JLabel("Formats");
         formatsBox.add(info);
         formatsBox.add(Box.createVerticalStrut(5));
-        formatsView = new ControllableListView<Pair<String, Format>>(new PairRenderer());
+        formatsView = new ControllableListView<Triple<String, Integer, Format>>(new TripleRenderer());
         formatsView.getListModel().addListDataListener(new ListDataListener() {
             @Override
             public void intervalAdded(ListDataEvent listDataEvent) {
@@ -49,12 +48,11 @@ public class RegexpParserAdjuster extends ParserAdjuster {
 
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                String pattern = JOptionPane.showInputDialog(null, "Enter record pattern:",
-                        "Format setup", JOptionPane.QUESTION_MESSAGE);
-                if (pattern == null) return;
-                Format format = new FormatDialog().showDialog();
+
+                RegexpFormatDialog formatDialog = new RegexpFormatDialog();
+                Triple<String, Integer, Format> format = formatDialog.showDialog();
                 if (format == null) return;
-                formatsView.getListModel().add(pair(pattern, format));
+                formatsView.getListModel().add(triple(format.first, format.second, format.third));
             }
         });
         formatsBox.add(formatsView);
@@ -73,15 +71,17 @@ public class RegexpParserAdjuster extends ParserAdjuster {
         int size = formatsView.getListModel().getSize();
         String[] patterns = new String[size];
         Format[] formats = new Format[size];
+        int[] linesPerRecord = new int[size];
         for (int i = 0; i < size; ++i) {
-            Pair<String, Format> cur = formatsView.getListModel().getElementAt(i);
+            Triple<String, Integer, Format> cur = formatsView.getListModel().getElementAt(i);
             patterns[i] = cur.first;
-            formats[i] = cur.second;
+            linesPerRecord[i] = cur.second;
+            formats[i] = cur.third;
         }
-        return new RegexpParser(patterns, formats, '\n', new int[]{5});
+        return new RegexpParser(patterns, formats, '\n', linesPerRecord);
     }
 
-    private class PairRenderer extends DefaultListCellRenderer {
+    private class TripleRenderer extends DefaultListCellRenderer {
 
         @Override
         public Component getListCellRendererComponent(JList jList, Object o, int i, boolean b, boolean b1) {
