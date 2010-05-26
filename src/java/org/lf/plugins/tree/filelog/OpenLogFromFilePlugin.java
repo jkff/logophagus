@@ -1,12 +1,16 @@
 package org.lf.plugins.tree.filelog;
 
 import com.sun.istack.internal.Nullable;
+import org.joda.time.format.DateTimeFormat;
 import org.lf.io.GzipRandomAccessIO;
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
+import org.lf.logs.Field;
 import org.lf.logs.FileBackedLog;
+import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.parser.Parser;
+import org.lf.parser.regex.RegexpParser;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
 import org.lf.plugins.tree.Bookmarks;
@@ -35,7 +39,7 @@ public class OpenLogFromFilePlugin implements TreePlugin {
             public void actionPerformed(ActionEvent e) {
                 Entity entity = getEntity();
                 if (entity == null) return;
-                NodeData nodeData = new NodeData(entity, getIcon());
+                NodeData nodeData = new NodeData(entity, getIconFilename());
                 context.addChildToRoot(nodeData, true);
             }
         });
@@ -46,8 +50,8 @@ public class OpenLogFromFilePlugin implements TreePlugin {
     }
 
     @Override
-    public Icon getIcon() {
-        return new ImageIcon(ProgramProperties.iconsPath + "log.gif");
+    public String getIconFilename() {
+        return "log.gif";
     }
 
     @Nullable
@@ -126,11 +130,8 @@ public class OpenLogFromFilePlugin implements TreePlugin {
 //                    };
 //
 //            Field[] fields1 = new Field[]{
-//                    new Field("Time"),
-//                    new Field("Level"),
-//                    new Field("pool"),
-//                    new Field("Message")
-//            };
+//                    DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS"));
+//            parser = new RegexpParser(regexes, new Format[]{singleFormat}, '\n', 1);
 //
 //            Field[] fields2 = new Field[]{
 //                    new Field("From"),
@@ -143,7 +144,6 @@ public class OpenLogFromFilePlugin implements TreePlugin {
 //            };
 //
 //            Format format1 = new Format(fields1, 0,
-//                    DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS"));
 //
 //            Format format2 = new Format(fields2, -1, null);
 //

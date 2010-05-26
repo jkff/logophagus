@@ -28,7 +28,7 @@ public class HighlightRegexpPlugin implements TreePlugin {
             public void actionPerformed(ActionEvent e) {
                 Entity entity = getEntity(context.selectedNodes[0].getNodeData().entity);
                 if (entity == null) return;
-                NodeData nodeData = new NodeData(entity, getIcon());
+                NodeData nodeData = new NodeData(entity, getIconFilename());
                 context.addChildTo(context.selectedNodes[0], nodeData, true);
             }
         };
@@ -44,8 +44,8 @@ public class HighlightRegexpPlugin implements TreePlugin {
     }
 
     @Override
-    public Icon getIcon() {
-        return new ImageIcon(ProgramProperties.iconsPath + "colorized.gif");
+    public String getIconFilename() {
+        return "colorized.gif";
     }
 
     private Entity getEntity(Entity parent) {

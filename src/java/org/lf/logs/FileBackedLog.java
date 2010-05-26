@@ -1,6 +1,8 @@
 package org.lf.logs;
 
+import org.joda.time.Chronology;
 import org.joda.time.DateTime;
+import org.joda.time.chrono.ISOChronology;
 import org.joda.time.format.DateTimeFormatter;
 import org.lf.io.RandomAccessFileIO;
 import org.lf.io.ScrollableInputStream;
@@ -10,6 +12,8 @@ import org.lf.parser.Position;
 import java.io.IOException;
 
 public class FileBackedLog implements Log {
+    private static final Chronology ISO_CHRONOLOGY = ISOChronology.getInstance();
+
     private final RandomAccessFileIO file;
     private final Parser parser;
 
@@ -165,8 +169,7 @@ public class FileBackedLog implements Log {
     private DateTime getTimeImpl(Position pos) throws IOException {
         Record posRecord = readRecord(pos);
         if (posRecord.getFormat().getTimeFieldIndex() != -1) {
-            DateTimeFormatter dtf = posRecord.getFormat().getTimeFormat();
-            return dtf.parseDateTime(posRecord.getCellValues()[posRecord.getFormat().getTimeFieldIndex()]);
+            return getTimeFromRecord(posRecord);
         }
 
         Position cur = pos;
@@ -174,8 +177,7 @@ public class FileBackedLog implements Log {
             cur = prev(cur);
             Record curRec = readRecord(cur);
             if (curRec.getFormat().getTimeFieldIndex() != -1) {
-                DateTimeFormatter dtf = curRec.getFormat().getTimeFormat();
-                return dtf.parseDateTime(curRec.getCellValues()[curRec.getFormat().getTimeFieldIndex()]);
+                return getTimeFromRecord(curRec);
             }
         }
 
@@ -184,12 +186,16 @@ public class FileBackedLog implements Log {
             cur = next(cur);
             Record curRec = readRecord(cur);
             if (curRec.getFormat().getTimeFieldIndex() != -1) {
-                DateTimeFormatter dtf = curRec.getFormat().getTimeFormat();
-                return dtf.parseDateTime(curRec.getCellValues()[curRec.getFormat().getTimeFieldIndex()]);
+                return getTimeFromRecord(curRec);
             }
         }
 
         return null;
+    }
+
+    private DateTime getTimeFromRecord(Record rec) {
+        DateTimeFormatter dtf = rec.getFormat().getTimeFormat();
+        return new DateTime(dtf.parseMillis(rec.getCellValues()[rec.getFormat().getTimeFieldIndex()]), ISO_CHRONOLOGY);
     }
 
 }

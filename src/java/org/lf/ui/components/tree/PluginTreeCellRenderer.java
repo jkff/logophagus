@@ -1,6 +1,8 @@
 package org.lf.ui.components.tree;
 
 
+import org.lf.services.ProgramProperties;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -22,7 +24,7 @@ class PluginTreeCellRenderer extends DefaultTreeCellRenderer {
         if (nodeValue != null) {
             if (nodeValue.getClass() != NodeData.class)
                 return label;
-            label.setIcon(((NodeData) nodeValue).icon);
+            label.setIcon(new ImageIcon(ProgramProperties.getIconsPath()+((NodeData) nodeValue).iconFilename));
         }
         return label;
     }

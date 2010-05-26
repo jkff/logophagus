@@ -28,11 +28,11 @@ public class PluginPanel extends JPanel implements TreeSelectionListener {
         if (node != null) {
             NodeData nodeData = (NodeData) node.getUserObject();
             if (nodeData != null) {
-                if (nodeData.component == null) {
+                if (nodeData.view == null) {
                     List<DisplayPlugin> dPlugins = DisplayPluginRepository.getApplicablePlugins(nodeData.entity.data);
-                    nodeData.component = dPlugins.get(0).createView(nodeData.entity);
+                    nodeData.view = dPlugins.get(0).createView(nodeData.entity);
                 }
-                this.add(nodeData.component);
+                this.add(nodeData.view.getComponent());
             }
         }
         this.revalidate();

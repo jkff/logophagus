@@ -8,29 +8,29 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class AddBookmarkListener implements ActionListener {
-    private final ScrollableLogView scrollableLogView;
+    private final ScrollableLogPanel scrollableLogPanel;
 
-    public AddBookmarkListener(ScrollableLogView scrollableLogView) {
-        this.scrollableLogView = scrollableLogView;
+    public AddBookmarkListener(ScrollableLogPanel scrollableLogPanel) {
+        this.scrollableLogPanel = scrollableLogPanel;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         while (true) {
             String name = JOptionPane.showInputDialog(
-                    scrollableLogView,
+                    scrollableLogPanel,
                     "Enter bookmark name", "Add bookmark", JOptionPane.QUESTION_MESSAGE);
             if (name == null || name.equals("")) return;
 
             try {
-                if (scrollableLogView.context.getAttributes().getValue(Bookmarks.class).getValue(name) != null) {
+                if (scrollableLogPanel.context.getAttributes().getValue(Bookmarks.class).getValue(name) != null) {
                     JOptionPane.showMessageDialog(
-                            scrollableLogView,
+                            scrollableLogPanel,
                             "Bookmark with such name already exists. Please input a different name.");
                 } else {
-                    int indexes[] = scrollableLogView.context.getSelectedIndexes();
+                    int indexes[] = scrollableLogPanel.context.getSelectedIndexes();
                     int row = indexes.length == 0 ? 0 : indexes[0];
-                    scrollableLogView.context.getAttributes().getValue(Bookmarks.class).addBookmark(name, scrollableLogView.context.getModel().getPosition(row));
+                    scrollableLogPanel.context.getAttributes().getValue(Bookmarks.class).addBookmark(name, scrollableLogPanel.context.getModel().getPosition(row));
                     return;
                 }
             } catch (IOException e1) {

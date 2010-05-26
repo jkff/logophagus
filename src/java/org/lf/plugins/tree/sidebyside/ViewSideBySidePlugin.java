@@ -29,7 +29,7 @@ public class ViewSideBySidePlugin implements TreePlugin {
                 Entity first = context.selectedNodes[0].getNodeData().entity;
                 Entity second = context.selectedNodes[1].getNodeData().entity;
                 Entity entity = new Entity(new Attributes(), new LogsPair(first, second));
-                NodeData nodeData = new NodeData(entity, getIcon());
+                NodeData nodeData = new NodeData(entity, getIconFilename());
                 context.addChildToRoot(nodeData, true);
             }
         };
@@ -43,7 +43,7 @@ public class ViewSideBySidePlugin implements TreePlugin {
     }
 
     @Override
-    public Icon getIcon() {
-        return new ImageIcon(ProgramProperties.iconsPath + "folder_files.gif");
+    public String getIconFilename() {
+        return "folder_files.gif";
     }
 }

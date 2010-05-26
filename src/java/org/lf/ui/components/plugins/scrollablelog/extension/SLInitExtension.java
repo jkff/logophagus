@@ -1,7 +1,7 @@
 package org.lf.ui.components.plugins.scrollablelog.extension;
 
-import org.lf.ui.components.plugins.scrollablelog.ScrollableLogView;
+import org.lf.ui.components.plugins.scrollablelog.ScrollableLogPanel;
 
 public interface SLInitExtension {
-    public void init(ScrollableLogView.Context context);
+    public void init(ScrollableLogPanel.Context context);
 }

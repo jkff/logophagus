@@ -9,7 +9,7 @@ import javax.swing.*;
 public class ViewFieldSplittedLogPlugin implements DisplayPlugin {
 
     @Override
-    public JComponent createView(Entity entity) {
+    public View createView(Entity entity) {
         throw new UnsupportedOperationException("Fix SplitByFieldPlugin and include it into compilation again");
 //        return new FieldSplittedLog((LogAndField)entity.data, entity.attributes);
     }

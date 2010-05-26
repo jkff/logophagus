@@ -16,7 +16,6 @@ import org.lf.ui.components.tree.PluginTree;
 import javax.swing.*;
 import java.awt.*;
 
-
 public class Logophagus extends JFrame {
     private JMenuBar menuBar;
     private PluginTree pluginsTreeView;
@@ -27,7 +26,9 @@ public class Logophagus extends JFrame {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "OS look-and-feel theme is not available. Will use default instead", "Warning", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "OS look-and-feel theme is not available. Will use default instead",
+                    "Warning", JOptionPane.ERROR_MESSAGE);
         }
 
         this.initComponents();

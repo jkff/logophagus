@@ -4,7 +4,7 @@ import org.lf.parser.Position;
 import org.lf.plugins.tree.BookmarkListener;
 import org.lf.plugins.tree.Bookmarks;
 import org.lf.ui.components.plugins.scrollablelog.PopupElementProvider;
-import org.lf.ui.components.plugins.scrollablelog.ScrollableLogView;
+import org.lf.ui.components.plugins.scrollablelog.ScrollableLogPanel;
 import org.lf.ui.components.plugins.scrollablelog.extension.SLInitExtension;
 import org.lf.util.HierarchicalAction;
 
@@ -19,7 +19,7 @@ import java.io.IOException;
 public class BookmarkExtension implements SLInitExtension {
 
     @Override
-    public void init(final ScrollableLogView.Context context) {
+    public void init(final ScrollableLogPanel.Context context) {
 
         context.addToolbarElement(getToolbarElement(context));
         context.addKeyListener(new KeyAdapter() {
@@ -39,7 +39,7 @@ public class BookmarkExtension implements SLInitExtension {
         });
     }
 
-    private JComponent getToolbarElement(ScrollableLogView.Context context) {
+    private JComponent getToolbarElement(ScrollableLogPanel.Context context) {
         JLabel label = new JLabel("Bookmarks");
         final Bookmarks bookmarks = context.getAttributes().getValue(Bookmarks.class);
         BookmarksComboBoxModel model = new BookmarksComboBoxModel(bookmarks);
@@ -61,7 +61,7 @@ public class BookmarkExtension implements SLInitExtension {
         return box;
     }
 
-    private HierarchicalAction getHierarchicalActionFor(final ScrollableLogView.Context context) {
+    private HierarchicalAction getHierarchicalActionFor(final ScrollableLogPanel.Context context) {
         if (!context.getModel().isReadingDone()) return null;
         Action action = new AbstractAction("Add to bookmarks") {
             @Override
@@ -96,9 +96,9 @@ public class BookmarkExtension implements SLInitExtension {
     }
 
     class ComboBoxActionListener implements ActionListener {
-        private final ScrollableLogView.Context context;
+        private final ScrollableLogPanel.Context context;
 
-        ComboBoxActionListener(ScrollableLogView.Context context) {
+        ComboBoxActionListener(ScrollableLogPanel.Context context) {
             this.context = context;
         }
 

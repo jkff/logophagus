@@ -31,7 +31,7 @@ public class FilterByCriteriaPlugin implements TreePlugin {
             public void actionPerformed(ActionEvent e) {
                 Entity entity = getEntity(parentNodeData.entity, true);
                 if (entity == null) return;
-                NodeData nodeData = new NodeData(entity, getIcon());
+                NodeData nodeData = new NodeData(entity, getIconFilename());
                 context.addChildTo(context.selectedNodes[0], nodeData, true);
             }
         };
@@ -43,7 +43,7 @@ public class FilterByCriteriaPlugin implements TreePlugin {
             public void actionPerformed(ActionEvent e) {
                 Entity entity = getFormatEntity(parentNodeData.entity);
                 if (entity == null) return;
-                NodeData nodeData = new NodeData(entity, getIcon());
+                NodeData nodeData = new NodeData(entity, getIconFilename());
                 context.addChildTo(context.selectedNodes[0], nodeData, true);
             }
         };
@@ -54,7 +54,7 @@ public class FilterByCriteriaPlugin implements TreePlugin {
             public void actionPerformed(ActionEvent e) {
                 Entity entity = getEntity(parentNodeData.entity, false);
                 if (entity == null) return;
-                NodeData nodeData = new NodeData(entity, getIcon());
+                NodeData nodeData = new NodeData(entity, getIconFilename());
                 context.addChildTo(context.selectedNodes[0], nodeData, true);
             }
         };
@@ -69,8 +69,8 @@ public class FilterByCriteriaPlugin implements TreePlugin {
     }
 
     @Override
-    public Icon getIcon() {
-        return new ImageIcon(ProgramProperties.iconsPath + "filter.gif");
+    public String getIconFilename() {
+        return "filter.gif";
     }
 
     private Entity getEntity(Entity parent, final boolean substringNotRegexp) {

@@ -1,22 +1,23 @@
 package org.lf.ui.components.tree;
 
 import org.lf.plugins.Entity;
+import org.lf.plugins.display.View;
 
 import javax.swing.*;
 
 public class NodeData {
     public final Entity entity;
-    public JComponent component;
-    public final Icon icon;
+    public View view;
+    public final String iconFilename;
 
-    public NodeData(Entity entity, Icon icon) {
-        this(entity, null, icon);
+    public NodeData(Entity entity, String iconFilename) {
+        this(entity, null, iconFilename);
     }
 
-    public NodeData(Entity entity, JComponent component, Icon icon) {
+    public NodeData(Entity entity, View view, String iconFilename) {
         this.entity = entity;
-        this.component = component;
-        this.icon = icon;
+        this.view = view;
+        this.iconFilename = iconFilename;
     }
 
     public String toString() {

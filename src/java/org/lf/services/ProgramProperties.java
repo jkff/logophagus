@@ -5,13 +5,12 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
 public class ProgramProperties {
-    public static final String propertiesFileName = "logophagus.txt";
-    public static final String workingDir = "WORKING_DIR";
-    public static final Properties mainProperties = new Properties();
-    public static final String iconsPath;
+    private static final String propertiesFileName = "logophagus.txt";
+    private static final String workingDir = "WORKING_DIR";
+    private static final Properties mainProperties = new Properties();
+    private static final String iconsPath;
 
     static {
-        //System.setProperty("jna.library.path", System.getProperty("user.dir")+ "/lib");
         iconsPath = System.getProperty("user.dir") + "/src/java/org/lf/ui/icons/";
         String userHomePath = System.getProperty("user.home");
         File file = new File(userHomePath, propertiesFileName);
@@ -37,6 +36,10 @@ public class ProgramProperties {
 
     public static void setWorkingDir(File f) {
         mainProperties.setProperty(workingDir, f.getAbsolutePath());
+    }
+
+    public static String getIconsPath() {
+        return iconsPath;
     }
 
     public static void save() throws IOException {

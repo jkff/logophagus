@@ -7,5 +7,5 @@ import javax.swing.*;
 public interface DisplayPlugin {
     boolean isApplicableFor(Object o);
 
-    JComponent createView(Entity entity);
+    View createView(Entity entity);
 }

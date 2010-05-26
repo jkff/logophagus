@@ -61,7 +61,7 @@ public class SplitByFieldPlugin implements TreePlugin {
                                             Log log = new FilteredLog(parentLog, getFilter(curField, rec.getCellValues()[i]));
                                             Attributes attr = parentEntity.attributes.createSuccessor(log);
                                             Entity entity = new Entity(attr, log);
-                                            context.addChildTo(parentNode, new NodeData(entity, getIcon()), false);
+                                            context.addChildTo(parentNode, new NodeData(entity, getIconFilename()), false);
                                         }
                                     }
                                     if (cur.equals(parentLog.last())) break;
@@ -87,8 +87,8 @@ public class SplitByFieldPlugin implements TreePlugin {
     }
 
     @Override
-    public Icon getIcon() {
-        return new ImageIcon(ProgramProperties.iconsPath + "folder_files.gif");
+    public String getIconFilename() {
+        return "folder_files.gif";
     }
 
 

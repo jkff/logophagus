@@ -83,32 +83,34 @@ public class BufferPool<K, H> {
             H hash = hashKey.apply(key);
 
             HashWithOwner mapKey = new HashWithOwner(owner, hash);
+            top:
+            while (true) {
+                if (hash2buf.containsKey(mapKey)) {
+                    Buffer b = (Buffer) hash2buf.get(mapKey);
+                    b.refCount++;
+                    return b;
+                }
 
-            if (hash2buf.containsKey(mapKey)) {
-                Buffer b = (Buffer) hash2buf.get(mapKey);
-                b.refCount++;
+                // Wait till there's space in the buffer pool
+                if (hash2buf.size() >= MAX_BUFFERS) {
+                    // No space: garbageCollect() and try again.
+                    while (true) {
+                        garbageCollectBuffers();
+                        if (hash2buf.size() >= MAX_BUFFERS)
+                            hash2buf.wait();
+                        else
+                            continue top;
+                    }
+                }
+
+                byte[] data = this.makeBuffer.apply(hash);
+
+                Buffer b = new Buffer(1, hash, data);
+                hash2buf.put(mapKey, b);
+
+                hash2buf.notifyAll();
                 return b;
             }
-
-            // Wait till there's space in the buffer pool
-            if (hash2buf.size() >= MAX_BUFFERS) {
-                // No space: garbageCollect() and try again.
-                while (true) {
-                    garbageCollectBuffers();
-                    if (hash2buf.size() >= MAX_BUFFERS)
-                        hash2buf.wait();
-                    else
-                        return getBuffer(key);
-                }
-            }
-
-            byte[] data = this.makeBuffer.apply(hash);
-
-            Buffer b = new Buffer(1, hash, data);
-            hash2buf.put(mapKey, b);
-
-            hash2buf.notifyAll();
-            return b;
         }
     }
 
@@ -125,10 +127,10 @@ public class BufferPool<K, H> {
     }
 
     void releaseBuffer(Buffer buf) {
-        buf.refCount--;
-        if (buf.refCount == 0) {
-            this.releaseBuffer.apply(buf);
-            synchronized (hash2buf) {
+        synchronized (hash2buf) {
+            buf.refCount--;
+            if (buf.refCount == 0) {
+                this.releaseBuffer.apply(buf);
                 // No need to call notify() if surely noone is calling wait().
                 // It is so if there are enough buffers.
                 if (hash2buf.size() >= MAX_BUFFERS) {

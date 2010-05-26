@@ -12,5 +12,5 @@ public interface TreePlugin {
 
     String getName();
 
-    Icon getIcon();
+    String getIconFilename();
 }

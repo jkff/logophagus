@@ -6,7 +6,7 @@ import org.lf.parser.Position;
 import org.lf.plugins.tree.highlight.RecordColorer;
 import org.lf.ui.components.dialog.LongTaskDialog;
 import org.lf.ui.components.dialog.SearchSetupDialog;
-import org.lf.ui.components.plugins.scrollablelog.ScrollableLogView;
+import org.lf.ui.components.plugins.scrollablelog.ScrollableLogPanel;
 import org.lf.ui.components.plugins.scrollablelog.extension.SLInitExtension;
 import org.lf.util.Filter;
 import org.lf.util.Removable;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SearchExtension implements SLInitExtension {
 
     @Override
-    public void init(final ScrollableLogView.Context context) {
+    public void init(final ScrollableLogPanel.Context context) {
         final Action searchAction = getActionForContext(context);
         JComponent component = new JButton(searchAction);
         context.addToolbarElement(component);
@@ -46,7 +46,7 @@ public class SearchExtension implements SLInitExtension {
         }
     }
 
-    private Action getActionForContext(final ScrollableLogView.Context context) {
+    private Action getActionForContext(final ScrollableLogPanel.Context context) {
         return new AbstractAction("Find") {
             private SearchContext lastContext;
 

@@ -4,12 +4,11 @@ import org.lf.logs.Log;
 import org.lf.plugins.Entity;
 import org.lf.plugins.extension.ExtensionPoint;
 import org.lf.plugins.extension.ExtensionPointsManager;
+import org.lf.ui.components.plugins.scrollablelog.ScrollableLogPanel;
 import org.lf.ui.components.plugins.scrollablelog.ScrollableLogView;
 import org.lf.ui.components.plugins.scrollablelog.extension.SLInitExtension;
 import org.lf.ui.components.plugins.scrollablelog.extension.builtin.BookmarkExtension;
 import org.lf.ui.components.plugins.scrollablelog.extension.builtin.SearchExtension;
-
-import javax.swing.*;
 
 public class ViewScrollableLogPlugin implements DisplayPlugin {
 
@@ -17,13 +16,13 @@ public class ViewScrollableLogPlugin implements DisplayPlugin {
         SearchExtension se = new SearchExtension();
         BookmarkExtension be = new BookmarkExtension();
         ExtensionPoint<SLInitExtension> ep = ExtensionPointsManager.getExtensionPoint(
-                ScrollableLogView.SL_INIT_EXTENSION_POINT_ID);
+                ScrollableLogPanel.SL_INIT_EXTENSION_POINT_ID);
         ep.addExtension(se);
         ep.addExtension(be);
     }
 
     @Override
-    public JComponent createView(Entity entity) {
+    public View createView(Entity entity) {
         return new ScrollableLogView((Log) entity.data, entity.attributes);
 
     }

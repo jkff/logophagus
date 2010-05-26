@@ -51,7 +51,7 @@ public class MergeLogsPlugin implements TreePlugin {
                 Entity entity = getEntity(list.toArray(new Entity[0]));
                 if (entity == null)
                     return;
-                NodeData nodeData = new NodeData(entity, getIcon());
+                NodeData nodeData = new NodeData(entity, getIconFilename());
                 context.addChildToRoot(nodeData, true);
             }
         };
@@ -67,8 +67,8 @@ public class MergeLogsPlugin implements TreePlugin {
 
 
     @Override
-    public Icon getIcon() {
-        return new ImageIcon(ProgramProperties.iconsPath + "multi.gif");
+    public String getIconFilename() {
+        return "multi.gif";
     }
 
     private Entity getEntity(Entity[] args) {

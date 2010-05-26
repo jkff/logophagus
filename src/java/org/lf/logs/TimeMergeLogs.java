@@ -205,12 +205,14 @@ public class TimeMergeLogs implements Log {
 
     @Override
     public Position next(Position pos) throws IOException {
+        if (pos == null)
+            throw new IllegalArgumentException("Position can't be null");
+        if (!(pos instanceof MergedPosition))
+            throw new IllegalArgumentException("Position must be a MergedPosition but is a " + pos.getClass());
         MergedPosition p = (MergedPosition) pos;
         // Specification:
         // readRecord(next(p)) is the earliest record in the union of all records
         // in all logs, later than readRecord(p).
-        if (p == null)
-            throw new IllegalArgumentException("Unsupported position for this log.");
 
         TreeSet<CurPrevIndex> curSortedCopy = new TreeSet<CurPrevIndex>(p.cpisAscCur);
         TreeSet<CurPrevIndex> prevSortedCopy = new TreeSet<CurPrevIndex>(p.cpisAscPrev);
@@ -231,11 +233,14 @@ public class TimeMergeLogs implements Log {
 
     @Override
     public Position prev(Position pos) throws IOException {
+        if (pos == null)
+            throw new IllegalArgumentException("Position can't be null");
+        if (!(pos instanceof MergedPosition))
+            throw new IllegalArgumentException("Position must be a MergedPosition but is a " + pos.getClass());
         MergedPosition p = (MergedPosition) pos;
-
-        if (p == null)
-            throw new IllegalArgumentException("Unsupported position for this log.");
-
+        // Specification:
+        // readRecord(next(p)) is the earliest record in the union of all records
+        // in all logs, later than readRecord(p).
         TreeSet<CurPrevIndex> curSortedCopy = new TreeSet<CurPrevIndex>(p.cpisAscCur);
         TreeSet<CurPrevIndex> prevSortedCopy = new TreeSet<CurPrevIndex>(p.cpisAscPrev);
 
