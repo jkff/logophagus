@@ -5,8 +5,9 @@ import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.plugins.Entity;
+import org.lf.plugins.Plugin;
+import org.lf.plugins.ProgramContext;
 import org.lf.plugins.tree.TreePlugin;
-import org.lf.services.ProgramProperties;
 import org.lf.ui.components.tree.NodeData;
 import org.lf.ui.components.tree.TreeContext;
 import org.lf.util.Filter;
@@ -15,7 +16,12 @@ import org.lf.util.HierarchicalAction;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class FilterByCriteriaPlugin implements TreePlugin {
+public class FilterByCriteriaPlugin implements TreePlugin, Plugin {
+    @Override
+    public void init(ProgramContext context) {
+        context.getTreePluginRepository().register(this);
+    }
+
     @Override
     public HierarchicalAction getActionFor(final TreeContext context) {
         if (context.selectedNodes.length != 1 ||
@@ -148,5 +154,4 @@ public class FilterByCriteriaPlugin implements TreePlugin {
         Log fLog = new FilteredLog(log, filter);
         return new Entity(parent.attributes.createSuccessor(fLog), fLog);
     }
-
 }

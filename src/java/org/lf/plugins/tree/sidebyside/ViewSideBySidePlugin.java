@@ -3,8 +3,10 @@ package org.lf.plugins.tree.sidebyside;
 import org.lf.logs.Log;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
+import org.lf.plugins.Plugin;
+import org.lf.plugins.ProgramContext;
+import org.lf.plugins.display.ViewSideBySideDisplayPlugin;
 import org.lf.plugins.tree.TreePlugin;
-import org.lf.services.ProgramProperties;
 import org.lf.ui.components.tree.NodeData;
 import org.lf.ui.components.tree.TreeContext;
 import org.lf.util.HierarchicalAction;
@@ -13,7 +15,13 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 
-public class ViewSideBySidePlugin implements TreePlugin {
+public class ViewSideBySidePlugin implements TreePlugin, Plugin {
+
+    @Override
+    public void init(ProgramContext context) {
+        context.getTreePluginRepository().register(this);
+        context.getDisplayPluginRepository().register(new ViewSideBySideDisplayPlugin());
+    }
 
     @Override
     public HierarchicalAction getActionFor(final TreeContext context) {

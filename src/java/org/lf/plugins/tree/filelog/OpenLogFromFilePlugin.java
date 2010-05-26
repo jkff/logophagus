@@ -1,18 +1,16 @@
 package org.lf.plugins.tree.filelog;
 
 import com.sun.istack.internal.Nullable;
-import org.joda.time.format.DateTimeFormat;
 import org.lf.io.GzipRandomAccessIO;
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
-import org.lf.logs.Field;
 import org.lf.logs.FileBackedLog;
-import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.parser.Parser;
-import org.lf.parser.regex.RegexpParser;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
+import org.lf.plugins.Plugin;
+import org.lf.plugins.ProgramContext;
 import org.lf.plugins.tree.Bookmarks;
 import org.lf.plugins.tree.TreePlugin;
 import org.lf.services.ProgramProperties;
@@ -29,7 +27,11 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
-public class OpenLogFromFilePlugin implements TreePlugin {
+public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
+    @Override
+    public void init(ProgramContext context) {
+        context.getTreePluginRepository().register(this);
+    }
 
     @Override
     public HierarchicalAction getActionFor(final TreeContext context) {
@@ -160,5 +162,4 @@ public class OpenLogFromFilePlugin implements TreePlugin {
             return null;
         }
     }
-
 }

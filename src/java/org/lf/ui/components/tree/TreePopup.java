@@ -15,8 +15,10 @@ import java.util.List;
 
 public class TreePopup extends JPopupMenu {
     private final JTree tree;
+    private TreePluginRepository treePluginRepository;
 
-    public TreePopup(JTree pluginsTree) {
+    public TreePopup(JTree pluginsTree, TreePluginRepository tpr) {
+        this.treePluginRepository = tpr;
         this.tree = pluginsTree;
         this.setBorder(BorderFactory.createLineBorder(Color.GRAY));
     }
@@ -30,7 +32,7 @@ public class TreePopup extends JPopupMenu {
     private void update() {
         this.removeAll();
         final TreeContext context = new TreeContext(tree);
-        List<TreePlugin> plugins = TreePluginRepository.getApplicablePlugins(context);
+        List<TreePlugin> plugins = treePluginRepository.getApplicablePlugins(context);
         for (final TreePlugin plugin : plugins) {
             HierarchicalAction treeAction = plugin.getActionFor(context);
             JMenuItem itemPlugin;

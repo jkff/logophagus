@@ -5,8 +5,9 @@ import org.lf.logs.Log;
 import org.lf.logs.TimeMergeLogs;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
+import org.lf.plugins.Plugin;
+import org.lf.plugins.ProgramContext;
 import org.lf.plugins.tree.TreePlugin;
-import org.lf.services.ProgramProperties;
 import org.lf.ui.components.tree.NodeData;
 import org.lf.ui.components.tree.TreeContext;
 import org.lf.ui.components.tree.TreePluginNode;
@@ -19,7 +20,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class MergeLogsPlugin implements TreePlugin {
+public class MergeLogsPlugin implements TreePlugin, Plugin {
+    @Override
+    public void init(ProgramContext context) {
+        context.getTreePluginRepository().register(this);
+    }
+
     @Override
     public HierarchicalAction getActionFor(final TreeContext context) {
         if (context.selectedNodes.length < 2)
@@ -60,11 +66,11 @@ public class MergeLogsPlugin implements TreePlugin {
         return new HierarchicalAction(action);
     }
 
+
     @Override
     public String getName() {
         return "Merge logs";
     }
-
 
     @Override
     public String getIconFilename() {
@@ -93,5 +99,4 @@ public class MergeLogsPlugin implements TreePlugin {
         }
         return null;
     }
-
 }

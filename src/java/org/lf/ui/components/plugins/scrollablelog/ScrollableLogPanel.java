@@ -3,11 +3,7 @@ package org.lf.ui.components.plugins.scrollablelog;
 
 import org.lf.logs.Log;
 import org.lf.logs.Record;
-import org.lf.parser.Position;
 import org.lf.plugins.Attributes;
-import org.lf.plugins.extension.ExtensionPointID;
-import org.lf.plugins.extension.ExtensionPointsManager;
-import org.lf.plugins.extension.ListExtensionPoint;
 import org.lf.plugins.tree.highlight.Highlighter;
 import org.lf.plugins.tree.highlight.RecordColorer;
 import org.lf.ui.components.plugins.scrollablelog.extension.SLInitExtension;
@@ -25,13 +21,6 @@ import java.util.Observer;
 import static org.lf.util.CollectionFactory.newList;
 
 public class ScrollableLogPanel extends JPanel implements Observer {
-    public static final ExtensionPointID<SLInitExtension> SL_INIT_EXTENSION_POINT_ID = ExtensionPointID.create();
-    private static final ListExtensionPoint<SLInitExtension> SL_INIT_EXTENSION_POINT = new ListExtensionPoint<SLInitExtension>();
-
-    static {
-        ExtensionPointsManager.registerExtensionPoint(SL_INIT_EXTENSION_POINT_ID, SL_INIT_EXTENSION_POINT);
-    }
-
     private final JToolBar toolbar;
     private final List<PopupElementProvider> pepList = newList();
     private final JList recordsList;
@@ -93,31 +82,12 @@ public class ScrollableLogPanel extends JPanel implements Observer {
             };
         }
 
-        public Removable addToolbarElement(final JComponent c, int index) {
-            toolbar.add(c, index);
-            return new Removable() {
-                @Override
-                public void remove() {
-                    toolbar.remove(c);
-                }
-            };
-
-        }
-
-        public int getToolbarElementIndex(JComponent c) {
-            return toolbar.getComponentIndex(c);
-        }
-
         public void updateRecords() {
             recordsList.repaint();
         }
     }
 
-    public ScrollableLogPanel(Log log, Attributes attributes) {
-        this(log, attributes, null);
-    }
-
-    public ScrollableLogPanel(final Log log, Attributes attributes, Position pos) {
+    public ScrollableLogPanel(final Log log, Attributes attributes) {
         this.attributes = attributes;
         this.logSegmentModel = new ScrollableLogModel(log, 50);
         this.logSegmentModel.start();
@@ -186,7 +156,7 @@ public class ScrollableLogPanel extends JPanel implements Observer {
     }
 
     private void installExtensions() {
-        List<SLInitExtension> extensions = SL_INIT_EXTENSION_POINT.getItems();
+        List<SLInitExtension> extensions = ScrollableLogPlugin.getInitExtensions();
         for (SLInitExtension cur : extensions)
             cur.init(context);
     }

@@ -1,5 +1,7 @@
 package org.lf.ui;
 
+import org.lf.plugins.PluginManager;
+import org.lf.plugins.ProgramContext;
 import org.lf.plugins.display.ViewScrollableLogPlugin;
 import org.lf.plugins.tree.filelog.OpenLogFromFilePlugin;
 import org.lf.plugins.tree.filtersubstr.FilterByCriteriaPlugin;
@@ -7,10 +9,9 @@ import org.lf.plugins.tree.highlight.HighlightRegexpPlugin;
 import org.lf.plugins.tree.merge.MergeLogsPlugin;
 import org.lf.plugins.tree.sidebyside.ViewSideBySidePlugin;
 import org.lf.plugins.tree.splitbyfield.SplitByFieldPlugin;
-import org.lf.services.DisplayPluginRepository;
-import org.lf.services.TreePluginRepository;
 import org.lf.ui.components.menu.LogophagusMenuBar;
 import org.lf.ui.components.pluginPanel.PluginPanel;
+import org.lf.ui.components.plugins.scrollablelog.ScrollableLogPlugin;
 import org.lf.ui.components.tree.PluginTree;
 
 import javax.swing.*;
@@ -21,8 +22,27 @@ public class Logophagus extends JFrame {
     private PluginTree pluginsTreeView;
     private PluginPanel pluginPanel;
 
+    private ProgramContext context;
+
     private Logophagus() {
         super("Logophagus");
+
+        context = new ProgramContext();
+
+        PluginManager pluginManager = new PluginManager(context);
+
+        pluginManager.addPlugin(new ViewScrollableLogPlugin());
+        pluginManager.addPlugin(new ScrollableLogPlugin());
+        pluginManager.addPlugin(new OpenLogFromFilePlugin());
+        pluginManager.addPlugin(new FilterByCriteriaPlugin());
+        pluginManager.addPlugin(new ViewSideBySidePlugin());
+        pluginManager.addPlugin(new SplitByFieldPlugin());
+        pluginManager.addPlugin(new HighlightRegexpPlugin());
+        pluginManager.addPlugin(new MergeLogsPlugin());
+//        pluginManager.addPlugin(new ViewFieldSplittedLogPlugin());
+
+        pluginManager.init();
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
@@ -65,30 +85,19 @@ public class Logophagus extends JFrame {
 
     private PluginPanel getPluginPanel() {
         if (pluginPanel != null) return pluginPanel;
-        pluginPanel = new PluginPanel();
+        pluginPanel = new PluginPanel(context.getDisplayPluginRepository());
         pluginPanel.setLayout(new BorderLayout());
         return pluginPanel;
     }
 
     private PluginTree getPluginTree() {
         if (pluginsTreeView != null) return pluginsTreeView;
-        pluginsTreeView = new PluginTree();
+        pluginsTreeView = new PluginTree(context.getTreePluginRepository());
         pluginsTreeView.addTreeSelectionListener(getPluginPanel());
         return pluginsTreeView;
     }
 
     public static void main(String[] args) {
-        TreePluginRepository.register(new OpenLogFromFilePlugin());
-        TreePluginRepository.register(new FilterByCriteriaPlugin());
-        TreePluginRepository.register(new ViewSideBySidePlugin());
-        TreePluginRepository.register(new SplitByFieldPlugin());
-        TreePluginRepository.register(new HighlightRegexpPlugin());
-        TreePluginRepository.register(new MergeLogsPlugin());
-
-        DisplayPluginRepository.register(new ViewScrollableLogPlugin());
-        DisplayPluginRepository.register(new org.lf.plugins.display.ViewSideBySidePlugin());
-//        DisplayPluginRepository.register(new ViewFieldSplittedLogPlugin());
-
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -96,7 +105,6 @@ public class Logophagus extends JFrame {
             }
         });
     }
-
 }
 
 

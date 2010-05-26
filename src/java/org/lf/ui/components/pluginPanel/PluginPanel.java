@@ -14,9 +14,11 @@ import java.util.List;
 
 
 public class PluginPanel extends JPanel implements TreeSelectionListener {
+    private DisplayPluginRepository displayPluginRepository;
 
-    public PluginPanel() {
+    public PluginPanel(DisplayPluginRepository dpr) {
         super(new BorderLayout());
+        displayPluginRepository = dpr;
         this.setBorder(BorderFactory.createEmptyBorder(12, 4, 12, 12));
     }
 
@@ -29,7 +31,7 @@ public class PluginPanel extends JPanel implements TreeSelectionListener {
             NodeData nodeData = (NodeData) node.getUserObject();
             if (nodeData != null) {
                 if (nodeData.view == null) {
-                    List<DisplayPlugin> dPlugins = DisplayPluginRepository.getApplicablePlugins(nodeData.entity.data);
+                    List<DisplayPlugin> dPlugins = displayPluginRepository.getApplicablePlugins(nodeData.entity.data);
                     nodeData.view = dPlugins.get(0).createView(nodeData.entity);
                 }
                 this.add(nodeData.view.getComponent());

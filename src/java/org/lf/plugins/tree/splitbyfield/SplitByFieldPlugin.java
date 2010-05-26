@@ -5,8 +5,9 @@ import org.lf.logs.*;
 import org.lf.parser.Position;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
+import org.lf.plugins.Plugin;
+import org.lf.plugins.ProgramContext;
 import org.lf.plugins.tree.TreePlugin;
-import org.lf.services.ProgramProperties;
 import org.lf.ui.components.tree.NodeData;
 import org.lf.ui.components.tree.TreeContext;
 import org.lf.ui.components.tree.TreePluginNode;
@@ -19,7 +20,13 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SplitByFieldPlugin implements TreePlugin {
+public class SplitByFieldPlugin implements TreePlugin, Plugin {
+
+    @Override
+    public void init(ProgramContext context) {
+        context.getTreePluginRepository().register(this);
+    }
+
 
     @Override
     public HierarchicalAction getActionFor(final TreeContext context) {
@@ -80,11 +87,11 @@ public class SplitByFieldPlugin implements TreePlugin {
         return rootAction;
     }
 
-
     @Override
     public String getName() {
         return "Split by field values";
     }
+
 
     @Override
     public String getIconFilename() {
@@ -105,6 +112,4 @@ public class SplitByFieldPlugin implements TreePlugin {
             }
         };
     }
-
-
 }

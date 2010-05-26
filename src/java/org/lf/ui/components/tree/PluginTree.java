@@ -1,5 +1,7 @@
 package org.lf.ui.components.tree;
 
+import org.lf.services.TreePluginRepository;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -11,13 +13,13 @@ import java.awt.event.MouseEvent;
 public class PluginTree extends JTree {
     private final TreePopup popup;
 
-    public PluginTree() {
+    public PluginTree(TreePluginRepository tpr) {
         super(new DefaultTreeModel(new DefaultMutableTreeNode()));
         this.setRootVisible(false);
         this.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
         this.addMouseListener(new TreeMouseListener());
         this.setCellRenderer(new PluginTreeCellRenderer());
-        this.popup = new TreePopup(this);
+        this.popup = new TreePopup(this, tpr);
     }
 
     private class TreeMouseListener extends MouseAdapter {
