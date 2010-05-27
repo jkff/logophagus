@@ -24,18 +24,20 @@ public class ScrollableLogModel extends Observable {
     private volatile float progress = 0F;
 
     private abstract class Navigator implements Runnable {
-        //adds records to model. startPos record included
-        final int addRecordsToModel(Position startPos, int recordsCount, boolean isForward, float progressIncrement) throws IOException {
+        // adds records to model. startPos record included
+        final int addRecordsToModel(Position startPos, int recordsCount, boolean isForward, float progressIncrement)
+                throws IOException
+        {
             Position temp = startPos;
             int counter = 1;
             for (; counter <= recordsCount; ++counter) {
                 if (isForward) {
-                    pushEnd(pair(log.readRecord(temp), temp));
+                    ScrollableLogModel.this.pushEnd(pair(log.readRecord(temp), temp));
                     if (logEndPos.equals(temp))
                         break;
                     temp = log.next(temp);
                 } else {
-                    pushBegin(pair(log.readRecord(temp), temp));
+                    ScrollableLogModel.this.pushBegin(pair(log.readRecord(temp), temp));
                     if (logBeginPos.equals(temp))
                         break;
                     temp = log.prev(temp);
@@ -152,55 +154,63 @@ public class ScrollableLogModel extends Observable {
     }
 
     synchronized public void start() {
-        if (!readingDone || isAtBegin()) return;
+        if (isAtBegin())
+            return;
         setReadingDone(false);
         executor.execute(new AbsolutePosNavigator());
     }
 
     synchronized public void end() {
-        if (!readingDone || isAtEnd()) return;
+        if (isAtEnd())
+            return;
         setReadingDone(false);
         executor.execute(new AbsolutePosNavigator(logEndPos, false));
     }
 
     synchronized public void next() {
-        if (!readingDone || isAtEnd()) return;
+        if (isAtEnd())
+            return;
         setReadingDone(false);
         executor.execute(new RelativePosNavigator(true, regionSize));
     }
 
     synchronized public void prev() {
-        if (!readingDone || isAtBegin()) return;
+        if (isAtBegin())
+            return;
         setReadingDone(false);
         executor.execute(new RelativePosNavigator(false, regionSize));
     }
 
     synchronized public void shiftUp() {
-        if (!readingDone || isAtBegin()) return;
+        if (isAtBegin())
+            return;
         setReadingDone(false);
         // Here and below we navigate an even number of records (for example, 2).
         // This is a hack to ensure that the alternating white/gray coloring in
-        // RecordView remains consistent while the list is being scrolled.
+        // RecordRenderer remains consistent while the list is being scrolled.
         // It could be done in a more elegant way, I suppose, but this hack is so
         // innocent that I let it be.
         executor.execute(new RelativePosNavigator(false, 2));
     }
 
     synchronized public void shiftDown() {
-        if (!readingDone || isAtEnd()) return;
+        if (isAtEnd())
+            return;
         setReadingDone(false);
         executor.execute(new RelativePosNavigator(true, 2));
     }
 
     synchronized public void shiftTo(Position pos) {
-        if (!readingDone || pos.equals(getPosition(0))) return;
+        if (pos.equals(getPosition(0)))
+            return;
         setReadingDone(false);
         executor.execute(new AbsolutePosNavigator(pos, true));
     }
 
     @Nullable
     synchronized public Position getPosition(int index) {
-        if (index >= recBuffer.size()) return null;
+        if (index >= recBuffer.size())
+            return null;
         return recBuffer.get(index).second;
     }
 

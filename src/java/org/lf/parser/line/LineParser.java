@@ -9,9 +9,9 @@ import org.lf.parser.Parser;
 import java.io.IOException;
 
 public class LineParser implements Parser {
-    private ScrollableInputStream cachedStream;
-    private Long cachedOffset;
-    private byte[] cachedBytes;
+    private transient ScrollableInputStream cachedStream;
+    private transient Long cachedOffset;
+    private transient byte[] cachedBytes;
 
     private final Format[] formats = new Format[]{Format.UNKNOWN_FORMAT};
 

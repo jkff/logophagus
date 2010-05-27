@@ -1,6 +1,7 @@
 package org.lf.plugins.tree.filelog;
 
 import com.sun.istack.internal.Nullable;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
 import org.lf.io.GzipRandomAccessIO;
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
@@ -25,26 +26,64 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
     @Override
     public void init(ProgramContext context) {
         context.getTreePluginRepository().register(this);
+
+        context.getXstream().registerConverter(new SingleValueConverter() {
+            public String toString(Object obj) {
+                return ((MappedFile)obj).getFile().getAbsolutePath();
+            }
+            public Object fromString(String str) {
+                try {
+                    return new MappedFile(str);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+            public boolean canConvert(Class type) {
+                return MappedFile.class.isAssignableFrom(type);
+            }
+        });
+
+        context.getXstream().registerConverter(new SingleValueConverter() {
+            public String toString(Object obj) {
+                return ((GzipRandomAccessIO)obj).getFile().getAbsolutePath();
+            }
+            public Object fromString(String str) {
+                GzipRandomAccessIO io = new GzipRandomAccessIO(str, 1 << 20);
+                if(!initWithProgressDialog(io))
+                    return null;
+                return io;
+            }
+            public boolean canConvert(Class type) {
+                return GzipRandomAccessIO.class.isAssignableFrom(type);
+            }
+        });
     }
 
     @Override
     public HierarchicalAction getActionFor(final TreeContext context) {
-        if (context.selectedNodes.length != 0) return null;
-        return new HierarchicalAction(new AbstractAction(getName()) {
+        if (context.selectedNodes.length != 0)
+            return null;
+        return new HierarchicalAction(getOpenFileAction(context));
+    }
+
+    public AbstractAction getOpenFileAction(final TreeContext context) {
+        return new AbstractAction(getName()) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Entity entity = getEntity();
+                Entity entity = selectEntity();
                 if (entity == null) return;
                 NodeData nodeData = new NodeData(entity, getIconFilename());
                 context.addChildToRoot(nodeData, true);
             }
-        });
+        };
     }
 
     public String getName() {
@@ -57,7 +96,7 @@ public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
     }
 
     @Nullable
-    private Entity getEntity() {
+    private static Entity selectEntity() {
         JFileChooser fileOpen = new JFileChooser(ProgramProperties.getWorkingDir());
         int state = fileOpen.showOpenDialog(null);
         if (state != JFileChooser.APPROVE_OPTION)
@@ -88,33 +127,7 @@ public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
 
             if (f.getName().endsWith(".gz") || f.getName().endsWith("zip")) {
                 final GzipRandomAccessIO cio = new GzipRandomAccessIO(f.getAbsolutePath(), 1 << 20);
-                final ProgressDialog d = new ProgressDialog(
-                        Frame.getFrames()[0],
-                        "Indexing compressed file for random access", "",
-                        Dialog.ModalityType.APPLICATION_MODAL);
-                d.setSize(400, 100);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            cio.init(new ProgressListener<Double>() {
-                                public boolean reportProgress(final Double donePart) {
-                                    d.setProgress(donePart);
-                                    if (donePart == 1.0)
-                                        d.setVisible(false);
-                                    boolean isCanceled = d.isCanceled();
-                                    if (isCanceled)
-                                        d.setVisible(false);
-                                    return !isCanceled;
-                                }
-                            });
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-                d.setVisible(true);
-                if (d.isCanceled())
+                if (!initWithProgressDialog(cio))
                     return null;
                 io = cio;
             } else {
@@ -161,5 +174,37 @@ public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private static boolean initWithProgressDialog(final GzipRandomAccessIO cio) {
+        final ProgressDialog d = new ProgressDialog(
+                Frame.getFrames()[0],
+                "Indexing compressed file for random access", "",
+                Dialog.ModalityType.APPLICATION_MODAL);
+        d.setSize(400, 100);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    cio.init(new ProgressListener<Double>() {
+                        public boolean reportProgress(final Double donePart) {
+                            d.setProgress(donePart);
+                            if (donePart == 1.0)
+                                d.setVisible(false);
+                            boolean isCanceled = d.isCanceled();
+                            if (isCanceled)
+                                d.setVisible(false);
+                            return !isCanceled;
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        d.setVisible(true);
+        if (d.isCanceled())
+            return false;
+        return true;
     }
 }

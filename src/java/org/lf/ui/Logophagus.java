@@ -1,5 +1,6 @@
 package org.lf.ui;
 
+import com.thoughtworks.xstream.XStream;
 import org.lf.plugins.PluginManager;
 import org.lf.plugins.ProgramContext;
 import org.lf.plugins.display.ViewScrollableLogPlugin;
@@ -9,19 +10,21 @@ import org.lf.plugins.tree.highlight.HighlightRegexpPlugin;
 import org.lf.plugins.tree.merge.MergeLogsPlugin;
 import org.lf.plugins.tree.sidebyside.ViewSideBySidePlugin;
 import org.lf.plugins.tree.splitbyfield.SplitByFieldPlugin;
-import org.lf.ui.components.menu.LogophagusMenuBar;
+import org.lf.services.ProgramProperties;
 import org.lf.ui.components.pluginPanel.PluginPanel;
 import org.lf.ui.components.plugins.scrollablelog.ScrollableLogPlugin;
+import org.lf.ui.components.plugins.scrollablelog.extension.builtin.BookmarksPlugin;
+import org.lf.ui.components.plugins.scrollablelog.extension.builtin.SearchPlugin;
 import org.lf.ui.components.tree.PluginTree;
+import org.lf.ui.components.tree.TreeContext;
+import org.lf.ui.persistence.TreePersistencePlugin;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 public class Logophagus extends JFrame {
-    private JMenuBar menuBar;
-    private PluginTree pluginsTreeView;
-    private PluginPanel pluginPanel;
-
     private ProgramContext context;
 
     private Logophagus() {
@@ -39,6 +42,11 @@ public class Logophagus extends JFrame {
         pluginManager.addPlugin(new SplitByFieldPlugin());
         pluginManager.addPlugin(new HighlightRegexpPlugin());
         pluginManager.addPlugin(new MergeLogsPlugin());
+
+        pluginManager.addPlugin(new SearchPlugin());
+        pluginManager.addPlugin(new BookmarksPlugin());
+
+        pluginManager.addPlugin(new TreePersistencePlugin());
 //        pluginManager.addPlugin(new ViewFieldSplittedLogPlugin());
 
         pluginManager.init();
@@ -57,44 +65,75 @@ public class Logophagus extends JFrame {
     }
 
     private void initComponents() {
-        this.setMinimumSize(new Dimension(800, 600));
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setJMenuBar(getLogophagusMenuBar());
+        PluginPanel pluginPanel = new PluginPanel(context.getDisplayPluginRepository());
+        pluginPanel.setLayout(new BorderLayout());
+
+        PluginTree pluginTree = new PluginTree(context.getTreePluginRepository());
+        pluginTree.addTreeSelectionListener(pluginPanel);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setDividerSize(5);
         splitPane.setContinuousLayout(true);
-        splitPane.setRightComponent(getPluginPanel());
+        splitPane.setRightComponent(pluginPanel);
 
         JPanel treePanel = new JPanel(new BorderLayout());
         treePanel.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 4));
-        treePanel.add(new JScrollPane(getPluginTree()));
+        treePanel.add(new JScrollPane(pluginTree));
         treePanel.setVisible(true);
 
         splitPane.setLeftComponent(treePanel);
         splitPane.setDividerLocation(250);
-        splitPane.setVisible(true);
+
+        this.setMinimumSize(new Dimension(800, 600));
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setJMenuBar(createMenu(pluginTree));
+
         this.getContentPane().add(splitPane);
     }
 
-    private JMenuBar getLogophagusMenuBar() {
-        if (menuBar != null) return menuBar;
-        menuBar = new LogophagusMenuBar(getPluginTree());
-        return menuBar;
-    }
+    private JMenuBar createMenu(final PluginTree pluginTree) {
+        JMenuBar res = new JMenuBar();
+        
+        JMenu menuFile = new JMenu("File");
+        menuFile.getPopupMenu().setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
-    private PluginPanel getPluginPanel() {
-        if (pluginPanel != null) return pluginPanel;
-        pluginPanel = new PluginPanel(context.getDisplayPluginRepository());
-        pluginPanel.setLayout(new BorderLayout());
-        return pluginPanel;
-    }
+        JMenuItem fileOpen = new JMenuItem(new OpenLogFromFilePlugin().getOpenFileAction(new TreeContext(pluginTree)));
 
-    private PluginTree getPluginTree() {
-        if (pluginsTreeView != null) return pluginsTreeView;
-        pluginsTreeView = new PluginTree(context.getTreePluginRepository());
-        pluginsTreeView.addTreeSelectionListener(getPluginPanel());
-        return pluginsTreeView;
+        JMenuItem fileClose = new JMenuItem(new AbstractAction("Close") {
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
+        JMenuItem fileSaveState = new JMenuItem(new AbstractAction("Save state") {
+            public void actionPerformed(ActionEvent evt) {
+                XStream xs = context.getXstream();
+                try {
+                    ProgramProperties.writeUIState(xs.toXML(pluginTree.getModel().getRoot()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        JMenuItem fileRestoreState = new JMenuItem(new AbstractAction("Restore state") {
+            public void actionPerformed(ActionEvent evt) {
+                XStream xs = context.getXstream();
+                try {
+                    pluginTree.setRoot(xs.fromXML(ProgramProperties.readUIState()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        menuFile.add(fileOpen);
+        menuFile.add(fileClose);
+        menuFile.add(fileSaveState);
+        menuFile.add(fileRestoreState);
+
+        res.add(menuFile);
+
+        return res;
     }
 
     public static void main(String[] args) {

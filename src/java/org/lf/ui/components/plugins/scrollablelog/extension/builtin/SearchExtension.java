@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SearchExtension implements SLInitExtension {
-
     @Override
     public void init(final ScrollableLogPanel.Context context) {
         final Action searchAction = getActionForContext(context);

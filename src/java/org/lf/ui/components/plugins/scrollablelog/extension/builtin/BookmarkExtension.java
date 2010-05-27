@@ -1,7 +1,6 @@
 package org.lf.ui.components.plugins.scrollablelog.extension.builtin;
 
 import org.lf.parser.Position;
-import org.lf.plugins.tree.BookmarkListener;
 import org.lf.plugins.tree.Bookmarks;
 import org.lf.ui.components.plugins.scrollablelog.PopupElementProvider;
 import org.lf.ui.components.plugins.scrollablelog.ScrollableLogPanel;
@@ -9,19 +8,20 @@ import org.lf.ui.components.plugins.scrollablelog.extension.SLInitExtension;
 import org.lf.util.HierarchicalAction;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.TimerTask;
 
 public class BookmarkExtension implements SLInitExtension {
+    private static java.util.Timer toolbarUpdateTimer =
+            new java.util.Timer("Bookmarks toolbar item updater", true); 
 
     @Override
     public void init(final ScrollableLogPanel.Context context) {
-
-        context.addToolbarElement(getToolbarElement(context));
+        context.addToolbarElement(createToolbarElement(context));
         context.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -39,33 +39,36 @@ public class BookmarkExtension implements SLInitExtension {
         });
     }
 
-    private JComponent getToolbarElement(ScrollableLogPanel.Context context) {
+    private JComponent createToolbarElement(ScrollableLogPanel.Context context) {
         JLabel label = new JLabel("Bookmarks");
+
         final Bookmarks bookmarks = context.getAttributes().getValue(Bookmarks.class);
-        BookmarksComboBoxModel model = new BookmarksComboBoxModel(bookmarks);
-        final JComboBox bookmarksList = new JComboBox(model);
-        bookmarksList.setPrototypeDisplayValue("0123456789");
-        bookmarks.addListener(new BookmarkListener() {
+        final BookmarksComboBoxModel model = new BookmarksComboBoxModel(bookmarks);
+
+        final JComboBox bookmarksComboBox = new JComboBox(model);
+        bookmarksComboBox.setPrototypeDisplayValue("0123456789");
+
+        toolbarUpdateTimer.schedule(new TimerTask() {
             @Override
-            public void bookmarkAdd(String name) {
-                bookmarksList.setEnabled(true);
-                bookmarks.removeListener(this);
+            public void run() {
+                model.update();
             }
-        });
-        if (bookmarks.getSize() == 0) bookmarksList.setEnabled(false);
-        bookmarksList.addActionListener(new ComboBoxActionListener(context));
+        }, 0, 100);
+
+        bookmarksComboBox.addActionListener(new ComboBoxActionListener(context));
         Box box = Box.createHorizontalBox();
         box.add(label);
         box.add(Box.createHorizontalStrut(3));
-        box.add(bookmarksList);
+        box.add(bookmarksComboBox);
         return box;
     }
 
     private HierarchicalAction getHierarchicalActionFor(final ScrollableLogPanel.Context context) {
-        if (!context.getModel().isReadingDone()) return null;
+        if (!context.getModel().isReadingDone())
+            return null;
         Action action = new AbstractAction("Add to bookmarks") {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent evt) {
                 while (true) {
                     String name = JOptionPane.showInputDialog(
                             null,
@@ -81,13 +84,12 @@ public class BookmarkExtension implements SLInitExtension {
                                     "Bookmark with such name already exists. Please input a different name.");
                         } else {
                             int row = context.getSelectedIndexes()[0];
-                            context.getAttributes().getValue(Bookmarks.class).addBookmark(name, context.getModel().getPosition(row));
+                            context.getAttributes().getValue(Bookmarks.class).addBookmark(
+                                    name, context.getModel().getPosition(row));
                             return;
                         }
-                    } catch (HeadlessException e1) {
-                        e1.printStackTrace();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -104,7 +106,8 @@ public class BookmarkExtension implements SLInitExtension {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (!context.getModel().isReadingDone()) return;
+            if (!context.getModel().isReadingDone())
+                return;
             JComboBox cb = (JComboBox) e.getSource();
             String selectedBookmark = (String) cb.getSelectedItem();
             if (selectedBookmark == null) return;

@@ -22,9 +22,9 @@ import static org.lf.util.CollectionFactory.newList;
 
 public class ScrollableLogPanel extends JPanel implements Observer {
     private final JToolBar toolbar;
-    private final List<PopupElementProvider> pepList = newList();
+    private final List<PopupElementProvider> popupProviders = newList();
     private final JList recordsList;
-    private final JScrollPane scrollableRecords;
+    private final JScrollPane recordsScrollPane;
     private final JProgressBar progressBar;
     private final LogPopup popup;
     private final Attributes attributes;
@@ -38,7 +38,6 @@ public class ScrollableLogPanel extends JPanel implements Observer {
         public ScrollableLogModel getModel() {
             return ScrollableLogPanel.this.logSegmentModel;
         }
-
         public int[] getSelectedIndexes() {
             return ScrollableLogPanel.this.recordsList.getSelectedIndices();
         }
@@ -48,11 +47,11 @@ public class ScrollableLogPanel extends JPanel implements Observer {
         }
 
         public Removable addPopupElementProvider(final PopupElementProvider pep) {
-            pepList.add(pep);
+            popupProviders.add(pep);
             return new Removable() {
                 @Override
                 public void remove() {
-                    pepList.remove(pep);
+                    popupProviders.remove(pep);
                 }
             };
         }
@@ -91,8 +90,8 @@ public class ScrollableLogPanel extends JPanel implements Observer {
         this.attributes = attributes;
         this.logSegmentModel = new ScrollableLogModel(log, 50);
         this.logSegmentModel.start();
-        // Create UI
 
+        // Create UI
         this.progressBar = new JProgressBar(0, 100);
         this.progressBar.setValue(0);
         this.progressBar.setStringPainted(true);
@@ -117,7 +116,7 @@ public class ScrollableLogPanel extends JPanel implements Observer {
                 }
             });
 
-        RecordView cellRenderer = new RecordView(recordColorer);
+        RecordRenderer cellRenderer = new RecordRenderer(recordColorer);
 
         this.recordsList = new JList(listModel);
         this.recordsList.setCellRenderer(cellRenderer);
@@ -134,15 +133,15 @@ public class ScrollableLogPanel extends JPanel implements Observer {
 
         this.recordsList.setVisible(true);
 
-        scrollableRecords = new JScrollPane(this.recordsList);
-        scrollableRecords.addMouseWheelListener(new ScrollBarMouseWheelListener());
-        this.scrollableRecords.setVisible(true);
+        recordsScrollPane = new JScrollPane(this.recordsList);
+        recordsScrollPane.addMouseWheelListener(new ScrollBarMouseWheelListener());
+        this.recordsScrollPane.setVisible(true);
 
         BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
         this.setLayout(layout);
         this.add(toolbar);
         this.add(Box.createVerticalStrut(5));
-        this.add(scrollableRecords);
+        this.add(recordsScrollPane);
         this.add(Box.createVerticalStrut(5));
         this.add(this.progressBar);
 
@@ -153,6 +152,14 @@ public class ScrollableLogPanel extends JPanel implements Observer {
         if (toolbar.getComponentCount() == 0)
             toolbar.setVisible(false);
         this.setVisible(true);
+    }
+
+    public ScrollableLogState getState() {
+        return new ScrollableLogState(logSegmentModel.getPosition(0));
+    }
+
+    public void restoreState(ScrollableLogState state) {
+        logSegmentModel.shiftTo(state.firstPosition);
     }
 
     private void installExtensions() {
@@ -192,10 +199,10 @@ public class ScrollableLogPanel extends JPanel implements Observer {
         public void keyPressed(KeyEvent e) {
             int curIndex = recordsList.getSelectedIndex();
 
-            Point viewPos = scrollableRecords.getViewport().getViewPosition();
-            int maxScrollValue = scrollableRecords.getHorizontalScrollBar().getModel().getMaximum();
-            int curScrollValue = scrollableRecords.getHorizontalScrollBar().getModel().getValue();
-            int extScrollValue = scrollableRecords.getHorizontalScrollBar().getModel().getExtent();
+            Point viewPos = recordsScrollPane.getViewport().getViewPosition();
+            int maxScrollValue = recordsScrollPane.getHorizontalScrollBar().getModel().getMaximum();
+            int curScrollValue = recordsScrollPane.getHorizontalScrollBar().getModel().getValue();
+            int extScrollValue = recordsScrollPane.getHorizontalScrollBar().getModel().getExtent();
 
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_UP:
@@ -231,14 +238,14 @@ public class ScrollableLogPanel extends JPanel implements Observer {
                         viewPos.x -= 5;
                     else if (curScrollValue > 0)
                         viewPos.x = 0;
-                    scrollableRecords.getViewport().setViewPosition(viewPos);
+                    recordsScrollPane.getViewport().setViewPosition(viewPos);
                     break;
                 case KeyEvent.VK_RIGHT:
                     if (curScrollValue + extScrollValue + 5 < maxScrollValue)
                         viewPos.x += 5;
                     else if (curScrollValue + extScrollValue < maxScrollValue)
                         viewPos.x = maxScrollValue;
-                    scrollableRecords.getViewport().setViewPosition(viewPos);
+                    recordsScrollPane.getViewport().setViewPosition(viewPos);
                     break;
             }
         }
@@ -247,9 +254,9 @@ public class ScrollableLogPanel extends JPanel implements Observer {
     class ScrollBarMouseWheelListener implements MouseWheelListener {
         @Override
         public void mouseWheelMoved(MouseWheelEvent event) {
-            int maxValue = scrollableRecords.getVerticalScrollBar().getModel().getMaximum();
-            int curValue = scrollableRecords.getVerticalScrollBar().getModel().getValue();
-            int extValue = scrollableRecords.getVerticalScrollBar().getModel().getExtent();
+            int maxValue = recordsScrollPane.getVerticalScrollBar().getModel().getMaximum();
+            int curValue = recordsScrollPane.getVerticalScrollBar().getModel().getValue();
+            int extValue = recordsScrollPane.getVerticalScrollBar().getModel().getExtent();
             if (event.getWheelRotation() < 0) {
                 if (curValue == 0 && !logSegmentModel.isAtBegin())
                     logSegmentModel.shiftUp();
@@ -274,7 +281,7 @@ public class ScrollableLogPanel extends JPanel implements Observer {
             this.removeAll();
 
 
-            for (PopupElementProvider cur : pepList) {
+            for (PopupElementProvider cur : popupProviders) {
                 HierarchicalAction treeAction = cur.getHierarchicalAction();
                 if (treeAction == null) continue;
                 JMenuItem itemPlugin;

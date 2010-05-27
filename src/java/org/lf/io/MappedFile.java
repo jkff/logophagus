@@ -80,4 +80,7 @@ public class MappedFile implements RandomAccessFileIO {
         return file.getName();
     }
 
+    public File getFile() {
+        return file;
+    }
 }

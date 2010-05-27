@@ -1,5 +1,6 @@
 package org.lf.io;
 
+import java.io.File;
 import java.io.IOException;
 
 public interface RandomAccessFileIO {
@@ -8,4 +9,6 @@ public interface RandomAccessFileIO {
     ScrollableInputStream getInputStreamFrom(long offset) throws IOException;
 
     long length() throws IOException;
+
+    File getFile();
 }

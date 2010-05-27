@@ -12,24 +12,26 @@ public interface Log {
 
     /**
      * @param pos can be:
-     *            - position from this log(then it will be returned as the result)
-     *            - position of parent log, for example parent log of filtered log, or one of parent logs in merged log
-     *            - null -> then function returns null;
+     *  - position from this log(then it will be returned as the result)
+     *  - position of parent log, for example parent log of filtered log,
+     *    or one of parent logs in merged log
+     *  - null -> then function returns null;
      * @return :
-     *         - position 'pos' that can be used in methods this.readRecord(), this.prev(), this.next() and this.convertToNative()
-     *         such that this.readRecord(pos) returns the same (if possible) record as pos.getCorrespondingLog().readRecord(pos).
-     *         - null, if argument was null or position fail @param requirements
+     *  - position 'pos' that can be used in methods this.readRecord(), this.prev(),
+     *    this.next() and this.convertToNative() such that this.readRecord(pos)
+     *    returns the same (if possible) record as pos.getCorrespondingLog().readRecord(pos).
+     *  - null, if argument was null or position does not fulfill the @param requirements
      */
     @Nullable
     public Position convertToNative(Position pos) throws IOException;
 
     /**
      * @param pos can be:
-     *            - position from this log
-     *            - null -> then function returns null;
+     *  - position from this log
+     *  - null -> then function returns null;
      * @return :
-     *         - position of parent log that corresponds to pos
-     *         - null if no parent log or impossible to convert position or pos is not from this log
+     *  - position of parent log that corresponds to pos
+     *  - null if no parent log or impossible to convert position or pos is not from this log
      */
     @Nullable
     public Position convertToParent(Position pos) throws IOException;

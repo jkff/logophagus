@@ -1,6 +1,7 @@
 package org.lf.plugins;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.lf.plugins.extension.ExtensionPointsManager;
 import org.lf.services.DisplayPluginRepository;
 import org.lf.services.TreePluginRepository;
@@ -12,7 +13,7 @@ public class ProgramContext {
     private TreePluginRepository treePluginRepository = new TreePluginRepository();
     private DisplayPluginRepository displayPluginRepository = new DisplayPluginRepository();
     private ExtensionPointsManager extensionPointsManager = new ExtensionPointsManager();
-    private XStream xstream = new XStream();
+    private XStream xstream = new XStream(new DomDriver());
 
     public ProgramContext() {
     }

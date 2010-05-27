@@ -25,7 +25,6 @@ public class FileBackedLog implements Log {
 
     private boolean hasTimeField;
 
-
     private class PhysicalPosition implements Position {
         final long offsetBytes;
 

@@ -12,20 +12,20 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 
 public class GzipRandomAccessIO implements RandomAccessFileIO {
-    private String fileName;
+    private File file;
     private int chunkSize;
 
     private RandomAccessGzip.Index idx;
     private BufferPool<Long, Long> bufferPool;
 
     public GzipRandomAccessIO(String fileName, int chunkSize) {
-        this.fileName = fileName;
+        this.file = new File(fileName);
         this.chunkSize = chunkSize;
     }
 
     public void init(final ProgressListener<Double> progressListener) throws IOException {
-        final long compressedSize = new File(fileName).length();
-        CountingInputStream cfis = new CountingInputStream(new FileInputStream(fileName));
+        final long compressedSize = file.length();
+        CountingInputStream cfis = new CountingInputStream(new FileInputStream(file));
         try {
             idx = RandomAccessGzip.index(cfis, chunkSize, new ProgressListener<Long>() {
                 public boolean reportProgress(Long progress) {
@@ -49,7 +49,7 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
             public byte[] apply(Long base) {
                 try {
                     byte[] buf = new byte[chunkSize];
-                    RandomAccessFile f = new RandomAccessFile(fileName, "r");
+                    RandomAccessFile f = new RandomAccessFile(file, "r");
                     try {
                         int n = idx.read(f, base, buf, 0, buf.length);
                         return n == chunkSize ? buf : Arrays.copyOf(buf, n);
@@ -72,7 +72,7 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
 
     @Override
     public String getFileName() {
-        return new File(fileName).getName();
+        return file.getName();
     }
 
     @Override
@@ -83,5 +83,10 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
     @Override
     public long length() throws IOException {
         return idx.decompressedSize();
+    }
+
+    @Override
+    public File getFile() {
+        return file;
     }
 }
