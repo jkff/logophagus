@@ -20,9 +20,9 @@ public class RegexpParser implements Parser {
     private final int[] linesPerRecord;
     private int maxLinesPerRecord = 1;
 
-    private ScrollableInputStream cachedStream;
+    private transient ScrollableInputStream cachedStream;
 
-    private long cachedOffset;
+    private transient long cachedOffset;
 
     // Integer - relative offset, Integer - index of pattern that matched (-1 means no pattern matched),
     // Object is a Matcher if a pattern matched, or a String (raw input line) if none matched
