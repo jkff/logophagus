@@ -58,4 +58,14 @@ public class RandomAccessGzip {
         List<ZRan.Point> idx = ZRan.build_index(input, span, holder, listener);
         return idx == null ? null : new IndexImpl(idx, holder[0]);
     }
+
+    public static IndexMemento indexToMemento(Index index) {
+        IndexImpl idx = (IndexImpl) index;
+        return new IndexMemento(idx.idx, idx.decompressedSize);
+    }
+
+    public static Index indexFromMemento(IndexMemento memento) {
+        IndexMemento p = (IndexMemento) memento;
+        return new IndexImpl(p.idx, p.decompressedSize);
+    }
 }

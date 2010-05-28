@@ -1,5 +1,6 @@
 package org.lf.io;
 
+import org.lf.io.zlib.IndexMemento;
 import org.lf.io.zlib.RandomAccessGzip;
 import org.lf.util.CountingInputStream;
 import org.lf.util.Function;
@@ -15,19 +16,25 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
     private File file;
     private int chunkSize;
 
-    private RandomAccessGzip.Index idx;
-    private BufferPool<Long, Long> bufferPool;
+    private transient RandomAccessGzip.Index idx;
+    private transient BufferPool<Long, Long> bufferPool;
 
     public GzipRandomAccessIO(String fileName, int chunkSize) {
         this.file = new File(fileName);
         this.chunkSize = chunkSize;
     }
 
+    public void initFromIndexMemento(IndexMemento indexMemento) {
+        initFromIndex(RandomAccessGzip.indexFromMemento(indexMemento));
+    }
+
     public void init(final ProgressListener<Double> progressListener) throws IOException {
+        RandomAccessGzip.Index index;
+
         final long compressedSize = file.length();
         CountingInputStream cfis = new CountingInputStream(new FileInputStream(file));
         try {
-            idx = RandomAccessGzip.index(cfis, chunkSize, new ProgressListener<Long>() {
+            index = RandomAccessGzip.index(cfis, chunkSize, new ProgressListener<Long>() {
                 public boolean reportProgress(Long progress) {
                     return progressListener.reportProgress(1.0 * progress / compressedSize);
                 }
@@ -36,6 +43,12 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
             cfis.close();
         }
         progressListener.reportProgress(1.0);
+
+        initFromIndex(index);
+    }
+
+    public void initFromIndex(RandomAccessGzip.Index index) {
+        idx = index;
 
         Function<Long, Long> TRUNCATE_BUF = new Function<Long, Long>() {
             @Override
@@ -88,5 +101,13 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
     @Override
     public File getFile() {
         return file;
+    }
+
+    public int getChunkSize() {
+        return chunkSize;
+    }
+
+    public IndexMemento getIndexMemento() {
+        return RandomAccessGzip.indexToMemento(idx);        
     }
 }

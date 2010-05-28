@@ -1,10 +1,16 @@
 package org.lf.plugins.tree.filelog;
 
 import com.sun.istack.internal.Nullable;
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.lf.io.GzipRandomAccessIO;
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
+import org.lf.io.zlib.IndexMemento;
 import org.lf.logs.FileBackedLog;
 import org.lf.logs.Log;
 import org.lf.parser.Parser;
@@ -51,16 +57,38 @@ public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
             }
         });
 
-        context.getXstream().registerConverter(new SingleValueConverter() {
-            public String toString(Object obj) {
-                return ((GzipRandomAccessIO)obj).getFile().getAbsolutePath();
+        context.getXstream().registerConverter(new Converter() {
+            @Override
+            public void marshal(Object source, HierarchicalStreamWriter writer, MarshallingContext context) {
+                GzipRandomAccessIO io = (GzipRandomAccessIO) source;
+                writer.startNode("filename");
+                writer.setValue(io.getFile().getAbsolutePath());
+                writer.endNode();
+                writer.startNode("chunkSize");
+                writer.setValue(""+io.getChunkSize());
+                writer.endNode();
+                writer.startNode("index");
+                context.convertAnother(io.getIndexMemento());
+                writer.endNode();
             }
-            public Object fromString(String str) {
-                GzipRandomAccessIO io = new GzipRandomAccessIO(str, 1 << 20);
-                if(!initWithProgressDialog(io))
-                    return null;
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                reader.moveDown();
+                String filename = reader.getValue();
+                reader.moveUp();
+                reader.moveDown();
+                int chunkSize = Integer.parseInt(reader.getValue());
+                reader.moveUp();
+                reader.moveDown();
+                IndexMemento indexMemento = (IndexMemento) context.convertAnother(null, IndexMemento.class);
+                reader.moveUp();
+                GzipRandomAccessIO io = new GzipRandomAccessIO(filename, chunkSize);
+                io.initFromIndexMemento(indexMemento);
                 return io;
             }
+
+            @Override
             public boolean canConvert(Class type) {
                 return GzipRandomAccessIO.class.isAssignableFrom(type);
             }

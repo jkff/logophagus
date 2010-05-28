@@ -15,7 +15,7 @@ import java.util.List;
  * from the examples to zlib 1.2.3.
  */
 class ZRan {
-    private static final int WINSIZE = 65536;
+    private static final int WINSIZE = 32768;
     private static final int CHUNK = 65536;
 
     static class Point {
