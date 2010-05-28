@@ -51,7 +51,7 @@ public class RecordRenderer extends JPanel implements ListCellRenderer {
         } else {
 
             Color c = (colorer == null) ? null : colorer.getColor(record);
-            if (c == null && record.getFormat() == Format.UNKNOWN_FORMAT)
+            if (c == null && record.getFormat().equals(Format.UNKNOWN_FORMAT))
                 c = Color.PINK;
 
             background = (c == null) ? ((index % 2 == 0) ? new Color(244, 244, 244) : Color.WHITE) : c;

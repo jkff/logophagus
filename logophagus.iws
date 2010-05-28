@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="31698152-f0b2-4601-a11a-005f7603c976" name="Default" comment="" />
-    <ignored path=".idea/workspace.xml" />
     <ignored path="logophagus.iws" />
+    <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,21 +19,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <line_breakpoints>
-      <breakpoint url="file://$PROJECT_DIR$/src/java/org/lf/ui/Logophagus.java" line="121" class="org.lf.ui.Logophagus$3" package="org.lf.ui">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="false" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-    </line_breakpoints>
     <breakpoint_any>
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -78,7 +63,79 @@
       <file leaf-file-name="ScrollableLogModel.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogModel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="182" column="38" selection-start="6182" selection-end="6182" vertical-scroll-proportion="0.0">
+            <state line="233" column="25" selection-start="8116" selection-end="8116" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Record.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/Record.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="5" column="15" selection-start="101" selection-end="101" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Format.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/Format.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="11" column="40" selection-start="274" selection-end="274" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RecordRenderer.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/RecordRenderer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="61" column="59" selection-start="2344" selection-end="2344" vertical-scroll-proportion="0.7635659">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FileBackedLog.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/FileBackedLog.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="76" column="49" selection-start="2002" selection-end="2002" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TimeMergeLogs.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/TimeMergeLogs.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="179" column="41" selection-start="5923" selection-end="5923" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FilteredLog.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/FilteredLog.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="96" column="48" selection-start="3097" selection-end="3097" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ScrollableLogPanel.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogPanel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="188" column="12" selection-start="6145" selection-end="6145" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SearchExtension.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/SearchExtension.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="53" column="20" selection-start="1973" selection-end="1973" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -87,90 +144,8 @@
       <file leaf-file-name="BookmarkExtension.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/BookmarkExtension.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="109" column="16" selection-start="4318" selection-end="4318" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ScrollableLogPlugin.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogPlugin.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="49" column="23" selection-start="1965" selection-end="1965" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TreePersistencePlugin.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/persistence/TreePersistencePlugin.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="52" column="0" selection-start="2177" selection-end="2177" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Logophagus.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/Logophagus.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="122" column="45" selection-start="4954" selection-end="4954" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PluginTree.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/tree/PluginTree.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="110" selection-start="873" selection-end="873" vertical-scroll-proportion="0.0">
+            <state line="106" column="0" selection-start="4175" selection-end="4175" vertical-scroll-proportion="0.0">
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Object.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_18/src.zip!/java/lang/Object.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="364" column="29" selection-start="17907" selection-end="17907" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Function.class" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$PROJECT_DIR$/lib/jna.jar!/com/sun/jna/Function.class">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="47" column="23" selection-start="2464" selection-end="2464" vertical-scroll-proportion="-3.125">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RandomAccessGzip.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/zlib/RandomAccessGzip.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="60" selection-start="1625" selection-end="1625" vertical-scroll-proportion="0.4906367">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ScrollableLogView.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogView.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="0" selection-start="922" selection-end="922" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -185,22 +160,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/display/ViewScrollableLogPlugin.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/BookmarksPlugin.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/io/MappedFile.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/io/GzipRandomAccessIO.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/tree/filelog/OpenLogFromFilePlugin.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/logs/Log.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/plugins/tree/Bookmarks.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/BookmarksComboBoxModel.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/services/ProgramProperties.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/Logophagus.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/plugins/ProgramContext.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogPanel.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogModel.java" />
-        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/BookmarkExtension.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/ui/persistence/TreePersistencePlugin.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/persistence/UIState.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/Logophagus.java" />
         <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/tree/PluginTree.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogState.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/logs/Log.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/BookmarkExtension.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogPanel.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/SearchExtension.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/logs/TimeMergeLogs.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogModel.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/logs/Format.java" />
+        <option value="$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/RecordRenderer.java" />
       </list>
     </option>
   </component>
@@ -239,6 +214,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Favorites" />
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -447,8 +424,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane />
       </pane>
@@ -472,11 +447,11 @@
     <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
-    <property name="GenerateAntBuildDialog.backupFiles" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="GenerateAntBuildDialog.backupFiles" value="true" />
     <property name="dynamic.classpath" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
@@ -623,13 +598,13 @@
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32685512" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26557377" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.48688525" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25379938" sideWeight="0.5180328" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4704918" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29016393" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25835866" sideWeight="0.5032787" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4852459" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27213115" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -673,129 +648,116 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/SearchExtension.java">
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/Logophagus.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="53" column="40" selection-start="1993" selection-end="1993" vertical-scroll-proportion="0.23172906">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="188" column="29" selection-start="6152" selection-end="6152" vertical-scroll-proportion="0.16351119">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="class#Context#0;class#ScrollableLogPanel#0" expanded="false" />
-            <element signature="method#installExtensions#0;class#ScrollableLogPanel#0" expanded="false" />
-            <element signature="method#update#0;class#ScrollableLogPanel#0" expanded="false" />
-            <element signature="method#updateProgress#0;class#ScrollableLogPanel#0" expanded="false" />
-            <element signature="class#LogPopup#0;class#ScrollableLogPanel#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="0" selection-start="922" selection-end="922" vertical-scroll-proportion="0.0">
+        <state line="121" column="0" selection-start="4817" selection-end="4817" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogModel.java">
+    <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_18/jre/lib/rt.jar!/sun/misc/Unsafe.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="182" column="38" selection-start="6182" selection-end="6182" vertical-scroll-proportion="0.0">
+        <state line="293" column="23" selection-start="9140" selection-end="9140" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogPlugin.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="49" column="23" selection-start="1965" selection-end="1965" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/xstream-distribution-1.3.1-src.zip!/xstream-1.3.1/xstream/src/java/com/thoughtworks/xstream/core/AbstractReferenceUnmarshaller.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="62" column="0" selection-start="2461" selection-end="2461" vertical-scroll-proportion="0.0">
+        <state line="62" column="49" selection-start="2590" selection-end="2590" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/xstream-distribution-1.3.1-src.zip!/xstream-1.3.1/xstream/src/java/com/thoughtworks/xstream/core/TreeUnmarshaller.java">
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="0" selection-start="3053" selection-end="3053" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/xstream-distribution-1.3.1-src.zip!/xstream-1.3.1/xstream/src/java/com/thoughtworks/xstream/io/ReaderWrapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="0" selection-start="849" selection-end="849" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/xstream-distribution-1.3.1-src.zip!/xstream-1.3.1/xstream/src/java/com/thoughtworks/xstream/io/xml/AbstractDocumentReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="36" selection-start="1604" selection-end="1619" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/xstream-distribution-1.3.1-src.zip!/xstream-1.3.1/xstream/src/java/com/thoughtworks/xstream/converters/UnmarshallingContext.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="11" selection-start="460" selection-end="460" vertical-scroll-proportion="0.26217228">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/persistence/TreePersistencePlugin.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="0" selection-start="2177" selection-end="2177" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/Logophagus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="122" column="45" selection-start="4954" selection-end="4954" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/tree/PluginTree.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="24" column="110" selection-start="873" selection-end="873" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files (x86)/Java/jdk1.6.0_18/src.zip!/java/lang/Object.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="364" column="29" selection-start="17907" selection-end="17907" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/lib/jna.jar!/com/sun/jna/Function.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="23" selection-start="2464" selection-end="2464" vertical-scroll-proportion="-3.125">
+        <state line="18" column="39" selection-start="481" selection-end="481" vertical-scroll-proportion="0.19387755">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/java/org/lf/io/zlib/RandomAccessGzip.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="60" selection-start="1625" selection-end="1625" vertical-scroll-proportion="0.4906367">
+        <state line="37" column="82" selection-start="1084" selection-end="1084" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/Log.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="27" selection-start="1456" selection-end="1456" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/BookmarkExtension.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="106" column="0" selection-start="4175" selection-end="4175" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="188" column="12" selection-start="6145" selection-end="6145" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/extension/builtin/SearchExtension.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="20" selection-start="1973" selection-end="1973" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/FileBackedLog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="76" column="49" selection-start="2002" selection-end="2002" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/TimeMergeLogs.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="179" column="41" selection-start="5923" selection-end="5923" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/FilteredLog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="96" column="48" selection-start="3097" selection-end="3097" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/ScrollableLogModel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="233" column="25" selection-start="8116" selection-end="8116" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/Record.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="15" selection-start="101" selection-end="101" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/logs/Format.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="40" selection-start="274" selection-end="274" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/java/org/lf/ui/components/plugins/scrollablelog/RecordRenderer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="59" selection-start="2344" selection-end="2344" vertical-scroll-proportion="0.7635659">
           <folding />
         </state>
       </provider>

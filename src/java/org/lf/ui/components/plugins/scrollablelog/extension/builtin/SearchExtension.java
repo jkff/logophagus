@@ -51,7 +51,7 @@ public class SearchExtension implements SLInitExtension {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!context.getModel().isReadingDone() || context.getModel().getRecordCount() == 0)
+                if (context.getModel().getShownRecordCount() == 0)
                     return;
                 SearchSetupDialog dialog = new SearchSetupDialog(Frame.getFrames()[0], Dialog.ModalityType.APPLICATION_MODAL);
                 final SearchSetupDialog.SearchContext dialogSearchContext = lastContext != null ?

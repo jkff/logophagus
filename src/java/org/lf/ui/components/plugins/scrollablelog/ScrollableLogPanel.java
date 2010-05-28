@@ -155,11 +155,11 @@ public class ScrollableLogPanel extends JPanel implements Observer {
     }
 
     public ScrollableLogState getState() {
-        return new ScrollableLogState(logSegmentModel.getPosition(0));
+        return new ScrollableLogState(logSegmentModel.getShownContent());
     }
 
     public void restoreState(ScrollableLogState state) {
-        logSegmentModel.shiftTo(state.firstPosition);
+        logSegmentModel.setShownContent(state.shownContent);
     }
 
     private void installExtensions() {
@@ -186,7 +186,7 @@ public class ScrollableLogPanel extends JPanel implements Observer {
     }
 
     private void updateControls() {
-        if (!logSegmentModel.isReadingDone() || logSegmentModel.getRecordCount() == 0) {
+        if (logSegmentModel.getShownRecordCount() == 0) {
             toolbar.setEnabled(false);
         } else {
             toolbar.setEnabled(true);

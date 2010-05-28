@@ -64,8 +64,6 @@ public class BookmarkExtension implements SLInitExtension {
     }
 
     private HierarchicalAction getHierarchicalActionFor(final ScrollableLogPanel.Context context) {
-        if (!context.getModel().isReadingDone())
-            return null;
         Action action = new AbstractAction("Add to bookmarks") {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -106,8 +104,6 @@ public class BookmarkExtension implements SLInitExtension {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (!context.getModel().isReadingDone())
-                return;
             JComboBox cb = (JComboBox) e.getSource();
             String selectedBookmark = (String) cb.getSelectedItem();
             if (selectedBookmark == null) return;

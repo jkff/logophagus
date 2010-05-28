@@ -8,7 +8,6 @@ public class Format {
     private final Field[] fields;
     private final int timeIndex;
     private final DateTimeFormatter timeFormat;
-    private String toString;
 
     public static final Format UNKNOWN_FORMAT = new Format(new Field[]{new Field("UNKNOWN_FORMAT")}, -1, null);
 
@@ -39,6 +38,16 @@ public class Format {
     }
 
     @Override
+    public String toString() {
+        StringBuilder res = new StringBuilder();
+        for (Field cur : fields)
+            res.append(cur.name).append(", ");
+        String s = res.toString();
+        return s.substring(0, s.length() - 2);
+
+    }
+
+    @Override
     public boolean equals(Object obj) {
         return obj != null &&
                 obj.getClass().isAssignableFrom(Format.class) &&
@@ -47,20 +56,7 @@ public class Format {
     }
 
     @Override
-    public String toString() {
-        StringBuilder res = new StringBuilder();
-        for (Field cur : fields)
-            res.append(cur.name + ", ");
-        toString = res.toString();
-        return toString.substring(0, toString.length() - 2);
-
-    }
-
-
-    @Override
     public int hashCode() {
         return Arrays.hashCode(fields);
     }
-
-
 }

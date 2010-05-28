@@ -177,7 +177,7 @@ public class TimeMergeLogs implements Log {
     }
 
     @Override
-    public synchronized Position first() throws IOException {
+    public synchronized Position first() {
         if (cachedFirst == null) {
             List<CurPrevIndex> p = newList();
             for (int i = 0; i < logs.length; ++i) {

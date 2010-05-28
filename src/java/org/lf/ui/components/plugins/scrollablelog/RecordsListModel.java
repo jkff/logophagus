@@ -21,18 +21,18 @@ class RecordsListModel extends AbstractListModel implements Observer {
 
     @Override
     public int getSize() {
-        return underlyingModel.getRecordCount();
+        return underlyingModel.getShownRecordCount();
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        if (underlyingModel.getRecordCount() != lastUpdateSize)
+        if (underlyingModel.getShownRecordCount() != lastUpdateSize)
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    fireContentsChanged(RecordsListModel.this, 0, underlyingModel.getRecordCount());
+                    fireContentsChanged(RecordsListModel.this, 0, underlyingModel.getShownRecordCount());
                 }
             });
-        lastUpdateSize = underlyingModel.getRecordCount();
+        lastUpdateSize = underlyingModel.getShownRecordCount();
     }
 }

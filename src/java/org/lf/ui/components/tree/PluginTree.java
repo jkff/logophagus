@@ -22,6 +22,13 @@ public class PluginTree extends JTree {
     public void setRoot(Object root) {
         ((DefaultTreeModel)getModel()).setRoot((TreeNode) root);
         ((DefaultTreeModel)getModel()).reload();
+        for(int i = 0; i < getRowCount(); ++i) {
+            expandRow(i);
+        }
+    }
+
+    public Object getRoot() {
+        return getModel().getRoot();
     }
 
     private class TreeMouseListener extends MouseAdapter {

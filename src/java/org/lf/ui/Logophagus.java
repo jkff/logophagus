@@ -109,7 +109,7 @@ public class Logophagus extends JFrame {
             public void actionPerformed(ActionEvent evt) {
                 XStream xs = context.getXstream();
                 try {
-                    ProgramProperties.writeUIState(xs.toXML(pluginTree.getModel().getRoot()));
+                    ProgramProperties.writeUIState(xs.toXML(pluginTree.getRoot()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
