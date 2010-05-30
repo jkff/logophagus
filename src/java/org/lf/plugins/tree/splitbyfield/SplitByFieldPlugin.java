@@ -17,6 +17,7 @@ import org.lf.util.HierarchicalAction;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,17 +41,16 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
 
         final Set<Field> uniqueFields = new HashSet<Field>();
         for (Format format : parentLog.getFormats())
-            for (Field field : format.getFields())
-                uniqueFields.add(field);
+            uniqueFields.addAll(Arrays.asList(format.getFields()));
 
         final TreePluginNode parentNode = context.selectedNodes[0];
 
         HierarchicalAction rootAction = new HierarchicalAction("Split by ...");
 
         for (final Field curField : uniqueFields) {
-            Action fieldSplitAction = new AbstractAction(curField.name) {
+            rootAction.addChild(new HierarchicalAction(new AbstractAction(curField.name) {
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(ActionEvent evt) {
                     new Thread() {
                         Set<String> uniqueValues = new HashSet<String>();
 
@@ -58,31 +58,29 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
                         public void run() {
                             try {
                                 Position cur = parentLog.first();
-                                do {
+                                while (true) {
                                     cur = parentLog.next(cur);
                                     Record rec = parentLog.readRecord(cur);
-                                    for (int i = 0; i < rec.getFormat().getFields().length; ++i) {
-                                        if (rec.getFormat().getFields()[i].equals(curField) &&
-                                                !uniqueValues.contains(rec.getCellValues()[i])) {
-                                            uniqueValues.add(rec.getCellValues()[i]);
-                                            Log log = new FilteredLog(parentLog, getFilter(curField, rec.getCellValues()[i]));
+                                    Field[] fields = rec.getFormat().getFields();
+                                    String[] cells = rec.getCellValues();
+                                    for (int i = 0; i < fields.length; ++i) {
+                                        if (fields[i].equals(curField) && !uniqueValues.contains(cells[i])) {
+                                            uniqueValues.add(cells[i]);
+                                            Log log = new FilteredLog(parentLog, getFilter(curField, cells[i]));
                                             Attributes attr = parentEntity.attributes.createSuccessor(log);
                                             Entity entity = new Entity(attr, log);
                                             context.addChildTo(parentNode, new NodeData(entity, getIconFilename()), false);
                                         }
                                     }
                                     if (cur.equals(parentLog.last())) break;
-                                } while (true);
-                            } catch (IOException e1) {
-                                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-
                         }
                     }.start();
                 }
-            };
-
-            rootAction.addChild(new HierarchicalAction(fieldSplitAction));
+            }));
         }
         return rootAction;
     }

@@ -137,13 +137,11 @@ public class ScrollableLogPanel extends JPanel implements Observer {
         recordsScrollPane.addMouseWheelListener(new ScrollBarMouseWheelListener());
         this.recordsScrollPane.setVisible(true);
 
-        BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
+        BorderLayout layout = new BorderLayout(0, 5);
         this.setLayout(layout);
-        this.add(toolbar);
-        this.add(Box.createVerticalStrut(5));
-        this.add(recordsScrollPane);
-        this.add(Box.createVerticalStrut(5));
-        this.add(this.progressBar);
+        this.add(toolbar, BorderLayout.PAGE_START);
+        this.add(recordsScrollPane, BorderLayout.CENTER);
+        this.add(this.progressBar, BorderLayout.PAGE_END);
 
         update(logSegmentModel, null);
         this.logSegmentModel.addObserver(this);
