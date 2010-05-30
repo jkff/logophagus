@@ -2,11 +2,10 @@ package org.lf.io.zlib;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import com.sun.jna.Platform;
 
 interface ZLib extends Library {
 
-    public static ZLib INSTANCE = (ZLib) Native.loadLibrary(Platform.isWindows() ? "zlib1" : "libz", ZLib.class);
+    public static ZLib INSTANCE = (ZLib) Native.loadLibrary("lib/zlib1-1.2.4", ZLib.class);
 
     int inflatePrime(z_stream stream, int bits, int value);
 

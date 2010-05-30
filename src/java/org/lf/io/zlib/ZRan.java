@@ -145,11 +145,11 @@ class ZRan {
 
         /* find where in stream to start */
         int j = 0;
-        here = index.get(j);
         ret = index.size();
         while ((0 != --ret) && (index.get(j + 1).out <= offset))
             j++;
-
+        here = index.get(j);
+        
         /* initialize file and inflate state to start there */
         strm.zalloc = null;
         strm.zfree = null;
