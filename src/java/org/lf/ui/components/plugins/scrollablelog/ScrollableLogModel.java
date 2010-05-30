@@ -23,6 +23,7 @@ public class ScrollableLogModel extends Observable {
     private volatile float progress = 0F;
 
     private volatile Navigator curNavigator = null;
+    private boolean readingDone;
 
     // Thrown inside a navigation task when a new navigation task supersedes it.
     private static class NavigationObsoletedException extends Exception {}
@@ -105,7 +106,7 @@ public class ScrollableLogModel extends Observable {
             synchronized(model) {
                 if(model.curNavigator != this)
                     return;
-                model.progress = progress;
+                model.setProgress(progress);
             }
         }
 
@@ -113,7 +114,7 @@ public class ScrollableLogModel extends Observable {
             synchronized(model) {
                 if(model.curNavigator != this)
                     return;
-                model.progress += progressIncrement;
+                model.setProgress(model.progress + progressIncrement);
             }
         }
 
@@ -310,6 +311,16 @@ public class ScrollableLogModel extends Observable {
         }
     }
 
+    synchronized void setReadingDone(boolean isDone) {
+        readingDone = isDone;
+        setChanged();
+        notifyObservers("READING_STATE");
+    }
+
+    synchronized public boolean isReadingDone() {
+        return readingDone;
+    }
+    
     synchronized public boolean isAtEnd() {
         try {
             return recBuffer.size() != 0 &&
