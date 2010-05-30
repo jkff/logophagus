@@ -1,7 +1,5 @@
 package org.lf.services;
 
-import org.lf.util.IOUtils;
-
 import java.io.*;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
@@ -51,30 +49,7 @@ public class ProgramProperties {
         mainProperties.storeToXML(stream, null);
     }
 
-    public static void writeUIState(String state) throws IOException {
-        Writer w = null;
-        try {
-            w = new OutputStreamWriter(new FileOutputStream(
-                    getUIStateFile()), "utf-8");
-            w.write(state);
-        } finally {
-            if(w != null)
-                w.close();
-        }
-    }
-
-    private static File getUIStateFile() {
+    public static File getUIStateFile() {
         return new File(System.getProperty("user.home"), "logophagus.state");
-    }
-
-    public static String readUIState() throws IOException {
-        InputStream is = null;
-        try {
-            is = new FileInputStream(new File(System.getProperty("user.home"), "logophagus.state"));
-            return new String(IOUtils.readInputStream(is), "utf-8");
-        } finally {
-            if(is != null)
-                is.close();
-        }
     }
 }

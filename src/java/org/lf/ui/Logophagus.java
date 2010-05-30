@@ -22,7 +22,10 @@ import org.lf.ui.persistence.TreePersistencePlugin;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class Logophagus extends JFrame {
     private ProgramContext context;
@@ -108,20 +111,28 @@ public class Logophagus extends JFrame {
         JMenuItem fileSaveState = new JMenuItem(new AbstractAction("Save state") {
             public void actionPerformed(ActionEvent evt) {
                 XStream xs = context.getXstream();
+                FileOutputStream os = null;
                 try {
-                    ProgramProperties.writeUIState(xs.toXML(pluginTree.getRoot()));
+                    os = new FileOutputStream(ProgramProperties.getUIStateFile());
+                    xs.toXML(pluginTree.getRoot(), os);
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    if(os != null) try { os.close(); } catch (IOException e) {}
                 }
             }
         });
         JMenuItem fileRestoreState = new JMenuItem(new AbstractAction("Restore state") {
             public void actionPerformed(ActionEvent evt) {
                 XStream xs = context.getXstream();
+                InputStream is = null;
                 try {
-                    pluginTree.setRoot(xs.fromXML(ProgramProperties.readUIState()));
+                    is = new FileInputStream(ProgramProperties.getUIStateFile());
+                    pluginTree.setRoot(xs.fromXML(is));
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    if(is != null) try { is.close(); } catch (IOException e) {}
                 }
             }
         });
