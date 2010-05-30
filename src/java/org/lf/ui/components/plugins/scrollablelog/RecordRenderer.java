@@ -38,7 +38,8 @@ public class RecordRenderer extends JPanel implements ListCellRenderer {
         extendRecordViewIfSmaller(record);
         String[] cellValues = record.getCellValues();
 
-        for (int i = 0; i < cellValues.length; ++i) cells.get(i).setText(" " + cellValues[i] + " ");
+        for (int i = 0; i < cellValues.length; ++i) cells.get(i).setText(
+                " " + cellValues[i].replaceAll("\\s+"," ") + " ");
         for (int i = 0; i < cells.size(); ++i) cells.get(i).setVisible(i < cellValues.length);
         for (int i = 0; i < cells.size(); ++i) cells.get(i).setFont(defaultFont);
         if (record.getFormat().getTimeFieldIndex() != -1)
