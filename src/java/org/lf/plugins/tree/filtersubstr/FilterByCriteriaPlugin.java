@@ -92,7 +92,7 @@ public class FilterByCriteriaPlugin implements TreePlugin, Plugin {
             return null;
         Filter<Record> filter = new Filter<Record>() {
             public String toString() {
-                return input;
+                return "filter: " + input;
             }
 
             public boolean accepts(Record r) {

@@ -135,7 +135,7 @@ public class FilteredLog implements Log {
     }
 
     public String toString() {
-        return underlyingLog.toString() + " => filter : " + filter.toString();
+        return underlyingLog.toString() + " | " + filter.toString();
     }
 
 

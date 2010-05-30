@@ -108,6 +108,10 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
                 return false;
 
             }
+
+            public String toString() {
+                return "split:" + value;
+            };
         };
     }
 }
