@@ -8,7 +8,7 @@ public interface RandomAccessFileIO {
 
     ScrollableInputStream getInputStreamFrom(long offset) throws IOException;
 
-    long length() throws IOException;
+    long length();
 
     File getFile();
 }

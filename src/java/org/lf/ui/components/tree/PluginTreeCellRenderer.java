@@ -18,7 +18,8 @@ class PluginTreeCellRenderer extends DefaultTreeCellRenderer {
             boolean expanded,
             boolean leaf,
             int row,
-            boolean hasFocus) {
+            boolean hasFocus)
+    {
         Object nodeValue = ((DefaultMutableTreeNode) value).getUserObject();
         JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
         if (nodeValue != null) {

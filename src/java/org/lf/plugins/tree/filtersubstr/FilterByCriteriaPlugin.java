@@ -97,8 +97,9 @@ public class FilterByCriteriaPlugin implements TreePlugin, Plugin {
 
             public boolean accepts(Record r) {
                 for (String cell : r.getCellValues()) {
-                    if (cell != null &&
-                            substringNotRegexp ? cell.contains(input) : cell.matches(input))
+                    if (cell == null)
+                        continue;
+                    if (substringNotRegexp ? cell.contains(input) : cell.matches(input))
                         return true;
                 }
                 return false;

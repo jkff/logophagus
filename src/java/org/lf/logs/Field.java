@@ -21,8 +21,6 @@ public final class Field {
         NUMBER,
     }
 
-    ;
-
 
     @Override
     public boolean equals(Object o) {

@@ -111,12 +111,14 @@ public class ParserSetupDialog extends JDialog implements PropertyChangeListener
             parserAdjuster.removePropertyChangeListener(this);
         try {
             //TODO don't create new instance if same one had been created
-            parserAdjuster = (ParserAdjuster) parserNameToClass.get(parserChooser.getSelectedItem()).newInstance();
+            parserAdjuster = (ParserAdjuster)
+                    parserNameToClass.get(((String) parserChooser.getSelectedItem()))
+                                     .newInstance();
             parserAdjuster.addPropertyChangeListener("adjustmentValid", this);
         } catch (InstantiationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
         okButton.setEnabled(parserAdjuster.isAdjustmentValid());
         adjusterBox.removeAll();

@@ -14,10 +14,13 @@ public class TreeContext {
         this.tree = tree;
 
         TreePath[] tp = tree.getSelectionPaths();
-        int length = tp == null ? 0 : tp.length;
-        selectedNodes = new TreePluginNode[length];
-        for (int i = 0; i < length; ++i) {
-            selectedNodes[i] = new TreePluginNode((DefaultMutableTreeNode) tp[i].getLastPathComponent());
+        if(tp == null) {
+            selectedNodes = new TreePluginNode[0];
+        } else {
+            selectedNodes = new TreePluginNode[tp.length];
+            for (int i = 0; i < tp.length; ++i) {
+                selectedNodes[i] = new TreePluginNode((DefaultMutableTreeNode) tp[i].getLastPathComponent());
+            }
         }
     }
 

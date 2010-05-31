@@ -38,10 +38,14 @@ public class RecordRenderer extends JPanel implements ListCellRenderer {
         extendRecordViewIfSmaller(record);
         String[] cellValues = record.getCellValues();
 
-        for (int i = 0; i < cellValues.length; ++i) cells.get(i).setText(
-                " " + cellValues[i].replaceAll("\\s+"," ") + " ");
-        for (int i = 0; i < cells.size(); ++i) cells.get(i).setVisible(i < cellValues.length);
-        for (int i = 0; i < cells.size(); ++i) cells.get(i).setFont(defaultFont);
+        for (int i = 0; i < cellValues.length; ++i) {
+            cells.get(i).setText(" " + cellValues[i].replaceAll("\\s+"," ") + " ");
+            cells.get(i).setFont(defaultFont);
+        }
+        for (int i = 0; i < cells.size(); ++i) {
+            cells.get(i).setVisible(i < cellValues.length);
+        }
+        
         if (record.getFormat().getTimeFieldIndex() != -1)
             cells.get(record.getFormat().getTimeFieldIndex()).setFont(timeFont);
 
@@ -50,7 +54,6 @@ public class RecordRenderer extends JPanel implements ListCellRenderer {
             background = UIManager.getColor("List.selectionBackground");
             foreground = UIManager.getColor("List.selectionForeground");
         } else {
-
             Color c = (colorer == null) ? null : colorer.getColor(record);
             if (c == null && record.getFormat().equals(Format.UNKNOWN_FORMAT))
                 c = Color.PINK;

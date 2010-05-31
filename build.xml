@@ -39,7 +39,7 @@
             <fileset dir="." includes="${libs.dir}/**/*.jar"/>
             <fileset dir="." includes="${libs.dir}/**/*.dll"/>
             <fileset dir="." includes="${libs.dir}/**/*.so"/>
-            <fileset dir="${resources.dir}" includes="**/*"/>
+            <fileset dir="." includes="${resources.dir}/**/*"/>
             <fileset file="${jar.file}"/>
         </copy>
     </target>

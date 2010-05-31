@@ -35,6 +35,8 @@ public class TreePopup extends JPopupMenu {
         List<TreePlugin> plugins = treePluginRepository.getApplicablePlugins(context);
         for (final TreePlugin plugin : plugins) {
             HierarchicalAction treeAction = plugin.getActionFor(context);
+            if(treeAction == null)
+                continue;
             JMenuItem itemPlugin;
             if (treeAction.getAction() != null)
                 itemPlugin = new JMenuItem(treeAction.getAction());

@@ -1,6 +1,6 @@
 package org.lf.plugins.extension;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.lf.util.Removable;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class ExtensionPointsManager {
         }
     }
 
-    @Nullable
+    @NotNull
     public <T> ExtensionPoint<T> getExtensionPoint(final ExtensionPointID<T> extID) {
         final List<ExtensionPoint> pt = extIDToExtPoint.get(extID);
         if(pt == null) {

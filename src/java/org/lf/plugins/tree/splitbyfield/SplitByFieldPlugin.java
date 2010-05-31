@@ -1,7 +1,7 @@
 package org.lf.plugins.tree.splitbyfield;
 
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.lf.logs.*;
 import org.lf.parser.Position;
 import org.lf.plugins.Attributes;
@@ -63,6 +63,8 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
                         public void run() {
                             try {
                                 Position cur = parentLog.first();
+                                if(cur == null)
+                                    return;
                                 int recCount = 0;
                                 while (true) {
                                     recCount++;
@@ -79,7 +81,9 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
                                             context.addChildTo(parentNode, new NodeData(entity, getIconFilename()), false);
                                         }
                                     }
-                                    if (cur.equals(parentLog.last()) || recCount >= maxRecsMaxLogs.first) break;
+                                    assert cur != null;
+                                    if (cur.equals(parentLog.last()) || recCount >= maxRecsMaxLogs.first) 
+                                    	break;
 
                                 }
 
@@ -138,7 +142,7 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
 
             public String toString() {
                 return "split:OTHER";
-            };
+            }
         };
     }
 
@@ -156,7 +160,7 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
 
             public String toString() {
                 return "split:" + value;
-            };
+            }
         };
     }
 

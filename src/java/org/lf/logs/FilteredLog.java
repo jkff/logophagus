@@ -1,5 +1,6 @@
 package org.lf.logs;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 import org.lf.parser.Position;
@@ -64,15 +65,20 @@ public class FilteredLog implements Log {
     }
 
     @Nullable
-    private Position seek(Position pos, boolean isForward) throws IOException {
+    private Position seek(@NotNull Position pos, boolean isForward) throws IOException {
         Position borderPos = isForward ? underlyingLog.last() : underlyingLog.first();
-        if (pos.equals(borderPos)) return null;
-        pos = isForward ? underlyingLog.next(pos) : underlyingLog.prev(pos);
-        while (true) {
-            if (filter.accepts(underlyingLog.readRecord(pos))) return pos;
-            if (pos.equals(borderPos)) return null;
-            pos = isForward ? underlyingLog.next(pos) : underlyingLog.prev(pos);
+        if (pos.equals(borderPos))
+            return null;
+        @Nullable
+        Position cur = isForward ? underlyingLog.next(pos) : underlyingLog.prev(pos);
+        while (cur != null) {
+            if (filter.accepts(underlyingLog.readRecord(cur)))
+                return cur;
+            if (cur.equals(borderPos))
+                return null;
+            cur = isForward ? underlyingLog.next(cur) : underlyingLog.prev(cur);
         }
+        return null;
     }
 
     @Override

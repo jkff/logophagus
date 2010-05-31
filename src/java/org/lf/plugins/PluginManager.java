@@ -24,8 +24,12 @@ public class PluginManager {
     }
 
     public void init() {
+        if(isInitialized) {
+            throw new IllegalStateException("Plugin manager is already initialized");
+        }
         for(Plugin plugin : plugins) {
             plugin.init(context);
         }
+        isInitialized = true;
     }
 }

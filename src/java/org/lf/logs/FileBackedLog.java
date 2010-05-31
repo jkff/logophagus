@@ -1,5 +1,6 @@
 package org.lf.logs;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
@@ -165,14 +166,14 @@ public class FileBackedLog implements Log {
         return res;
     }
 
-    private DateTime getTimeImpl(Position pos) throws IOException {
+    private DateTime getTimeImpl(@NotNull Position pos) throws IOException {
         Record posRecord = readRecord(pos);
         if (posRecord.getFormat().getTimeFieldIndex() != -1) {
             return getTimeFromRecord(posRecord);
         }
 
         Position cur = pos;
-        while (!cur.equals(first())) {
+        while (cur != null && !cur.equals(first())) {
             cur = prev(cur);
             Record curRec = readRecord(cur);
             if (curRec.getFormat().getTimeFieldIndex() != -1) {
@@ -181,7 +182,7 @@ public class FileBackedLog implements Log {
         }
 
         cur = pos;
-        while (!cur.equals(last())) {
+        while (cur != null && !cur.equals(last())) {
             cur = next(cur);
             Record curRec = readRecord(cur);
             if (curRec.getFormat().getTimeFieldIndex() != -1) {

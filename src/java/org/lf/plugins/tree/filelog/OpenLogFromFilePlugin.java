@@ -7,13 +7,17 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.jetbrains.annotations.Nullable;
+import org.joda.time.format.DateTimeFormat;
 import org.lf.io.GzipRandomAccessIO;
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
 import org.lf.io.zlib.IndexMemento;
+import org.lf.logs.Field;
 import org.lf.logs.FileBackedLog;
+import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.parser.Parser;
+import org.lf.parser.regex.RegexpParser;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
 import org.lf.plugins.Plugin;
@@ -21,7 +25,6 @@ import org.lf.plugins.ProgramContext;
 import org.lf.plugins.tree.Bookmarks;
 import org.lf.plugins.tree.TreePlugin;
 import org.lf.services.ProgramProperties;
-import org.lf.ui.components.dialog.ParserSetupDialog;
 import org.lf.ui.components.dialog.ProgressDialog;
 import org.lf.ui.components.tree.NodeData;
 import org.lf.ui.components.tree.TreeContext;
@@ -141,16 +144,16 @@ public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
         }
 
         Parser parser = null;
-        try {
-            ParserSetupDialog psd = new ParserSetupDialog(Frame.getFrames()[0]);
-            parser = psd.showSetupDialog();
-            psd.dispose();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (parser == null)
-            return null;
+//        try {
+//            ParserSetupDialog psd = new ParserSetupDialog(Frame.getFrames()[0]);
+//            parser = psd.showSetupDialog();
+//            psd.dispose();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        if (parser == null)
+//            return null;
         try {
             RandomAccessFileIO io;
 
@@ -172,20 +175,19 @@ public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
 
 //            Log log = new FileBackedLog(io, new CSVParser(new Format(fields, -1, null)));
 //            [2200-01-02 06:27:46,148] DEBUG [pool-798] Search performed in 0 with 507 hits
-//            String[] regexes = {
-//                            "\\[([^\\]]+)\\]\\s+(\\w+)\\s+\\[([^\\]]+)\\]\\s+(.+)",
-//                    "\\[([^\\]]++)\\]\\s++(\\w++)\\s++\\[([^\\]]++)\\]\\s++(.++)",
-//                    };
+            String[] regexes = {
+                    "\\[([^\\]]++)\\]\\s++(\\w++)\\s++\\[([^\\]]++)\\]\\s++(.++)",
+                    };
 
-//            Field[] fields = {
-//                    new Field("Time"),
-//                    new Field("Level"),
-//                    new Field("Thread"),
-//                    new Field("Message")};
+            Field[] fields = {
+                    new Field("Time"),
+                    new Field("Level"),
+                    new Field("Thread"),
+                    new Field("Message")};
 //            Format format1 = new Format(fields1, 0,
-//            Format format = new Format(fields, 0, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS"));
+            Format format = new Format(fields, 0, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS"));
 
-//            parser = new RegexpParser(regexes, new Format[]{format}, '\n', new int[]{1});
+            parser = new RegexpParser(regexes, new Format[]{format}, '\n', new int[]{1});
 
 //            Format multiFormat = new Format(multiFields, -1, null);
 //

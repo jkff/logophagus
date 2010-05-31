@@ -57,6 +57,8 @@ public class SearchExtension implements SLInitExtension {
                 final SearchSetupDialog.SearchContext dialogSearchContext = lastContext != null ?
                         dialog.showSetupDialog(lastContext.dialogContext) :
                         dialog.showSetupDialog();
+                if(dialogSearchContext == null)
+                    return;
                 if (lastContext != null)
                     lastContext.highlighter.remove();
 
@@ -94,14 +96,13 @@ public class SearchExtension implements SLInitExtension {
                 new Thread() {
                     @Override
                     public void run() {
-//                        long startTime = new DateTime().getMillis();
                         try {
                             Position cur = pos[0];
                             Position border = dialogSearchContext.forwardNotBackward ? log.last() : log.first();
-                            while (!cur.equals(border) &&
+                            while (cur != null && !cur.equals(border) &&
                                     !found.get() &&
-                                    !searchStateDialog.isCanceled()
-                                    ) {
+                                    !searchStateDialog.isCanceled())
+                            {
                                 cur = dialogSearchContext.forwardNotBackward ? log.next(cur) : log.prev(cur);
                                 Record r = log.readRecord(cur);
                                 if (filter.accepts(r)) {
@@ -110,7 +111,6 @@ public class SearchExtension implements SLInitExtension {
                                 }
                             }
                             pos[0] = cur;
-//                            System.out.println(new DateTime().getMillis()-startTime);
                             while (!searchStateDialog.isVisible()) {
                                 //TODO make right                                
                             }

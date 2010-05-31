@@ -132,8 +132,10 @@ public class SearchSetupDialog extends JDialog {
     @Nullable
     public SearchContext showSetupDialog() {
         setVisible(true);
-        if (!okPressed) return null;
-        SearchContext result = new SearchContext(caseBox.isSelected(), forward.isSelected(), substring.isSelected(), textField.getText());
+        if (!okPressed)
+            return null;
+        SearchContext result = new SearchContext(
+                caseBox.isSelected(), forward.isSelected(), substring.isSelected(), textField.getText());
         dispose();
         return result;
     }

@@ -80,13 +80,16 @@ public class BookmarkExtension implements SLInitExtension {
                     if (name == null) return;
 
                     try {
-                        if (context.getAttributes().getValue(Bookmarks.class).getValue(name) != null) {
+                        Bookmarks bookmarks = context.getAttributes().getValue(Bookmarks.class);
+                        if (bookmarks == null)
+                            return;
+                        if (bookmarks.getValue(name) != null) {
                             JOptionPane.showMessageDialog(
                                     null,
                                     "Bookmark with such name already exists. Please input a different name.");
                         } else {
                             int row = context.getSelectedIndexes()[0];
-                            context.getAttributes().getValue(Bookmarks.class).addBookmark(
+                            bookmarks.addBookmark(
                                     name, context.getModel().getPosition(row));
                             return;
                         }
@@ -113,9 +116,11 @@ public class BookmarkExtension implements SLInitExtension {
             if (selectedBookmark == null) return;
             Position pos;
             try {
-                pos = context.getAttributes().getValue(Bookmarks.class).getValue(selectedBookmark);
+                Bookmarks bookmarks = context.getAttributes().getValue(Bookmarks.class);
+                if(bookmarks == null)
+                    return;
+                pos = bookmarks.getValue(selectedBookmark);
                 context.getModel().shiftTo(pos);
-
             } catch (IOException e1) {
                 e1.printStackTrace();
             }

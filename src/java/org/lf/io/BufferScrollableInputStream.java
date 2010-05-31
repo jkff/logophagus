@@ -1,6 +1,7 @@
 package org.lf.io;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created on: 26.03.2010 21:49:58
@@ -46,16 +47,22 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
         do {
             if (this.offsetInBuffer == this.buf.data.length - 1) {
                 cur = this.buf.data[this.offsetInBuffer];
-                if (!shiftNextBuffer()) break;
-            } else
+                if (!shiftNextBuffer())
+                    break;
+            } else {
                 cur = this.buf.data[this.offsetInBuffer++];
+            }
         } while (cur != b);
 
         long delta = this.offsetInBuffer + this.buf.hash - curFilePos;
         scrollTo(curFilePos);
         byte[] result = new byte[(int) delta];
-        read(result);
-        return result;
+        int n = read(result);
+        if(n != result.length) {
+            return Arrays.copyOf(result, n);
+        } else {
+            return result;
+        }
     }
 
     @Override
@@ -76,9 +83,13 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
         long delta = curFilePos - this.offsetInBuffer - this.buf.hash;
 
         byte[] result = new byte[(int) delta];
-        read(result);
+        int n = read(result);
         scrollBack(delta);
-        return result;
+        if(n != result.length) {
+            return Arrays.copyOf(result, n);
+        } else {
+            return result;
+        }
     }
 
     //relative scroll

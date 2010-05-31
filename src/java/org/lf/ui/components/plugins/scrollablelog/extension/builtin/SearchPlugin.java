@@ -16,7 +16,6 @@ public class SearchPlugin implements Plugin {
         ExtensionPointsManager epm = context.getExtensionPointsManager();
         ExtensionPoint<SLInitExtension> ep = epm.getExtensionPoint(
                 ScrollableLogPlugin.SL_INIT_EXTENSION_POINT_ID);
-        
         ep.addExtension(new SearchExtension());
     }
 }

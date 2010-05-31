@@ -2,14 +2,10 @@ package org.lf.io;
 
 import org.lf.io.zlib.IndexMemento;
 import org.lf.io.zlib.RandomAccessGzip;
-import org.lf.util.CountingInputStream;
 import org.lf.util.Function;
 import org.lf.util.ProgressListener;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.util.Arrays;
 
 public class GzipRandomAccessIO implements RandomAccessFileIO {
@@ -32,15 +28,15 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
         RandomAccessGzip.Index index;
 
         final long compressedSize = file.length();
-        CountingInputStream cfis = new CountingInputStream(new FileInputStream(file));
+        InputStream is = new FileInputStream(file);
         try {
-            index = RandomAccessGzip.index(cfis, chunkSize, new ProgressListener<Long>() {
+            index = RandomAccessGzip.index(is, chunkSize, new ProgressListener<Long>() {
                 public boolean reportProgress(Long progress) {
                     return progressListener.reportProgress(1.0 * progress / compressedSize);
                 }
             });
         } finally {
-            cfis.close();
+            is.close();
         }
         progressListener.reportProgress(1.0);
 
@@ -94,7 +90,7 @@ public class GzipRandomAccessIO implements RandomAccessFileIO {
     }
 
     @Override
-    public long length() throws IOException {
+    public long length()  {
         return idx.decompressedSize();
     }
 

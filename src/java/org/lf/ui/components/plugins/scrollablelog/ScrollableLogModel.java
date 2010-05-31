@@ -1,5 +1,6 @@
 package org.lf.ui.components.plugins.scrollablelog;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
@@ -51,20 +52,20 @@ public class ScrollableLogModel extends Observable {
         protected abstract void runImpl() throws IOException, NavigationObsoletedException;
 
         // adds records to model. startPos record included
-        final int addRecordsToModel(Position startPos, int recordsCount, boolean isForward, float progressIncrement)
+        final int addRecordsToModel(@NotNull Position startPos, int recordsCount, boolean isForward, float progressIncrement)
                 throws IOException, NavigationObsoletedException
         {
             Position temp = startPos;
             int counter = 1;
-            for (; counter <= recordsCount; ++counter) {
+            for (; counter <= recordsCount && temp != null; ++counter) {
                 if (isForward) {
                     this.pushEnd(pair(temp, model.log.readRecord(temp)));
-                    if (getLog().last().equals(temp))
+                    if (temp.equals(getLog().last()))
                         break;
                     temp = model.log.next(temp);
                 } else {
                     this.pushBegin(pair(temp, model.log.readRecord(temp)));
-                    if (getLog().first().equals(temp))
+                    if (temp.equals(getLog().first()))
                         break;
                     temp = model.log.prev(temp);
                 }
@@ -125,10 +126,12 @@ public class ScrollableLogModel extends Observable {
 
     private static class RelativePosNavigator extends Navigator {
         private final boolean isForward;
-        private final Position fromWhere;
+        private final @NotNull Position fromWhere;
         private final int recordsToRead;
         
-        public RelativePosNavigator(ScrollableLogModel model, Position fromWhere, boolean isForward, int recordsToRead) {
+        public RelativePosNavigator(
+                ScrollableLogModel model, @NotNull Position fromWhere, boolean isForward, int recordsToRead)
+        {
             super(model);
             
             this.fromWhere = fromWhere;
@@ -140,12 +143,13 @@ public class ScrollableLogModel extends Observable {
         protected void runImpl() throws IOException, NavigationObsoletedException {
             Position tempPos;
             if (isForward) {
-                if (getLog().last().equals(fromWhere)) return;
+                if (fromWhere.equals(getLog().last())) return;
                 tempPos = getLog().next(fromWhere);
             } else {
-                if (getLog().first().equals(fromWhere)) return;
+                if (fromWhere.equals(getLog().first())) return;
                 tempPos = getLog().prev(fromWhere);
             }
+            assert tempPos != null;
             addRecordsToModel(tempPos, recordsToRead, isForward, 100F / recordsToRead);
         }
     }
@@ -182,12 +186,13 @@ public class ScrollableLogModel extends Observable {
                 //now we will read missing records moving in reverse direction
                 Position tempPos;
                 if (isForward) {
-                    if (getLog().first().equals(fromWhere)) return;
+                    if (fromWhere.equals(getLog().first())) return;
                     tempPos = getLog().prev(fromWhere);
                 } else {
-                    if (getLog().last().equals(fromWhere)) return;
+                    if (fromWhere.equals(getLog().last())) return;
                     tempPos = getLog().next(fromWhere);
                 }
+                assert tempPos != null;
                 addRecordsToModel(tempPos, regionSize - recordsRead, !isForward, 100F / regionSize);
             }
         }
@@ -254,13 +259,21 @@ public class ScrollableLogModel extends Observable {
     }
 
     synchronized public void next() {
-        if (!isAtEnd())
-            navigate(new RelativePosNavigator(this, getPosition(getShownRecordCount() - 1), true, regionSize));
+        if (!isAtEnd()) {
+            Position fromWhere = getPosition(getShownRecordCount() - 1);
+            if (fromWhere != null) {
+                navigate(new RelativePosNavigator(this, fromWhere, true, regionSize));
+            }
+        }
     }
 
     synchronized public void prev() {
-        if (!isAtBegin())
-            navigate(new RelativePosNavigator(this, getPosition(0), false, regionSize));
+        if (!isAtBegin()) {
+            Position fromWhere = getPosition(0);
+            if (fromWhere != null) {
+                navigate(new RelativePosNavigator(this, fromWhere, false, regionSize));
+            }
+        }
     }
 
     synchronized public void shiftUp() {
@@ -271,12 +284,19 @@ public class ScrollableLogModel extends Observable {
         // RecordRenderer remains consistent while the list is being scrolled.
         // It could be done in a more elegant way, I suppose, but this hack is so
         // innocent that I let it be.
-        navigate(new RelativePosNavigator(this, getPosition(0), false, 2));
+        Position fromWhere = getPosition(0);
+        if (fromWhere != null) {
+            navigate(new RelativePosNavigator(this, fromWhere, false, 2));
+        }
     }
 
     synchronized public void shiftDown() {
-        if (!isAtEnd())
-            navigate(new RelativePosNavigator(this, getPosition(getShownRecordCount() - 1), true, 2));
+        if (!isAtEnd()) {
+            Position fromWhere = getPosition(getShownRecordCount() - 1);
+            if (fromWhere != null) {
+                navigate(new RelativePosNavigator(this, fromWhere, true, 2));
+            }
+        }
     }
 
     synchronized public void shiftTo(Position pos) {
@@ -309,16 +329,6 @@ public class ScrollableLogModel extends Observable {
             e.printStackTrace();
             return false;
         }
-    }
-
-    synchronized void setReadingDone(boolean isDone) {
-        readingDone = isDone;
-        setChanged();
-        notifyObservers("READING_STATE");
-    }
-
-    synchronized public boolean isReadingDone() {
-        return readingDone;
     }
     
     synchronized public boolean isAtEnd() {

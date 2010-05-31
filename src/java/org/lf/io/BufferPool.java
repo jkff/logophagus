@@ -2,7 +2,6 @@ package org.lf.io;
 
 import org.lf.util.Function;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -147,7 +146,7 @@ public class BufferPool<K, H> {
     // Does nothing if 'newKey' maps into 'buf',
     // otherwise frees 'buf' and allocates a new buffer.
 
-    public Buffer move(Buffer buf, K newKey) throws IOException, InterruptedException {
+    public Buffer move(Buffer buf, K newKey) throws InterruptedException {
         synchronized (hash2buf) {
             if (hashKey.apply(newKey).equals(buf.hash)) {
                 return buf;

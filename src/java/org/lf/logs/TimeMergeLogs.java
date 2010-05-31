@@ -1,14 +1,12 @@
 package org.lf.logs;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.lf.parser.Position;
 import org.lf.util.Pair;
 
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static org.lf.util.CollectionFactory.newHashSet;
 import static org.lf.util.CollectionFactory.newList;
@@ -153,9 +151,7 @@ public class TimeMergeLogs implements Log {
 
         Set<Format> formatSet = newHashSet();
         for (Log log : logs) {
-            for (Format format : log.getFormats()) {
-                formatSet.add(format);
-            }
+            formatSet.addAll(Arrays.asList(log.getFormats()));
         }
         this.mergeFormats = formatSet.toArray(new Format[0]);
     }
@@ -177,6 +173,7 @@ public class TimeMergeLogs implements Log {
     }
 
     @Override
+    @NotNull
     public synchronized Position first() {
         if (cachedFirst == null) {
             List<CurPrevIndex> p = newList();
@@ -191,6 +188,7 @@ public class TimeMergeLogs implements Log {
     }
 
     @Override
+    @NotNull
     public synchronized Position last() throws IOException {
         if (cachedLast == null) {
             List<CurPrevIndex> p = newList();
@@ -200,6 +198,7 @@ public class TimeMergeLogs implements Log {
             }
             cachedLast = (MergedPosition) prev(new MergedPosition(fromList(p, COMPARE_CPI_ON_CUR), fromList(p, COMPARE_CPI_ON_PREV)));
         }
+        assert cachedLast != null;
         return cachedLast;
     }
 
@@ -221,8 +220,9 @@ public class TimeMergeLogs implements Log {
         curSortedCopy.remove(cur);
         prevSortedCopy.remove(cur);
         //check if it's not the position of merged log end
-        if (cur.cur == null)
+        if (cur.cur == null) {
             return null;
+        }
         Position nextPos = logsBorders[cur.index].second.equals(cur.cur) ? null : logs[cur.index].next(cur.cur);
         CurPrevIndex newEntity = new CurPrevIndex(nextPos, cur.cur, null, cur.getCurTime(), cur.index);
         curSortedCopy.add(newEntity);
@@ -283,7 +283,9 @@ public class TimeMergeLogs implements Log {
         MergedPosition curPos = (MergedPosition) this.first();
         MergedPosition lastPos = (MergedPosition) this.last();
 
-        while (!(curPos.cpisAscCur.first().index == logOfPos && curPos.cpisAscCur.first().cur.equals(p))) {
+        while (curPos != null &&
+               !(curPos.cpisAscCur.first().index == logOfPos && curPos.cpisAscCur.first().cur.equals(p)))
+        {
             if (curPos.equals(lastPos)) return null;
             curPos = (MergedPosition) next(curPos);
         }
