@@ -126,7 +126,12 @@ public class SearchExtension implements SLInitExtension {
                 searchStateDialog.setVisible(true);
 
                 if (found.get())
-                    context.getModel().shiftTo(pos[0]);
+                    context.getModel().shiftTo(pos[0], new Runnable() {
+                        @Override
+                        public void run() {
+                            context.selectPosition(pos[0]);
+                        }
+                    });
                 else if (!searchStateDialog.isCanceled())
                     JOptionPane.showMessageDialog(null, "Nothing found");
                 searchStateDialog.dispose();

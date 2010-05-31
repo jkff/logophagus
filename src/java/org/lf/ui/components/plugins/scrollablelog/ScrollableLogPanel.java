@@ -4,6 +4,7 @@ package org.lf.ui.components.plugins.scrollablelog;
 import org.jetbrains.annotations.Nullable;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
+import org.lf.parser.Position;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.tree.highlight.Highlighter;
 import org.lf.plugins.tree.highlight.RecordColorer;
@@ -40,18 +41,18 @@ public class ScrollableLogPanel extends JPanel implements Observer {
     private PluginTree pluginTree;
 
     public class Context {
+
         @Nullable
         public PluginTree getPluginTree() {
             return ScrollableLogPanel.this.pluginTree;
         }
-
         public ScrollableLogModel getModel() {
             return ScrollableLogPanel.this.logSegmentModel;
         }
+
         public int[] getSelectedIndexes() {
             return ScrollableLogPanel.this.recordsList.getSelectedIndices();
         }
-
         public Removable addRecordColorer(RecordColorer rc) {
             return ScrollableLogPanel.this.recordColorer.addFirst(rc);
         }
@@ -94,13 +95,16 @@ public class ScrollableLogPanel extends JPanel implements Observer {
         public void updateRecords() {
             recordsList.repaint();
         }
-    }
 
+        public void selectPosition(Position pos) {
+            ScrollableLogPanel.this.selectPosition(pos);
+        }
+    }
     public ScrollableLogPanel(final Log log, Attributes attributes, @Nullable PluginTree pluginTree) {
         this.pluginTree = pluginTree;
         this.attributes = attributes;
         this.logSegmentModel = new ScrollableLogModel(log, 50);
-        this.logSegmentModel.start();
+        this.logSegmentModel.start(null);
 
         // Create UI
         this.progressBar = new JProgressBar(0, 100);
@@ -162,6 +166,14 @@ public class ScrollableLogPanel extends JPanel implements Observer {
         this.setVisible(true);
     }
 
+    public void selectPosition(Position pos) {
+        int row = logSegmentModel.indexOf(pos);
+        if(row != -1) {
+            recordsList.ensureIndexIsVisible(row);
+            recordsList.setSelectedIndex(row);
+        }
+    }
+
     public ScrollableLogState getState() {
         return new ScrollableLogState(logSegmentModel.getShownContent());
     }
@@ -218,31 +230,31 @@ public class ScrollableLogPanel extends JPanel implements Observer {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_UP:
                     if (curIndex == 0 && !logSegmentModel.isAtBegin())
-                        logSegmentModel.shiftUp();
+                        logSegmentModel.shiftUp(null);
                     break;
                 case KeyEvent.VK_PAGE_UP:
                     if (curIndex == 0 && !logSegmentModel.isAtBegin())
-                        logSegmentModel.prev();
+                        logSegmentModel.prev(null);
                     break;
                 case KeyEvent.VK_DOWN:
                     if (curIndex == (recordsList.getModel().getSize() - 1) && !logSegmentModel.isAtEnd())
-                        logSegmentModel.shiftDown();
+                        logSegmentModel.shiftDown(null);
                     break;
                 case KeyEvent.VK_PAGE_DOWN:
                     if (curIndex == (recordsList.getModel().getSize() - 1) && !logSegmentModel.isAtEnd()) {
                         recordsList.setSelectedIndex(recordsList.getModel().getSize() - 1);
-                        logSegmentModel.next();
+                        logSegmentModel.next(null);
                     }
                     break;
                 case KeyEvent.VK_HOME:
                     recordsList.setSelectedIndex(0);
                     if (!logSegmentModel.isAtBegin())
-                        logSegmentModel.start();
+                        logSegmentModel.start(null);
                     break;
                 case KeyEvent.VK_END:
                     recordsList.setSelectedIndex(recordsList.getModel().getSize() - 1);
                     if (!logSegmentModel.isAtEnd())
-                        logSegmentModel.end();
+                        logSegmentModel.end(null);
                     break;
                 case KeyEvent.VK_LEFT:
                     if (curScrollValue > 5)
@@ -270,10 +282,10 @@ public class ScrollableLogPanel extends JPanel implements Observer {
             int extValue = recordsScrollPane.getVerticalScrollBar().getModel().getExtent();
             if (event.getWheelRotation() < 0) {
                 if (curValue == 0 && !logSegmentModel.isAtBegin())
-                    logSegmentModel.shiftUp();
+                    logSegmentModel.shiftUp(null);
             } else {
                 if (curValue + extValue == maxValue && !logSegmentModel.isAtEnd())
-                    logSegmentModel.shiftDown();
+                    logSegmentModel.shiftDown(null);
             }
         }
     }

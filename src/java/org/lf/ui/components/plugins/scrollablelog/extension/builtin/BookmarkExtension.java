@@ -114,13 +114,18 @@ public class BookmarkExtension implements SLInitExtension {
             JComboBox cb = (JComboBox) e.getSource();
             String selectedBookmark = (String) cb.getSelectedItem();
             if (selectedBookmark == null) return;
-            Position pos;
+            final Position pos;
             try {
                 Bookmarks bookmarks = context.getAttributes().getValue(Bookmarks.class);
                 if(bookmarks == null)
                     return;
                 pos = bookmarks.getValue(selectedBookmark);
-                context.getModel().shiftTo(pos);
+                context.getModel().shiftTo(pos, new Runnable() {
+                    @Override
+                    public void run() {
+                        context.selectPosition(pos);
+                    }
+                });
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
