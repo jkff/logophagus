@@ -1,6 +1,6 @@
 package org.lf.plugins.extension;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.lf.util.Removable;
 
 import java.util.ArrayList;

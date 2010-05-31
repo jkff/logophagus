@@ -1,0 +1,70 @@
+<project name="logophagus" default="all">
+    <property name="project.title" value="Logophagus"/>
+    <property name="project.version" value="0.1"/>
+
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="${build.dir}/dist"/>
+    <property name="jar.file" value="${build.dir}/logophagus.jar"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="libs.dir" value="lib"/>
+    <property name="src.dir" value="src"/>
+    <property name="resources.dir" value="res"/>
+    <property name="manifest.file" value="${build.dir}/MANIFEST.MF"/>
+
+    <target name="all" depends="clean, compile, dist"/>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true">
+            <classpath location="${libs.dir}">
+                <fileset dir="." includes="**/*.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="dist" depends="make-jar">
+        <mkdir dir="${dist.dir}"/>
+        <copy todir="${dist.dir}">
+            <fileset dir="." includes="${libs.dir}/**/*.jar"/>
+            <fileset dir="." includes="${libs.dir}/**/*.dll"/>
+            <fileset dir="." includes="${libs.dir}/**/*.so"/>
+            <fileset dir="${resources.dir}" includes="**/*"/>
+            <fileset file="${jar.file}"/>
+        </copy>
+    </target>
+
+    <target name="make-jar" depends="compile, make-manifest">
+        <jar basedir="${classes.dir}"
+             includes="**/*.class"
+             destfile="${jar.file}"
+             manifest="${manifest.file}"/>
+    </target>
+
+    <target name="make-manifest">
+        <pathconvert targetos="unix" pathsep=" " property="classpath">
+            <map from="${basedir}/" to=""/>
+            <path>
+                <fileset dir="${libs.dir}">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </path>
+        </pathconvert>
+        <tstamp>
+            <format property="today" pattern="yyyy-MM-dd HH:mm:ss z"/>
+        </tstamp>
+        <manifest file="${manifest.file}">
+            <attribute name="Implementation-Title"
+                       value="${project.title}"/>
+            <attribute name="Implementation-Version"
+                       value="${project.version} built on ${today}"/>
+            <attribute name="Main-Class"
+                       value="org.lf.ui.Logophagus"/>
+            <attribute name="Class-Path"
+                       value="${classpath}"/>
+        </manifest>
+    </target>
+</project>

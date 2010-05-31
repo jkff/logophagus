@@ -1,6 +1,6 @@
 package org.lf.plugins.tree.highlight;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.plugins.AttributeInstance;

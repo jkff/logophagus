@@ -1,7 +1,7 @@
 package org.lf.logs;
 
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 import org.lf.parser.Position;
 

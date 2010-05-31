@@ -4,10 +4,13 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 
+import java.io.File;
+
 interface ZLib extends Library {
 
-    public static ZLib INSTANCE = (ZLib) Native.loadLibrary("lib/" +
-            (Platform.isWindows() ? "zlib1-1.2.4":"libz.so.1.2.5") , ZLib.class);
+    public static ZLib INSTANCE = (ZLib) Native.loadLibrary(
+            new File("lib/" + (Platform.isWindows() ? "zlib1-1.2.4.dll" : "libz.so.1.2.5")).getAbsolutePath(), 
+            ZLib.class);
 
     int inflatePrime(z_stream stream, int bits, int value);
 

@@ -1,12 +1,11 @@
 package org.lf.logs;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 import org.lf.parser.Position;
 import org.lf.util.Filter;
 
 import java.io.IOException;
-
 
 public class FilteredLog implements Log {
     private final Filter<Record> filter;

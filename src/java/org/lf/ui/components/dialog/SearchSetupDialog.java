@@ -1,6 +1,6 @@
 package org.lf.ui.components.dialog;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.lf.ui.util.GUIUtils;
 
 import javax.swing.*;

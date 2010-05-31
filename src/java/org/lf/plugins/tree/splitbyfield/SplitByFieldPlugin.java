@@ -22,12 +22,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SplitByFieldPlugin implements TreePlugin, Plugin {
-
     @Override
     public void init(ProgramContext context) {
         context.getTreePluginRepository().register(this);
     }
-
 
     @Override
     public HierarchicalAction getActionFor(final TreeContext context) {

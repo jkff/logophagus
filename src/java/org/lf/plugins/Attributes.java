@@ -1,6 +1,6 @@
 package org.lf.plugins;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.lf.logs.Log;
 
 import java.util.*;
