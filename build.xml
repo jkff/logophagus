@@ -4,6 +4,7 @@
 
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="${build.dir}/dist"/>
+    <property name="dist.file" value="${dist.dir}/${project.title}-${project.version}.zip"/>
     <property name="jar.file" value="${build.dir}/logophagus.jar"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="libs.dir" value="lib"/>
@@ -11,7 +12,7 @@
     <property name="resources.dir" value="res"/>
     <property name="manifest.file" value="${build.dir}/MANIFEST.MF"/>
 
-    <target name="all" depends="clean, compile, dist"/>
+    <target name="all" depends="clean, compile, dist, zip-dist"/>
 
     <target name="clean">
         <delete dir="${build.dir}"/>
@@ -24,6 +25,10 @@
                 <fileset dir="." includes="**/*.jar"/>
             </classpath>
         </javac>
+    </target>
+
+    <target name="zip-dist" depends="dist">
+        <zip destfile="${dist.file}" basedir="${dist.dir}" includes="**/*"/>
     </target>
 
     <target name="dist" depends="make-jar">

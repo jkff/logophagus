@@ -46,6 +46,11 @@ public class ProgressDialog extends JDialog {
         return canceled.get();
     }
 
+    public void cancel() {
+        canceled.set(true);
+        setVisible(false);
+    }
+
     public void setProgress(double donePart) {
         progressBar.setValue((int) (1000 * donePart));
     }

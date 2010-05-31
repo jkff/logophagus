@@ -155,10 +155,16 @@ public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
             RandomAccessFileIO io;
 
             if (f.getName().endsWith(".gz") || f.getName().endsWith("zip")) {
-                final GzipRandomAccessIO cio = new GzipRandomAccessIO(f.getAbsolutePath(), 1 << 20);
-                if (!initWithProgressDialog(cio))
+                try {
+                    final GzipRandomAccessIO cio = new GzipRandomAccessIO(f.getAbsolutePath(), 1 << 20);
+                    if (!initWithProgressDialog(cio))
+                        return null;
+                    io = cio;
+                } catch(Throwable e) {
+                    JOptionPane.showMessageDialog(null, "Gzip support is broken: " + e.getMessage());
+                    e.printStackTrace();
                     return null;
-                io = cio;
+                }
             } else {
                 io = new MappedFile(f.getAbsolutePath());
             }
@@ -217,6 +223,10 @@ public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
                         }
                     });
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch(ExceptionInInitializerError e) {
+                    d.cancel();
+                    JOptionPane.showMessageDialog(null, "Gzip support is broken: " + e.getCause().getMessage());
                     e.printStackTrace();
                 }
             }

@@ -33,14 +33,6 @@ public class Logophagus extends JFrame {
     private Logophagus() {
         super("Logophagus");
 
-        if(System.getProperty("os.arch").contains("64") && System.getProperty("os.name").contains("Windows")) {
-            JOptionPane.showMessageDialog(null,
-                    "There seems to be a bug in JNA on 64-bit jvm + 64-bit Windows, " +
-                    "gzip-archived logs won't be opened.\n" +
-                    "Please use a 32-bit JVM if you need this feature, until the bug gets fixed\n" +
-                    "(in JNA or in its usage by Logophagus).");
-        }
-
         context = new ProgramContext();
 
         PluginManager pluginManager = new PluginManager(context);
