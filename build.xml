@@ -3,7 +3,8 @@
     <property name="project.version" value="0.1"/>
 
     <property name="build.dir" value="build"/>
-    <property name="dist.dir" value="${build.dir}/dist"/>
+    <property name="build.dist.dir" value="${build.dir}/dist"/>
+    <property name="dist.dir" value="dist"/>
     <property name="dist.file" value="${dist.dir}/${project.title}-${project.version}.zip"/>
     <property name="jar.file" value="${build.dir}/logophagus.jar"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
@@ -28,12 +29,13 @@
     </target>
 
     <target name="zip-dist" depends="dist">
-        <zip destfile="${dist.file}" basedir="${dist.dir}" includes="**/*"/>
+        <mkdir dir="${dist.dir}"/>
+        <zip destfile="${dist.file}" basedir="${build.dist.dir}" includes="**/*"/>
     </target>
 
     <target name="dist" depends="make-jar">
-        <mkdir dir="${dist.dir}"/>
-        <copy todir="${dist.dir}">
+        <mkdir dir="${build.dist.dir}"/>
+        <copy todir="${build.dist.dir}">
             <fileset dir="." includes="${libs.dir}/**/*.jar"/>
             <fileset dir="." includes="${libs.dir}/**/*.dll"/>
             <fileset dir="." includes="${libs.dir}/**/*.so"/>
