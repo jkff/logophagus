@@ -11,8 +11,8 @@ public class ViewSideBySideDisplayPlugin implements DisplayPlugin {
     public View createView(Entity entity) {
         LogsPair p = (LogsPair) entity.data;
         return new SideBySideView(
-                new ScrollableLogView((Log) p.first.data, p.first.attributes),
-                new ScrollableLogView((Log) p.second.data, p.second.attributes));
+                new ScrollableLogView((Log) p.first.data, p.first.attributes, null),
+                new ScrollableLogView((Log) p.second.data, p.second.attributes, null));
     }
 
     public boolean isApplicableFor(Object o) {

@@ -1,5 +1,6 @@
 package org.lf.ui.components.tree;
 
+import org.lf.plugins.display.View;
 import org.lf.services.TreePluginRepository;
 
 import javax.swing.*;
@@ -29,6 +30,27 @@ public class PluginTree extends JTree {
 
     public Object getRoot() {
         return getModel().getRoot();
+    }
+
+    /**
+     * Find row for an entity whose data is 'data' and which is visualized
+     * by a view of class 'viewClass', or return -1 
+     */
+    public TreePath findPathWithView(Object data, Class<? extends View> viewClass) {
+        return findPathWithViewRec(new TreePath(getRoot()), data, viewClass);
+    }
+
+    private TreePath findPathWithViewRec(TreePath root, Object data, Class<? extends View> viewClass) {
+        DefaultMutableTreeNode node = ((DefaultMutableTreeNode) root.getLastPathComponent());
+        NodeData nd = (NodeData) node.getUserObject();
+        if (nd != null && nd.entity.data.equals(data) && viewClass.isInstance(nd.view))
+            return root;
+        for (int i = 0; i < node.getChildCount(); ++i) {
+            TreePath p = findPathWithViewRec(root.pathByAddingChild(node.getChildAt(i)), data, viewClass);
+            if(p != null)
+                return p;
+        }
+        return null;
     }
 
     private class TreeMouseListener extends MouseAdapter {

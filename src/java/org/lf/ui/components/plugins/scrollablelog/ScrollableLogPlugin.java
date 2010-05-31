@@ -25,7 +25,7 @@ public class ScrollableLogPlugin implements Plugin {
     private static ListExtensionPoint<SLInitExtension> extensionPoint = new ListExtensionPoint<SLInitExtension>();
 
     @Override
-    public void init(ProgramContext context) {
+    public void init(final ProgramContext context) {
         context.getExtensionPointsManager().registerExtensionPoint(SL_INIT_EXTENSION_POINT_ID, extensionPoint);
 
         context.getXstream().registerConverter(new Converter() {
@@ -47,20 +47,20 @@ public class ScrollableLogPlugin implements Plugin {
             }
 
             @Override
-            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext umc) {
                 reader.moveDown();
-                Log log = (Log)context.convertAnother(null, Log.class);
+                Log log = (Log)umc.convertAnother(null, Log.class);
                 reader.moveUp();
 
                 reader.moveDown();
-                Attributes attributes = (Attributes)context.convertAnother(null, Attributes.class);
+                Attributes attributes = (Attributes)umc.convertAnother(null, Attributes.class);
                 reader.moveUp();
 
                 reader.moveDown();
-                ScrollableLogState state = (ScrollableLogState)context.convertAnother(null, ScrollableLogState.class);
+                ScrollableLogState state = (ScrollableLogState)umc.convertAnother(null, ScrollableLogState.class);
                 reader.moveUp();
 
-                ScrollableLogView res = new ScrollableLogView(log, attributes);
+                ScrollableLogView res = new ScrollableLogView(log, attributes, context.getPluginTree());
                 res.restoreState(state);
                 return res;
             }

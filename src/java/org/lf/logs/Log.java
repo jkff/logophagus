@@ -4,6 +4,7 @@ package org.lf.logs;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 import org.lf.parser.Position;
+import org.lf.util.Pair;
 
 import java.io.IOException;
 
@@ -30,11 +31,11 @@ public interface Log {
      *  - position from this log
      *  - null -> then function returns null;
      * @return :
-     *  - position of parent log that corresponds to pos
+     *  - parent log and position inside it that corresponds to pos
      *  - null if no parent log or impossible to convert position or pos is not from this log
      */
     @Nullable
-    public Position convertToParent(Position pos) throws IOException;
+    public Pair<Log,Position> convertToParent(Position pos) throws IOException;
 
     /**
      * @return - position of first record in this log

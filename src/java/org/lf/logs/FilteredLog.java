@@ -5,8 +5,11 @@ import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 import org.lf.parser.Position;
 import org.lf.util.Filter;
+import org.lf.util.Pair;
 
 import java.io.IOException;
+
+import static org.lf.util.CollectionFactory.pair;
 
 public class FilteredLog implements Log {
     private final Filter<Record> filter;
@@ -162,10 +165,10 @@ public class FilteredLog implements Log {
     }
 
     @Override
-    public Position convertToParent(Position pos) throws IOException {
+    public Pair<Log, Position> convertToParent(Position pos) throws IOException {
         if (pos == null || pos.getCorrespondingLog() != this) return null;
         FilteredPosition fPos = (FilteredPosition) pos;
-        return fPos.underlyingPos;
+        return pair(underlyingLog, fPos.underlyingPos);
     }
 
     @Override

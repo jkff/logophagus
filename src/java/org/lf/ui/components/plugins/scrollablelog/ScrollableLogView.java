@@ -1,8 +1,10 @@
 package org.lf.ui.components.plugins.scrollablelog;
 
+import org.jetbrains.annotations.Nullable;
 import org.lf.logs.Log;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.display.View;
+import org.lf.ui.components.tree.PluginTree;
 
 import javax.swing.*;
 
@@ -15,8 +17,8 @@ public class ScrollableLogView implements View<ScrollableLogState> {
 
     private ScrollableLogPanel panel;
 
-    public ScrollableLogView(Log log, Attributes attributes) {
-        this.panel = new ScrollableLogPanel(log, attributes);
+    public ScrollableLogView(Log log, Attributes attributes, @Nullable PluginTree pluginTree) {
+        this.panel = new ScrollableLogPanel(log, attributes, pluginTree);
         this.log = log;
         this.attributes = attributes;
     }

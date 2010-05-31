@@ -10,6 +10,7 @@ import java.util.*;
 
 import static org.lf.util.CollectionFactory.newHashSet;
 import static org.lf.util.CollectionFactory.newList;
+import static org.lf.util.CollectionFactory.pair;
 
 public class TimeMergeLogs implements Log {
     private final Log[] logs;
@@ -294,10 +295,11 @@ public class TimeMergeLogs implements Log {
     }
 
     @Override
-    public Position convertToParent(Position pos) throws IOException {
+    public Pair<Log, Position> convertToParent(Position pos) throws IOException {
         if (pos == null || pos.getCorrespondingLog() != this) return null;
         MergedPosition mPos = (MergedPosition) pos;
-        return mPos.cpisAscCur.first().cur;
+        CurPrevIndex cpi = mPos.cpisAscCur.first();
+        return pair(logs[cpi.index], cpi.cur);
     }
 
     @Override

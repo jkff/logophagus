@@ -9,6 +9,7 @@ import org.lf.io.RandomAccessFileIO;
 import org.lf.io.ScrollableInputStream;
 import org.lf.parser.Parser;
 import org.lf.parser.Position;
+import org.lf.util.Pair;
 
 import java.io.IOException;
 
@@ -140,7 +141,7 @@ public class FileBackedLog implements Log {
     }
 
     @Override
-    public Position convertToParent(Position pos) throws IOException {
+    public Pair<Log, Position> convertToParent(Position pos) throws IOException {
         return null;
     }
 

@@ -1,12 +1,14 @@
 package org.lf.ui.components.plugins.scrollablelog;
 
 
+import org.jetbrains.annotations.Nullable;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.tree.highlight.Highlighter;
 import org.lf.plugins.tree.highlight.RecordColorer;
 import org.lf.ui.components.plugins.scrollablelog.extension.SLInitExtension;
+import org.lf.ui.components.tree.PluginTree;
 import org.lf.ui.util.GUIUtils;
 import org.lf.util.HierarchicalAction;
 import org.lf.util.Removable;
@@ -32,9 +34,17 @@ public class ScrollableLogPanel extends JPanel implements Observer {
     private final ScrollableLogModel logSegmentModel;
     private final AccumulativeColorer recordColorer;
 
-    public final Context context;
+    private final Context context = new Context();
+
+    @Nullable
+    private PluginTree pluginTree;
 
     public class Context {
+        @Nullable
+        public PluginTree getPluginTree() {
+            return ScrollableLogPanel.this.pluginTree;
+        }
+
         public ScrollableLogModel getModel() {
             return ScrollableLogPanel.this.logSegmentModel;
         }
@@ -86,7 +96,8 @@ public class ScrollableLogPanel extends JPanel implements Observer {
         }
     }
 
-    public ScrollableLogPanel(final Log log, Attributes attributes) {
+    public ScrollableLogPanel(final Log log, Attributes attributes, @Nullable PluginTree pluginTree) {
+        this.pluginTree = pluginTree;
         this.attributes = attributes;
         this.logSegmentModel = new ScrollableLogModel(log, 50);
         this.logSegmentModel.start();
@@ -145,7 +156,6 @@ public class ScrollableLogPanel extends JPanel implements Observer {
 
         update(logSegmentModel, null);
         this.logSegmentModel.addObserver(this);
-        context = new Context();
         installExtensions();
         if (toolbar.getComponentCount() == 0)
             toolbar.setVisible(false);
@@ -191,6 +201,9 @@ public class ScrollableLogPanel extends JPanel implements Observer {
         }
     }
 
+    public ScrollableLogModel getLogSegmentModel() {
+        return logSegmentModel;
+    }
 
     class ListKeyListener extends KeyAdapter {
         @Override
@@ -267,7 +280,6 @@ public class ScrollableLogPanel extends JPanel implements Observer {
 
 
     private class LogPopup extends JPopupMenu {
-
         @Override
         public void show(Component invoker, int x, int y) {
             update();
@@ -277,7 +289,6 @@ public class ScrollableLogPanel extends JPanel implements Observer {
 
         private void update() {
             this.removeAll();
-
 
             for (PopupElementProvider cur : popupProviders) {
                 HierarchicalAction treeAction = cur.getHierarchicalAction();
