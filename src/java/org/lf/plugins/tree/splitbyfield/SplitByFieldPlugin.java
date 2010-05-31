@@ -1,6 +1,7 @@
 package org.lf.plugins.tree.splitbyfield;
 
 
+import com.sun.istack.internal.Nullable;
 import org.lf.logs.*;
 import org.lf.parser.Position;
 import org.lf.plugins.Attributes;
@@ -13,6 +14,7 @@ import org.lf.ui.components.tree.TreeContext;
 import org.lf.ui.components.tree.TreePluginNode;
 import org.lf.util.Filter;
 import org.lf.util.HierarchicalAction;
+import org.lf.util.Pair;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -20,6 +22,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.lf.util.CollectionFactory.pair;
 
 public class SplitByFieldPlugin implements TreePlugin, Plugin {
     @Override
@@ -49,6 +53,9 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
             rootAction.addChild(new HierarchicalAction(new AbstractAction(curField.name) {
                 @Override
                 public void actionPerformed(ActionEvent evt) {
+                    final Pair<Integer, Integer> maxRecsMaxLogs = getSplitSettings();
+                    if (maxRecsMaxLogs == null) return;
+
                     new Thread() {
                         Set<String> uniqueValues = new HashSet<String>();
 
@@ -56,7 +63,9 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
                         public void run() {
                             try {
                                 Position cur = parentLog.first();
+                                int recCount = 0;
                                 while (true) {
+                                    recCount++;
                                     cur = parentLog.next(cur);
                                     Record rec = parentLog.readRecord(cur);
                                     Field[] fields = rec.getFormat().getFields();
@@ -70,8 +79,16 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
                                             context.addChildTo(parentNode, new NodeData(entity, getIconFilename()), false);
                                         }
                                     }
-                                    if (cur.equals(parentLog.last())) break;
+                                    if (cur.equals(parentLog.last()) || recCount >= maxRecsMaxLogs.first) break;
+
                                 }
+
+                                if (recCount < maxRecsMaxLogs.first) return;
+
+                                Log log = new FilteredLog(parentLog, getExcludingFilter(curField, uniqueValues));
+                                Attributes attr = parentEntity.attributes.createSuccessor(log);
+                                Entity entity = new Entity(attr, log);
+                                context.addChildTo(parentNode, new NodeData(entity, getIconFilename()), false);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -94,6 +111,36 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
         return "folder_files.gif";
     }
 
+    @Nullable
+    private Pair<Integer, Integer> getSplitSettings() {
+        String str = JOptionPane.showInputDialog("Enter maximum amount of records to scan");
+        if (str == null) return null;
+
+        int recCount = Integer.parseInt(str);
+        str = JOptionPane.showInputDialog("Enter maximum amount of logs to create") ;
+        if (str == null) return null;
+        
+        int maxLogsCount = Integer.parseInt(str);
+
+        return pair(recCount, maxLogsCount);
+    }
+
+    private Filter<Record> getExcludingFilter(final Field field, final Set<String> excludingValues) {
+        return new Filter<Record>() {
+            @Override
+            public boolean accepts(Record r) {
+                for (int i = 0; i < r.getFormat().getFields().length; ++i)
+                    if (r.getFormat().getFields()[i].equals(field) &&
+                            excludingValues.contains(r.getCellValues()[i]))
+                        return false;
+                return true;
+            }
+
+            public String toString() {
+                return "split:OTHER";
+            };
+        };
+    }
 
     private Filter<Record> getFilter(final Field field, final String value) {
         return new Filter<Record>() {
@@ -112,4 +159,5 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
             };
         };
     }
+
 }
