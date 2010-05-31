@@ -1,6 +1,6 @@
 package org.lf.ui.components.dialog;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.lf.parser.Parser;
 import org.lf.parser.csv.CSVParserAdjuster;
 import org.lf.parser.line.LineParserAdjuster;

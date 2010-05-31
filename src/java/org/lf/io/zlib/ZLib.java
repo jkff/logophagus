@@ -4,10 +4,44 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 
-interface ZLib extends Library {
+import java.io.File;
 
-    public static ZLib INSTANCE = (ZLib) Native.loadLibrary("lib/" +
-            (Platform.isWindows() ? "zlib1-1.2.4":"libz.so.1.2.5") , ZLib.class);
+interface ZLib extends Library {
+    static class Helper {
+        public static ZLib loadLibrary() {
+            File res = getZlibFile().getAbsoluteFile();
+            if(!res.exists()) {
+                throw new RuntimeException(
+                        "Library " + res + " doesn't exist, " +
+                        "override property logophagus.zlib.file, " +
+                        "for example: java -Dlogophagus.zlib.file=/path/to/zlib-mac.dylib");
+            }
+            try {
+                return (ZLib) Native.loadLibrary(res.getAbsolutePath(), ZLib.class);
+            } catch(Throwable t) {
+                throw new RuntimeException("Library " + res + " exists but could not be loaded");
+            }
+        }
+
+        private static File getZlibFile() {
+            String overridden = System.getProperty("logophagus.zlib.file");
+            if(overridden != null) {
+                return new File(overridden);
+            }
+            if(Platform.isWindows()) {
+                return new File("lib/" + (Platform.is64Bit() ? "zlibwapi-1.2.5-64.dll" : "zlibwapi-1.2.5-32.dll"));
+            } else if(Platform.isLinux()) {
+                return new File("lib/" + (Platform.is64Bit() ? "libz-64.so.1.2.5" : "libz-32.so.1.2.5"));
+            } else {
+                throw new UnsupportedOperationException(
+                        "Versions of zlib are bundled only for Windows and Linux for now. " +
+                        "Report to the developers or override system property logophagus.zlib.file, " +
+                        "for example: java -Dlogophagus.zlib.file=/path/to/zlib-mac.dylib");
+            }
+        }
+    }
+
+    public static ZLib INSTANCE = Helper.loadLibrary();
 
     int inflatePrime(z_stream stream, int bits, int value);
 

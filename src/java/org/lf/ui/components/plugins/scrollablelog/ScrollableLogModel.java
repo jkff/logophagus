@@ -1,6 +1,6 @@
 package org.lf.ui.components.plugins.scrollablelog;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.parser.Position;

@@ -1,23 +1,19 @@
 package org.lf.plugins.tree.filelog;
 
-import com.sun.istack.internal.Nullable;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.joda.time.format.DateTimeFormat;
+import org.jetbrains.annotations.Nullable;
 import org.lf.io.GzipRandomAccessIO;
 import org.lf.io.MappedFile;
 import org.lf.io.RandomAccessFileIO;
 import org.lf.io.zlib.IndexMemento;
-import org.lf.logs.Field;
 import org.lf.logs.FileBackedLog;
-import org.lf.logs.Format;
 import org.lf.logs.Log;
 import org.lf.parser.Parser;
-import org.lf.parser.regex.RegexpParser;
 import org.lf.plugins.Attributes;
 import org.lf.plugins.Entity;
 import org.lf.plugins.Plugin;
@@ -145,23 +141,30 @@ public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
         }
 
         Parser parser = null;
-//        try {
-//            ParserSetupDialog psd = new ParserSetupDialog(Frame.getFrames()[0]);
-//            parser = psd.showSetupDialog();
-//            psd.dispose();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        if (parser == null) return null;
+        try {
+            ParserSetupDialog psd = new ParserSetupDialog(Frame.getFrames()[0]);
+            parser = psd.showSetupDialog();
+            psd.dispose();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (parser == null)
+            return null;
         try {
             RandomAccessFileIO io;
 
             if (f.getName().endsWith(".gz") || f.getName().endsWith("zip")) {
-                final GzipRandomAccessIO cio = new GzipRandomAccessIO(f.getAbsolutePath(), 1 << 20);
-                if (!initWithProgressDialog(cio))
+                try {
+                    final GzipRandomAccessIO cio = new GzipRandomAccessIO(f.getAbsolutePath(), 1 << 20);
+                    if (!initWithProgressDialog(cio))
+                        return null;
+                    io = cio;
+                } catch(Throwable e) {
+                    JOptionPane.showMessageDialog(null, "Gzip support is broken: " + e.getMessage());
+                    e.printStackTrace();
                     return null;
-                io = cio;
+                }
             } else {
                 io = new MappedFile(f.getAbsolutePath());
             }
@@ -169,40 +172,24 @@ public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
 
 //            Log log = new FileBackedLog(io, new CSVParser(new Format(fields, -1, null)));
 //            [2200-01-02 06:27:46,148] DEBUG [pool-798] Search performed in 0 with 507 hits
-            String[] regexes = new String[]
-                    {
-                            "\\[([^\\]]+)\\]\\s+(\\w+)\\s+\\[([^\\]]+)\\]\\s+(.+)",
-//                            "\\[([^\\]]++)\\]\\s++(\\w++)\\s++\\[([^\\]]++)\\]\\s++(.++)",
-//                            "\\s*(log4j:)\\s*(.*)",
-//                            "\\s*(java.lang.NumberFormat.*)\\n\\s*(at.*)\\s*"
-                    };
+//            String[] regexes = {
+//                            "\\[([^\\]]+)\\]\\s+(\\w+)\\s+\\[([^\\]]+)\\]\\s+(.+)",
+//                    "\\[([^\\]]++)\\]\\s++(\\w++)\\s++\\[([^\\]]++)\\]\\s++(.++)",
+//                    };
 
-            Field[] fields1 = new Field[]{
-                    new Field("Time"),
-                    new Field("Level"),
-                    new Field("pool"),
-                    new Field("Message")
-            };
+//            Field[] fields = {
+//                    new Field("Time"),
+//                    new Field("Level"),
+//                    new Field("Thread"),
+//                    new Field("Message")};
+//            Format format1 = new Format(fields1, 0,
+//            Format format = new Format(fields, 0, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS"));
 
-            Field[] fields2 = new Field[]{
-                    new Field("From"),
-                    new Field("Message")
-            };
+//            parser = new RegexpParser(regexes, new Format[]{format}, '\n', new int[]{1});
 
-            Field[] multiFields = new Field[]{
-                    new Field("Exception"),
-                    new Field("At Message")
-            };
-
-            Format format1 = new Format(fields1, 0,
-                    DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss,SSS"));
-
-            Format format2 = new Format(fields2, -1, null);
-
-            Format multiFormat = new Format(multiFields, -1, null);
-//            parser = new RegexpParser(regexes, new Format[]{format1, format2, multiFormat}, '\n', new int[]{1, 1, 2});
-
-            parser = new RegexpParser(regexes, new Format[]{format1}, '\n', new int[]{1});
+//            Format multiFormat = new Format(multiFields, -1, null);
+//
+//            parser = new RegexpParser(regexes, new Format[]{format1}, '\n', new int[]{1});
             Log log = new FileBackedLog(io, parser);
 
             Attributes atr = new Attributes();
@@ -236,6 +223,10 @@ public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
                         }
                     });
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch(ExceptionInInitializerError e) {
+                    d.cancel();
+                    JOptionPane.showMessageDialog(null, "Gzip support is broken: " + e.getCause().getMessage());
                     e.printStackTrace();
                 }
             }

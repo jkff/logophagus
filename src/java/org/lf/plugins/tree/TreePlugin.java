@@ -1,6 +1,6 @@
 package org.lf.plugins.tree;
 
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.lf.ui.components.tree.TreeContext;
 import org.lf.util.HierarchicalAction;
 

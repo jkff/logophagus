@@ -11,7 +11,7 @@ public class ProgramProperties {
     private static final String iconsPath;
 
     static {
-        iconsPath = System.getProperty("user.dir") + "/src/java/org/lf/ui/icons/";
+        iconsPath = System.getProperty("user.dir") + "/res/icons/";
         String userHomePath = System.getProperty("user.home");
         File file = new File(userHomePath, propertiesFileName);
         InputStream stream;
