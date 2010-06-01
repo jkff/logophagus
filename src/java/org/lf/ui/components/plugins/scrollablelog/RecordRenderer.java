@@ -34,28 +34,27 @@ public class RecordRenderer extends JPanel implements ListCellRenderer {
             boolean cellHasFocus)
     {
         if (value == null || value.getClass().isAssignableFrom(Record.class)) return null;
-        Record record = (Record) value;
-        extendRecordViewIfSmaller(record);
-        String[] cellValues = record.getCellValues();
+        Record r = (Record) value;
+        extendRecordViewIfSmaller(r);
 
-        for (int i = 0; i < cellValues.length; ++i) {
-            cells.get(i).setText(" " + cellValues[i].replaceAll("\\s+"," ") + " ");
+        for (int i = 0; i < r.getCellCount(); ++i) {
+            cells.get(i).setText(" " + r.getCell(i).replaceAll("\\s+"," ") + " ");
             cells.get(i).setFont(defaultFont);
         }
         for (int i = 0; i < cells.size(); ++i) {
-            cells.get(i).setVisible(i < cellValues.length);
+            cells.get(i).setVisible(i < r.getCellCount());
         }
         
-        if (record.getFormat().getTimeFieldIndex() != -1)
-            cells.get(record.getFormat().getTimeFieldIndex()).setFont(timeFont);
+        if (r.getFormat().getTimeFieldIndex() != -1)
+            cells.get(r.getFormat().getTimeFieldIndex()).setFont(timeFont);
 
         Color background, foreground;
         if (isSelected) {
             background = UIManager.getColor("List.selectionBackground");
             foreground = UIManager.getColor("List.selectionForeground");
         } else {
-            Color c = (colorer == null) ? null : colorer.getColor(record);
-            if (c == null && record.getFormat().equals(Format.UNKNOWN_FORMAT))
+            Color c = (colorer == null) ? null : colorer.getColor(r);
+            if (c == null && r.getFormat().equals(Format.UNKNOWN_FORMAT))
                 c = Color.PINK;
 
             background = (c == null) ? ((index % 2 == 0) ? new Color(244, 244, 244) : Color.WHITE) : c;
@@ -78,8 +77,8 @@ public class RecordRenderer extends JPanel implements ListCellRenderer {
         return this;
     }
 
-    void extendRecordViewIfSmaller(Record record) {
-        int recSize = record.getCellValues().length;
+    void extendRecordViewIfSmaller(Record r) {
+        int recSize = r.getCellCount();
         int vRecSize = this.cells.size();
         if (recSize <= vRecSize) return;
         for (int i = 0; i < (recSize - vRecSize); ++i) {

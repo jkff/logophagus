@@ -42,20 +42,29 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     @Override
     public byte[] readForwardUntil(byte b) throws IOException {
         ensureOpen();
-        long curFilePos = this.offsetInBuffer + this.buf.hash;
-        byte cur;
-        do {
-            if (this.offsetInBuffer == this.buf.data.length - 1) {
-                cur = this.buf.data[this.offsetInBuffer];
-                if (!shiftNextBuffer())
-                    break;
-            } else {
-                cur = this.buf.data[this.offsetInBuffer++];
+        long initialPos = this.offsetInBuffer + this.buf.hash;
+        boolean shiftedBuffer = false;
+        top: while(true) {
+            byte[] data = buf.data;
+            for(int i = this.offsetInBuffer; i < data.length; ++i) {
+                if(data[i] == b) {
+                    if(!shiftedBuffer) {
+                        // Simplest case
+                        byte[] res = Arrays.copyOfRange(data, this.offsetInBuffer, i + 1); 
+                        this.offsetInBuffer = i + 1;
+                        return res;
+                    }
+                    this.offsetInBuffer = i + 1;
+                    break top;
+                }
             }
-        } while (cur != b);
+            shiftedBuffer = true;
+            if(!shiftNextBuffer())
+                break;
+        }
 
-        long delta = this.offsetInBuffer + this.buf.hash - curFilePos;
-        scrollTo(curFilePos);
+        long delta = this.offsetInBuffer + this.buf.hash - initialPos;
+        scrollTo(initialPos);
         byte[] result = new byte[(int) delta];
         int n = read(result);
         if(n != result.length) {

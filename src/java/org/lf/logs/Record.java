@@ -1,7 +1,9 @@
 package org.lf.logs;
 
 public interface Record {
-    public String[] getCellValues();
+    public int getCellCount();
+
+    public String getCell(int i);
 
     public Format getFormat();
 }

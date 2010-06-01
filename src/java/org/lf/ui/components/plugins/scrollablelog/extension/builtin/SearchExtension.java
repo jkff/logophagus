@@ -145,13 +145,14 @@ public class SearchExtension implements SLInitExtension {
         return new Filter<Record>() {
             @Override
             public boolean accepts(Record r) {
-                for (String field : r.getCellValues()) {
-                    field = searchContext.caseSensitive ? field : field.toLowerCase();
+                for (int i = 0; i < r.getCellCount(); ++i) {
+                    String cell = r.getCell(i);
+                    cell = searchContext.caseSensitive ? cell : cell.toLowerCase();
                     if (searchContext.substringNotRegexp) {
-                        if (field.contains(userInput))
+                        if (cell.contains(userInput))
                             return true;
                     } else {
-                        if (field.matches(userInput))
+                        if (cell.matches(userInput))
                             return true;
                     }
                 }

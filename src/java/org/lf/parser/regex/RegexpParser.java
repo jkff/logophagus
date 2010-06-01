@@ -1,10 +1,10 @@
 package org.lf.parser.regex;
 
 import org.lf.io.ScrollableInputStream;
+import org.lf.logs.CompositeRecord;
 import org.lf.logs.Field;
 import org.lf.logs.Format;
 import org.lf.logs.Record;
-import org.lf.logs.RecordImpl;
 import org.lf.parser.Parser;
 import org.lf.util.Triple;
 
@@ -72,7 +72,7 @@ public class RegexpParser implements Parser {
 
         if (offsetIndexMatch.second == -1) {
             String wholeString = (String) offsetIndexMatch.third;
-            return new RecordImpl(new String[]{wholeString}, Format.UNKNOWN_FORMAT);
+            return new CompositeRecord(new String[]{wholeString}, Format.UNKNOWN_FORMAT);
         }
 
         Field[] fields = regexpFormats[offsetIndexMatch.second].getFields();
@@ -80,7 +80,7 @@ public class RegexpParser implements Parser {
         for (int i = 0; i < fields.length; ++i) {
             cells[i] = ((Matcher) offsetIndexMatch.third).group(i + 1);
         }
-        return new RecordImpl(cells, regexpFormats[offsetIndexMatch.second]);
+        return new CompositeRecord(cells, regexpFormats[offsetIndexMatch.second]);
     }
 
     private Triple<Integer, Integer, Object> getRecordFromCharStream(ScrollableInputStream is, boolean isForward) throws IOException {

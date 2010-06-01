@@ -196,7 +196,7 @@ public class FileBackedLog implements Log {
 
     private DateTime getTimeFromRecord(Record rec) {
         DateTimeFormatter dtf = rec.getFormat().getTimeFormat();
-        return new DateTime(dtf.parseMillis(rec.getCellValues()[rec.getFormat().getTimeFieldIndex()]), ISO_CHRONOLOGY);
+        return new DateTime(dtf.parseMillis(rec.getCell(rec.getFormat().getTimeFieldIndex())), ISO_CHRONOLOGY);
     }
 
 }

@@ -165,8 +165,13 @@ class CSVParser implements Parser {
         }
 
         @Override
-        public String[] getCellValues() {
-            return cells;
+        public int getCellCount() {
+            return cells.length;
+        }
+
+        @Override
+        public String getCell(int i) {
+            return cells[i];
         }
 
         @Override

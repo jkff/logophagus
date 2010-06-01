@@ -71,11 +71,11 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
                                     cur = parentLog.next(cur);
                                     Record rec = parentLog.readRecord(cur);
                                     Field[] fields = rec.getFormat().getFields();
-                                    String[] cells = rec.getCellValues();
                                     for (int i = 0; i < fields.length; ++i) {
-                                        if (fields[i].equals(curField) && !uniqueValues.contains(cells[i])) {
-                                            uniqueValues.add(cells[i]);
-                                            Log log = new FilteredLog(parentLog, getFilter(curField, cells[i]));
+                                        String cell = rec.getCell(i);
+                                        if (fields[i].equals(curField) && !uniqueValues.contains(cell)) {
+                                            uniqueValues.add(cell);
+                                            Log log = new FilteredLog(parentLog, getFilter(curField, cell));
                                             Attributes attr = parentEntity.attributes.createSuccessor(log);
                                             Entity entity = new Entity(attr, log);
                                             context.addChildTo(parentNode, new NodeData(entity, getIconFilename()), false);
@@ -135,7 +135,7 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
             public boolean accepts(Record r) {
                 for (int i = 0; i < r.getFormat().getFields().length; ++i)
                     if (r.getFormat().getFields()[i].equals(field) &&
-                            excludingValues.contains(r.getCellValues()[i]))
+                            excludingValues.contains(r.getCell(i)))
                         return false;
                 return true;
             }
@@ -152,7 +152,7 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
             public boolean accepts(Record r) {
                 for (int i = 0; i < r.getFormat().getFields().length; ++i)
                     if (r.getFormat().getFields()[i].equals(field) &&
-                            r.getCellValues()[i].equals(value))
+                            r.getCell(i).equals(value))
                         return true;
                 return false;
 
