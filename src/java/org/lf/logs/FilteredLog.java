@@ -104,18 +104,19 @@ public class FilteredLog implements Log {
     @Override
     @Nullable
     synchronized public Position first() throws IOException {
-        if (cachedFilteredFirst != null)
-            return cachedFilteredFirst;
-        Position pos = underlyingLog.first();
-        if (pos == null) return null;
-        if (filter.accepts(underlyingLog.readRecord(pos))) {
-            cachedFilteredFirst = new FilteredPosition(pos);
-            return cachedFilteredFirst;
-        }
-        pos = seek(pos, true);
-        cachedFilteredFirst = null;
-        if (pos != null) {
-            cachedFilteredFirst = new FilteredPosition(pos);
+        if (cachedFilteredFirst == null) {
+            Position pos = underlyingLog.first();
+            if (pos == null) {
+                cachedFilteredFirst = null;
+            } else if (filter.accepts(underlyingLog.readRecord(pos))) {
+                cachedFilteredFirst = new FilteredPosition(pos);
+            } else {
+                pos = seek(pos, true);
+                cachedFilteredFirst = null;
+                if (pos != null) {
+                    cachedFilteredFirst = new FilteredPosition(pos);
+                }
+            }
         }
         return cachedFilteredFirst;
     }
