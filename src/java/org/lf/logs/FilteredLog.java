@@ -14,6 +14,7 @@ import static org.lf.util.CollectionFactory.pair;
 public class FilteredLog implements Log {
     private final Filter<Record> filter;
     private FilteredPosition cachedFilteredFirst;
+    private FilteredPosition cachedFilteredLast;
     private final Log underlyingLog;
 
     private class FilteredPosition implements Position {
@@ -122,13 +123,20 @@ public class FilteredLog implements Log {
     @Override
     @Nullable
     public Position last() throws IOException {
-        Position pos = underlyingLog.last();
-        if (pos == null) return null;
-        if (filter.accepts(underlyingLog.readRecord(pos)))
-            return new FilteredPosition(pos);
-        pos = seek(pos, false);
-        if (pos != null) return new FilteredPosition(pos);
-        return null;
+        if(cachedFilteredLast == null) {
+            Position pos = underlyingLog.last();
+            if (pos == null) {
+                cachedFilteredLast = null;
+            } else if (filter.accepts(underlyingLog.readRecord(pos))) {
+                cachedFilteredLast = new FilteredPosition(pos);
+            } else {
+                pos = seek(pos, false);
+                if (pos != null) {
+                    cachedFilteredLast = new FilteredPosition(pos);
+                }
+            }
+        }
+        return cachedFilteredLast;
     }
 
     @Override
