@@ -94,6 +94,8 @@ public interface Log {
     @Nullable
     public DateTime getTime(Position pos) throws IOException;
 
+    public Position findNearestBeforeTime(DateTime time) throws IOException;
+
     /**
      * returns name of this log
      */

@@ -38,7 +38,7 @@ public class RecordRenderer extends JPanel implements ListCellRenderer {
         extendRecordViewIfSmaller(r);
 
         for (int i = 0; i < r.getCellCount(); ++i) {
-            cells.get(i).setText(" " + r.getCell(i).replaceAll("\\s+"," ") + " ");
+            cells.get(i).setText(" " + r.getCell(i).toString().replaceAll("\\s+"," ") + " ");
             cells.get(i).setFont(defaultFont);
         }
         for (int i = 0; i < cells.size(); ++i) {

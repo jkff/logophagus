@@ -1,4 +1,4 @@
-package org.lf.ui.components.dialog;
+package org.lf.ui.components.plugins.scrollablelog.extension.search;
 
 import org.jetbrains.annotations.Nullable;
 import org.lf.ui.util.GUIUtils;
@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SearchSetupDialog extends JDialog {
+public class SearchDialog extends JDialog {
     private boolean okPressed = false;
     private final JTextField textField;
     private final JRadioButton substring;
@@ -31,11 +31,11 @@ public class SearchSetupDialog extends JDialog {
         }
     }
 
-    public SearchSetupDialog(Window owner, ModalityType modality) {
+    public SearchDialog(Window owner, ModalityType modality) {
         this(owner, null, modality);
     }
 
-    public SearchSetupDialog(Window owner, String initialText, ModalityType modality) {
+    public SearchDialog(Window owner, String initialText, ModalityType modality) {
         super(owner, "Search", modality);
 
         Box contentBox = Box.createVerticalBox();

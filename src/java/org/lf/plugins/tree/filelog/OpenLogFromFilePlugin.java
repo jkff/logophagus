@@ -151,6 +151,7 @@ public class OpenLogFromFilePlugin implements TreePlugin, Plugin {
 
         if (parser == null)
             return null;
+
         try {
             RandomAccessFileIO io;
 

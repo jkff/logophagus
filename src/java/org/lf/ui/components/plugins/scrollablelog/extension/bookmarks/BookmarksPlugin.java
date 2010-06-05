@@ -1,4 +1,4 @@
-package org.lf.ui.components.plugins.scrollablelog.extension.builtin;
+package org.lf.ui.components.plugins.scrollablelog.extension.bookmarks;
 
 import org.lf.plugins.Plugin;
 import org.lf.plugins.ProgramContext;
@@ -8,14 +8,15 @@ import org.lf.ui.components.plugins.scrollablelog.ScrollableLogPlugin;
 import org.lf.ui.components.plugins.scrollablelog.extension.SLInitExtension;
 
 /**
- * Created on: 27.05.2010 16:00:54
+ * Created on: 27.05.2010 16:02:10
  */
-public class SearchPlugin implements Plugin {
+public class BookmarksPlugin implements Plugin {
     @Override
     public void init(ProgramContext context) {
         ExtensionPointsManager epm = context.getExtensionPointsManager();
         ExtensionPoint<SLInitExtension> ep = epm.getExtensionPoint(
                 ScrollableLogPlugin.SL_INIT_EXTENSION_POINT_ID);
-        ep.addExtension(new SearchExtension());
+
+        ep.addExtension(new BookmarkExtension());
     }
 }

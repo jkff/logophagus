@@ -1,4 +1,4 @@
-package org.lf.ui.components.plugins.scrollablelog.extension.builtin;
+package org.lf.ui.components.plugins.scrollablelog.extension.gotoparent;
 
 import org.lf.logs.Log;
 import org.lf.parser.Position;

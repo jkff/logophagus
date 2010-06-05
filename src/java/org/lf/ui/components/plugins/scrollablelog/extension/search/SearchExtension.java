@@ -1,11 +1,10 @@
-package org.lf.ui.components.plugins.scrollablelog.extension.builtin;
+package org.lf.ui.components.plugins.scrollablelog.extension.search;
 
 import org.lf.logs.Log;
 import org.lf.logs.Record;
 import org.lf.parser.Position;
 import org.lf.plugins.tree.highlight.RecordColorer;
 import org.lf.ui.components.dialog.LongTaskDialog;
-import org.lf.ui.components.dialog.SearchSetupDialog;
 import org.lf.ui.components.plugins.scrollablelog.ScrollableLogPanel;
 import org.lf.ui.components.plugins.scrollablelog.extension.SLInitExtension;
 import org.lf.util.Filter;
@@ -18,6 +17,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 public class SearchExtension implements SLInitExtension {
     @Override
@@ -36,10 +36,10 @@ public class SearchExtension implements SLInitExtension {
     }
 
     private class SearchContext {
-        public final SearchSetupDialog.SearchContext dialogContext;
+        public final SearchDialog.SearchContext dialogContext;
         public final Removable highlighter;
 
-        SearchContext(SearchSetupDialog.SearchContext dialogContext, Removable highlighter) {
+        SearchContext(SearchDialog.SearchContext dialogContext, Removable highlighter) {
             this.dialogContext = dialogContext;
             this.highlighter = highlighter;
         }
@@ -53,8 +53,8 @@ public class SearchExtension implements SLInitExtension {
             public void actionPerformed(ActionEvent e) {
                 if (context.getModel().getShownRecordCount() == 0)
                     return;
-                SearchSetupDialog dialog = new SearchSetupDialog(Frame.getFrames()[0], Dialog.ModalityType.APPLICATION_MODAL);
-                final SearchSetupDialog.SearchContext dialogSearchContext = lastContext != null ?
+                SearchDialog dialog = new SearchDialog(Frame.getFrames()[0], Dialog.ModalityType.APPLICATION_MODAL);
+                final SearchDialog.SearchContext dialogSearchContext = lastContext != null ?
                         dialog.showSetupDialog(lastContext.dialogContext) :
                         dialog.showSetupDialog();
                 if(dialogSearchContext == null)
@@ -140,21 +140,18 @@ public class SearchExtension implements SLInitExtension {
         };
     }
 
-    private Filter<Record> getFilterFromSearchContext(final SearchSetupDialog.SearchContext searchContext) {
+    private Filter<Record> getFilterFromSearchContext(final SearchDialog.SearchContext searchContext) {
         final String userInput = searchContext.caseSensitive ? searchContext.text : searchContext.text.toLowerCase();
+        final Pattern p = Pattern.compile(userInput,
+                (searchContext.substringNotRegexp ? Pattern.LITERAL : 0) |
+                (searchContext.caseSensitive ? 0 : Pattern.CASE_INSENSITIVE));
         return new Filter<Record>() {
             @Override
             public boolean accepts(Record r) {
                 for (int i = 0; i < r.getCellCount(); ++i) {
-                    String cell = r.getCell(i);
-                    cell = searchContext.caseSensitive ? cell : cell.toLowerCase();
-                    if (searchContext.substringNotRegexp) {
-                        if (cell.contains(userInput))
-                            return true;
-                    } else {
-                        if (cell.matches(userInput))
-                            return true;
-                    }
+                    CharSequence cell = r.getCell(i);
+                    if(p.matcher(cell).find())
+                        return true;
                 }
                 return false;
             }

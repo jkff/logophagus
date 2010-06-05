@@ -167,6 +167,21 @@ public class FileBackedLog implements Log {
         return res;
     }
 
+    @Override
+    public Position findNearestBeforeTime(DateTime time) throws IOException {
+        // Naive implementation. Use binary search afterwards.
+        Position prev = null;
+        for(Position p = first(); p != null; p = next(p)) {
+            DateTime t = getTime(p);
+            if(t == null)
+                continue;
+            if(t.isAfter(time))
+                return prev;
+            prev = p;
+        }
+        return null;
+    }
+
     private DateTime getTimeImpl(@NotNull Position pos) throws IOException {
         Record posRecord = readRecord(pos);
         if (posRecord.getFormat().getTimeFieldIndex() != -1) {
@@ -196,7 +211,8 @@ public class FileBackedLog implements Log {
 
     private DateTime getTimeFromRecord(Record rec) {
         DateTimeFormatter dtf = rec.getFormat().getTimeFormat();
-        return new DateTime(dtf.parseMillis(rec.getCell(rec.getFormat().getTimeFieldIndex())), ISO_CHRONOLOGY);
+        return new DateTime(
+                dtf.parseMillis(rec.getCell(rec.getFormat().getTimeFieldIndex()).toString()), ISO_CHRONOLOGY);
     }
 
 }

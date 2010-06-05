@@ -80,7 +80,7 @@ public class HighlightRegexpPlugin implements TreePlugin, Plugin {
             @Override
             public Color getColor(Record r) {
                 for (int i = 0; i < r.getCellCount(); ++i) {
-                    String cell = r.getCell(i);
+                    CharSequence cell = r.getCell(i);
                     if (cell != null && p.matcher(cell).find())
                         return Color.RED;
                 }

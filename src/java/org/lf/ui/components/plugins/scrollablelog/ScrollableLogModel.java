@@ -384,5 +384,8 @@ public class ScrollableLogModel extends Observable {
         notifyObservers("CLEAR");
     }
 
+    public Log getLog() {
+        return log;
+    }
 
 }

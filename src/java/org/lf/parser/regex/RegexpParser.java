@@ -1,10 +1,7 @@
 package org.lf.parser.regex;
 
 import org.lf.io.ScrollableInputStream;
-import org.lf.logs.CompositeRecord;
-import org.lf.logs.Field;
-import org.lf.logs.Format;
-import org.lf.logs.Record;
+import org.lf.logs.*;
 import org.lf.parser.Parser;
 import org.lf.util.Triple;
 
@@ -71,16 +68,10 @@ public class RegexpParser implements Parser {
         Triple<Integer, Integer, Object> offsetIndexMatch = findOIMforward(is);
 
         if (offsetIndexMatch.second == -1) {
-            String wholeString = (String) offsetIndexMatch.third;
-            return new CompositeRecord(new String[]{wholeString}, Format.UNKNOWN_FORMAT);
+            return new LineRecord((String) offsetIndexMatch.third);
         }
 
-        Field[] fields = regexpFormats[offsetIndexMatch.second].getFields();
-        String[] cells = new String[regexpFormats[offsetIndexMatch.second].getFields().length];
-        for (int i = 0; i < fields.length; ++i) {
-            cells[i] = ((Matcher) offsetIndexMatch.third).group(i + 1);
-        }
-        return new CompositeRecord(cells, regexpFormats[offsetIndexMatch.second]);
+        return new RegexRecord((Matcher) offsetIndexMatch.third, regexpFormats[offsetIndexMatch.second]);
     }
 
     private Triple<Integer, Integer, Object> getRecordFromCharStream(ScrollableInputStream is, boolean isForward) throws IOException {

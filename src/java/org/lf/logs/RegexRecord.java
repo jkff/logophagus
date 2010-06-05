@@ -1,22 +1,24 @@
 package org.lf.logs;
 
-public class CompositeRecord implements Record {
-    private final String[] cells;
+import java.util.regex.Matcher;
+
+public class RegexRecord implements Record {
+    private final Matcher matcher;
     private final Format format;
 
-    public CompositeRecord(String[] cells, Format format) {
-        this.cells = cells;
+    public RegexRecord(Matcher matcher, Format format) {
+        this.matcher = matcher;
         this.format = format;
     }
 
     @Override
     public int getCellCount() {
-        return this.cells.length;
+        return this.matcher.groupCount();
     }
 
     @Override
     public String getCell(int i) {
-        return this.cells[i];
+        return this.matcher.group(i+1);
     }
 
     @Override

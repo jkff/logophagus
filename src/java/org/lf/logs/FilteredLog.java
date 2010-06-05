@@ -189,4 +189,9 @@ public class FilteredLog implements Log {
     public DateTime getTime(Position pos) throws IOException {
         return underlyingLog.getTime(((FilteredPosition) pos).underlyingPos);
     }
+
+    @Override
+    public Position findNearestBeforeTime(DateTime time) throws IOException {
+        return seek(underlyingLog.findNearestBeforeTime(time), false);
+    }
 }

@@ -13,9 +13,10 @@ import org.lf.plugins.tree.splitbyfield.SplitByFieldPlugin;
 import org.lf.services.ProgramProperties;
 import org.lf.ui.components.pluginPanel.PluginPanel;
 import org.lf.ui.components.plugins.scrollablelog.ScrollableLogPlugin;
-import org.lf.ui.components.plugins.scrollablelog.extension.builtin.BookmarksPlugin;
-import org.lf.ui.components.plugins.scrollablelog.extension.builtin.GoToParentLogPlugin;
-import org.lf.ui.components.plugins.scrollablelog.extension.builtin.SearchPlugin;
+import org.lf.ui.components.plugins.scrollablelog.extension.bookmarks.BookmarksPlugin;
+import org.lf.ui.components.plugins.scrollablelog.extension.gotoparent.GoToParentLogPlugin;
+import org.lf.ui.components.plugins.scrollablelog.extension.gototime.GoToTimePlugin;
+import org.lf.ui.components.plugins.scrollablelog.extension.search.SearchPlugin;
 import org.lf.ui.components.tree.PluginTree;
 import org.lf.ui.components.tree.TreeContext;
 import org.lf.ui.persistence.TreePersistencePlugin;
@@ -50,6 +51,7 @@ public class Logophagus extends JFrame {
         pluginManager.addPlugin(new SearchPlugin());
         pluginManager.addPlugin(new BookmarksPlugin());
         pluginManager.addPlugin(new GoToParentLogPlugin());
+        pluginManager.addPlugin(new GoToTimePlugin());
 
         pluginManager.addPlugin(new TreePersistencePlugin());
 //        pluginManager.addPlugin(new ViewFieldSplittedLogPlugin());

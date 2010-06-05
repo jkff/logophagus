@@ -1,4 +1,4 @@
-package org.lf.ui.components.plugins.scrollablelog.extension.builtin;
+package org.lf.ui.components.plugins.scrollablelog.extension.bookmarks;
 
 import org.lf.parser.Position;
 import org.lf.plugins.tree.Bookmarks;

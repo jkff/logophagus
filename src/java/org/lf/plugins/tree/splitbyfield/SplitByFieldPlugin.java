@@ -72,7 +72,7 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
                                     Record rec = parentLog.readRecord(cur);
                                     Field[] fields = rec.getFormat().getFields();
                                     for (int i = 0; i < fields.length; ++i) {
-                                        String cell = rec.getCell(i);
+                                        String cell = rec.getCell(i).toString();
                                         if (fields[i].equals(curField) && !uniqueValues.contains(cell)) {
                                             uniqueValues.add(cell);
                                             Log log = new FilteredLog(parentLog, getFilter(curField, cell));

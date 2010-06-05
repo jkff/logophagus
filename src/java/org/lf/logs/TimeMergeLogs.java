@@ -313,4 +313,13 @@ public class TimeMergeLogs implements Log {
         return logs[mPos.cpisAscCur.first().index].getTime(mPos.cpisAscCur.first().cur);
     }
 
+    @Override
+    public Position findNearestBeforeTime(DateTime time) throws IOException {
+        List<CurPrevIndex> ps = newList();
+        for (int i = 0; i < logs.length; ++i) {
+            Position p = logs[i].findNearestBeforeTime(time);
+            ps.add(new CurPrevIndex(p, logs[i].prev(p), null, null, i));
+        }
+        return new MergedPosition(fromList(ps, COMPARE_CPI_ON_CUR), fromList(ps, COMPARE_CPI_ON_PREV));
+    }
 }

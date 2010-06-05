@@ -15,6 +15,7 @@ import org.lf.util.HierarchicalAction;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.regex.Pattern;
 
 public class FilterByCriteriaPlugin implements TreePlugin, Plugin {
     @Override
@@ -90,6 +91,9 @@ public class FilterByCriteriaPlugin implements TreePlugin, Plugin {
                 JOptionPane.QUESTION_MESSAGE);
         if (input == null)
             return null;
+
+        final Pattern p = Pattern.compile(input, substringNotRegexp ? Pattern.LITERAL : 0);
+
         Filter<Record> filter = new Filter<Record>() {
             public String toString() {
                 return "filter: " + input;
@@ -97,10 +101,10 @@ public class FilterByCriteriaPlugin implements TreePlugin, Plugin {
 
             public boolean accepts(Record r) {
                 for (int i = 0; i < r.getCellCount(); ++i) {
-                    String cell = r.getCell(i);
+                    CharSequence cell = r.getCell(i);
                     if (cell == null)
                         continue;
-                    if (substringNotRegexp ? cell.contains(input) : cell.matches(input))
+                    if (p.matcher(cell).find())
                         return true;
                 }
                 return false;
