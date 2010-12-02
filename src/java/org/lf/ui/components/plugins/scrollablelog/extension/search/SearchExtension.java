@@ -88,8 +88,8 @@ public class SearchExtension implements SLInitExtension {
                         "Searching",
                         "Please wait",
                         Dialog.ModalityType.APPLICATION_MODAL);
-                searchStateDialog.setSize(200, 100);
-                searchStateDialog.setResizable(false);
+                searchStateDialog.setSize(300, 100);
+                searchStateDialog.setResizable(true);
 
                 final AtomicBoolean found = new AtomicBoolean(false);
 
@@ -99,6 +99,7 @@ public class SearchExtension implements SLInitExtension {
                         try {
                             Position cur = pos[0];
                             Position border = dialogSearchContext.forwardNotBackward ? log.last() : log.first();
+                            int numScanned = 0;
                             while (cur != null && !cur.equals(border) &&
                                     !found.get() &&
                                     !searchStateDialog.isCanceled())
@@ -108,6 +109,15 @@ public class SearchExtension implements SLInitExtension {
                                 if (filter.accepts(r)) {
                                     found.set(true);
                                     break;
+                                }
+                                if(numScanned++ % 10000 == 0) {
+                                    int timeFieldIndex = r.getFormat().getTimeFieldIndex();
+                                    if(timeFieldIndex != -1) {
+                                        searchStateDialog.setProgressText("Now at " + r.getCell(timeFieldIndex));
+                                    } else {
+                                        CharSequence s = r.getRawString();
+                                        searchStateDialog.setProgressText("Now at " + s.subSequence(0, Math.min(50,s.length())) + "...");
+                                    }
                                 }
                             }
                             pos[0] = cur;
