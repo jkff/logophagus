@@ -10,21 +10,19 @@ import static org.lf.util.CollectionFactory.pair;
  * Created on: 26.05.2010 15:13:07
  */
 public class SideBySideView implements View<Pair<Object,Object>> {
-    private JScrollPane component;
+    private JComponent component;
     private View va;
     private View vb;
 
     public SideBySideView(View va, View vb) {
         this.va = va;
         this.vb = vb;
-        JPanel panel = new JPanel();
-        BoxLayout layout = new BoxLayout(panel, BoxLayout.X_AXIS);
-        panel.setLayout(layout);
-        panel.add(va.getComponent());
-        panel.add(Box.createHorizontalStrut(12));
-        panel.add(vb.getComponent());
+        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        split.setLeftComponent(va.getComponent());
+        split.setRightComponent(vb.getComponent());
+        split.setResizeWeight(0.5);
 
-        this.component = new JScrollPane(panel);
+        this.component = split;
     }
 
     @Override
