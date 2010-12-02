@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 public class RegexpParser implements Parser {
     private final Format[] regexpFormats;
     private final Pattern[] patterns;
-    private final char recordDelimiter;
     private final int[] linesPerRecord;
     private int maxLinesPerRecord = 1;
 
@@ -25,13 +24,12 @@ public class RegexpParser implements Parser {
     // Object is a Matcher if a pattern matched, or a String (raw input line) if none matched
     private Triple<Integer, Integer, Object> cachedOffsetIndexMatch;
 
-    public RegexpParser(String[] regexps, Format[] regexpFormats, char recordDelimiter, int[] linesPerRecord) {
+    public RegexpParser(String[] regexps, Format[] regexpFormats, int[] linesPerRecord) {
         this.patterns = new Pattern[regexps.length];
         for (int i = 0; i < regexps.length; ++i) {
             patterns[i] = Pattern.compile(regexps[i]);
         }
 
-        this.recordDelimiter = recordDelimiter;
         this.linesPerRecord = linesPerRecord;
 
         for (int cur : linesPerRecord) {
@@ -75,47 +73,65 @@ public class RegexpParser implements Parser {
     }
 
     private Triple<Integer, Integer, Object> getRecordFromCharStream(ScrollableInputStream is, boolean isForward) throws IOException {
-        int firstLineLength = 0;
+        int nextLineOffset = 0;
         String firstLineString = null;
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-        String curBytesString;
+        String curLines;
 
-        for (int joinCount = 0; joinCount < maxLinesPerRecord; ++joinCount) {
-            byte b[] = isForward ? is.readForwardUntil((byte) recordDelimiter) : is.readBackwardUntil((byte) recordDelimiter);
+        for (int numLines = 1; numLines <= maxLinesPerRecord; ++numLines) {
+            byte b[] = isForward ? is.readForwardUntil((byte) '\n') : is.readBackwardUntil((byte) '\n');
 
-            if (isForward) byteArray.write(b);
-            else byteArray.write(b, 0, b.length);
+            if (isForward)
+                byteArray.write(b);
+            else
+                byteArray.write(b, 0, b.length);
 
-            curBytesString = byteArray.toString("us-ascii");
-            int length = curBytesString.length();
+            curLines = byteArray.toString("us-ascii");
 
-            if (joinCount == 0) {
-                firstLineLength = !isForward ?
-                        curBytesString.charAt(0) == recordDelimiter ?
-                                length - 1
-                                :
-                                length
-                        :
-                        length;
-                firstLineString = curBytesString;
+            int length = curLines.length();
+
+            int numRs = 0;
+            for(int i = 0; i < length; ++i) {
+                if(curLines.charAt(i) == '\r') {
+                    numRs++;
+                }
             }
 
+            if(numRs > 0) {
+                char[] c = new char[length - numRs];
+                for(int i = 0, j = 0; i < length; ++i) {
+                    char chr = curLines.charAt(i);
+                    if(chr != '\r')
+                        c[j++] = chr;
+                }
+                curLines = new String(c);
+            }
+
+            length = curLines.length() - numRs;
+
+            if (isForward)
+                nextLineOffset = length;
+            else
+                nextLineOffset = (curLines.charAt(0) == '\n') ? length - 1 : length;
+            nextLineOffset += numRs;
+
+            if (numLines == 1) {
+                firstLineString = curLines;
+            }
 
             for (int i = 0; i < linesPerRecord.length; ++i) {
-                if (linesPerRecord[i] != joinCount + 1) continue;
+                if (linesPerRecord[i] != numLines) continue;
 
-                Matcher m = patterns[i].matcher
-                        (
-                                curBytesString.length() != 0 && curBytesString.charAt(length - 1) == '\n'
-                                        ?
-                                        curBytesString.substring(0, length - 1)
-                                        :
-                                        curBytesString
-                        );
+                int toNewline = length;
+                if(length > 0 && curLines.charAt(length - 1) == '\n')
+                    toNewline--;
+
+                Matcher m = patterns[i].matcher(curLines.substring(0, toNewline));
+
                 if (m.matches()) {
                     if (isForward)
                         return new Triple<Integer, Integer, Object>(byteArray.size(), i, m);
-                    if (curBytesString.charAt(0) == recordDelimiter)
+                    if (curLines.charAt(0) == '\n')
                         return new Triple<Integer, Integer, Object>(byteArray.size() - 1, i, m);
                     return new Triple<Integer, Integer, Object>(byteArray.size(), i, m);
                 }
@@ -123,11 +139,11 @@ public class RegexpParser implements Parser {
             }
             // if there is no recordDelimiter at the joined lines end then the begin/end of file occurs
             // and we can't continue to read next lines 
-            if (curBytesString.charAt(isForward ? curBytesString.length() - 1 : 0) != recordDelimiter) {
+            if (curLines.charAt(isForward ? curLines.length() - 1 : 0) != '\n') {
                 break;
             }
         }
-        return new Triple<Integer, Integer, Object>(firstLineLength, -1, firstLineString);
+        return new Triple<Integer, Integer, Object>(nextLineOffset, -1, firstLineString);
     }
 
     @Override

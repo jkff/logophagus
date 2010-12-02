@@ -78,7 +78,7 @@ public class RegexpParserAdjuster extends ParserAdjuster {
             linesPerRecord[i] = cur.second;
             formats[i] = cur.third;
         }
-        return new RegexpParser(patterns, formats, '\n', linesPerRecord);
+        return new RegexpParser(patterns, formats, linesPerRecord);
     }
 
     private class TripleRenderer extends DefaultListCellRenderer {
