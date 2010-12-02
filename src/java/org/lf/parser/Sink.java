@@ -23,4 +23,8 @@ public class Sink {
 
     public void error() {
     }
+
+    public void onRawChar(char c) {
+
+    }
 }

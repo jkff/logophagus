@@ -6,4 +6,6 @@ public interface Record {
     public CharSequence getCell(int i);
 
     public Format getFormat();
+
+    public CharSequence getRawString();
 }

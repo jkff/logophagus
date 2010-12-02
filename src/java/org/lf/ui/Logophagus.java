@@ -14,6 +14,7 @@ import org.lf.services.ProgramProperties;
 import org.lf.ui.components.pluginPanel.PluginPanel;
 import org.lf.ui.components.plugins.scrollablelog.ScrollableLogPlugin;
 import org.lf.ui.components.plugins.scrollablelog.extension.bookmarks.BookmarksPlugin;
+import org.lf.ui.components.plugins.scrollablelog.extension.clipboard.CopyToClipboardPlugin;
 import org.lf.ui.components.plugins.scrollablelog.extension.gotoparent.GoToParentLogPlugin;
 import org.lf.ui.components.plugins.scrollablelog.extension.gototime.GoToTimePlugin;
 import org.lf.ui.components.plugins.scrollablelog.extension.search.SearchPlugin;
@@ -24,10 +25,7 @@ import org.lf.ui.persistence.TreePersistencePlugin;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 public class Logophagus extends JFrame {
     private ProgramContext context;
@@ -52,6 +50,7 @@ public class Logophagus extends JFrame {
         pluginManager.addPlugin(new BookmarksPlugin());
         pluginManager.addPlugin(new GoToParentLogPlugin());
         pluginManager.addPlugin(new GoToTimePlugin());
+        pluginManager.addPlugin(new CopyToClipboardPlugin());
 
         pluginManager.addPlugin(new TreePersistencePlugin());
 //        pluginManager.addPlugin(new ViewFieldSplittedLogPlugin());
@@ -138,6 +137,11 @@ public class Logophagus extends JFrame {
                 } finally {
                     if(is != null) try { is.close(); } catch (IOException e) {}
                 }
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return ProgramProperties.getUIStateFile().exists();
             }
         });
 

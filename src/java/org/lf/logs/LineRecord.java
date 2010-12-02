@@ -55,4 +55,9 @@ public class LineRecord implements Record {
     public Format getFormat() {
         return Format.UNKNOWN_FORMAT;
     }
+
+    @Override
+    public CharSequence getRawString() {
+        return value;
+    }
 }

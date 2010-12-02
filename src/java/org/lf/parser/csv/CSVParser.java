@@ -68,12 +68,14 @@ class CSVParser implements Parser {
             char c = (char) i;
             SymbolType s =
                     (c == recordDelimiter) ? SymbolType.RECORD_DELIMITER :
-                            (c == escapeCharacter) ? SymbolType.ESCAPE :
-                                    (c == fieldDelimiter) ? SymbolType.FIELD_DELIMITER :
-                                            (c == quoteCharacter) ? SymbolType.QUOTE :
-                                                    SymbolType.OTHER;
+                    (c == escapeCharacter) ? SymbolType.ESCAPE :
+                    (c == fieldDelimiter) ? SymbolType.FIELD_DELIMITER :
+                    (c == quoteCharacter) ? SymbolType.QUOTE :
+                    SymbolType.OTHER;
 
             state = tf.next(state, s);
+
+            sink.onRawChar(c);
 
             switch (state) {
                 case FIELD:
@@ -123,6 +125,8 @@ class CSVParser implements Parser {
     public Record readRecord(ScrollableInputStream is) throws IOException {
         final List<String> fields = newList();
 
+        final StringBuilder rawString = new StringBuilder();
+
         findBorder(forward(is), new Forward(),
                 new Sink() {
                     public void fieldBreak() {
@@ -136,17 +140,23 @@ class CSVParser implements Parser {
                     public void recordBorder() {
                         fields.add(getContents().toString());
                     }
+
+                    public void onRawChar(char c) {
+                        rawString.append(c);
+                    }
                 });
 
-        return new CSVRecord(fields);
+        return new CSVRecord(rawString.toString(), fields);
     }
 
 
     private class CSVRecord implements Record {
+        private final String rawString;
         private final String[] cells;
         private final boolean matchesFormat;
 
-        private CSVRecord(List<String> strFields) {
+        private CSVRecord(String rawString, List<String> strFields) {
+            this.rawString = rawString;
             matchesFormat = (strFields.size() == CSVParser.this.csvFormat.getFields().length);
 
             this.cells = new String[matchesFormat ? strFields.size() : 1];
@@ -177,6 +187,11 @@ class CSVParser implements Parser {
         @Override
         public Format getFormat() {
             return matchesFormat ? CSVParser.this.csvFormat : Format.UNKNOWN_FORMAT;
+        }
+
+        @Override
+        public CharSequence getRawString() {
+            return rawString;
         }
     }
 

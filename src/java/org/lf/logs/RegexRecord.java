@@ -26,4 +26,8 @@ public class RegexRecord implements Record {
         return this.format;
     }
 
+    @Override
+    public CharSequence getRawString() {
+        return matcher.group(0);
+    }
 }
