@@ -28,7 +28,7 @@ public class SearchExtension implements SLInitExtension {
         context.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == (KeyEvent.CTRL_MASK | KeyEvent.VK_F)) {
+                if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_F) {
                     searchAction.actionPerformed(null);
                 }
             }
