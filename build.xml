@@ -1,6 +1,6 @@
 <project name="logophagus" default="all">
     <property name="project.title" value="Logophagus"/>
-    <property name="project.version" value="0.1"/>
+    <property name="project.version" value="0.1.1"/>
 
     <property name="build.dir" value="build"/>
     <property name="build.dist.dir" value="${build.dir}/dist"/>
