@@ -141,7 +141,7 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
             }
 
             public String toString() {
-                return "split:OTHER";
+                return "(other)";
             }
         };
     }
@@ -159,7 +159,7 @@ public class SplitByFieldPlugin implements TreePlugin, Plugin {
             }
 
             public String toString() {
-                return "split:" + value;
+                return field.name + " = " + value;
             }
         };
     }
