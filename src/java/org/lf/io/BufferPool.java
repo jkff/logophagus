@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * Provides buffers with data of type 'B' by fine-keys of type 'K'
- * where two keys may map into the same hash (and thus the same buffer)
+ * where two keys may map into the same base (and thus the same buffer)
  * of type 'H'.
  */
 public class BufferPool<K, H> {
@@ -53,12 +53,12 @@ public class BufferPool<K, H> {
 
     public class Buffer {
         private int refCount;
-        public final H hash;
+        public final H base;
         public final byte[] data;
 
-        private Buffer(int refCount, H hash, byte[] data) {
+        private Buffer(int refCount, H base, byte[] data) {
             this.refCount = refCount;
-            this.hash = hash;
+            this.base = base;
             this.data = data;
         }
     }
@@ -148,7 +148,7 @@ public class BufferPool<K, H> {
 
     public Buffer move(Buffer buf, K newKey) throws InterruptedException {
         synchronized (hash2buf) {
-            if (hashKey.apply(newKey).equals(buf.hash)) {
+            if (hashKey.apply(newKey).equals(buf.base)) {
                 return buf;
             } else {
                 releaseBuffer(buf);

@@ -20,7 +20,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
         } catch (InterruptedException e) {
             throw new IOException("InterruptedException in bufferPool.getBuffer()");
         }
-        this.offsetInBuffer = (int) (offset - this.buf.hash);
+        this.offsetInBuffer = (int) (offset - this.buf.base);
 
         this.isOpen = true;
         this.bufferPool = bufferPool;
@@ -36,13 +36,13 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
         } catch (InterruptedException e) {
             throw new IOException("InterruptedException in bufferPool.move()");
         }
-        this.offsetInBuffer = (int) (newOffset - this.buf.hash);
+        this.offsetInBuffer = (int) (newOffset - this.buf.base);
     }
 
     @Override
     public byte[] readForwardUntil(byte b) throws IOException {
         ensureOpen();
-        long initialPos = this.offsetInBuffer + this.buf.hash;
+        long initialPos = this.offsetInBuffer + this.buf.base;
         boolean shiftedBuffer = false;
         top: while(true) {
             byte[] data = buf.data;
@@ -63,7 +63,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
                 break;
         }
 
-        long delta = this.offsetInBuffer + this.buf.hash - initialPos;
+        long delta = this.offsetInBuffer + this.buf.base - initialPos;
         scrollTo(initialPos);
         byte[] result = new byte[(int) delta];
         int n = read(result);
@@ -77,7 +77,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     @Override
     public byte[] readBackwardUntil(byte b) throws IOException {
         ensureOpen();
-        long curFilePos = this.offsetInBuffer + this.buf.hash;
+        long curFilePos = this.offsetInBuffer + this.buf.base;
         byte cur;
         do {
             if (this.offsetInBuffer == 0) {
@@ -89,7 +89,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
             cur = this.buf.data[this.offsetInBuffer];
         } while (cur != b);
 
-        long delta = curFilePos - this.offsetInBuffer - this.buf.hash;
+        long delta = curFilePos - this.offsetInBuffer - this.buf.base;
 
         byte[] result = new byte[(int) delta];
         int n = read(result);
@@ -107,7 +107,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     public long scrollBack(long offset) throws IOException {
         ensureOpen();
         long scrolled;
-        long curFilePos = this.offsetInBuffer + this.buf.hash;
+        long curFilePos = this.offsetInBuffer + this.buf.base;
         try {
             if (curFilePos <= offset) {
                 scrolled = curFilePos;
@@ -115,7 +115,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
                 this.offsetInBuffer = 0;
             } else {
                 this.buf = bufferPool.move(this.buf, curFilePos - offset);
-                this.offsetInBuffer = (int) (curFilePos - offset - this.buf.hash);
+                this.offsetInBuffer = (int) (curFilePos - offset - this.buf.base);
                 scrolled = offset;
             }
         } catch (InterruptedException e) {
@@ -131,7 +131,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     public long scrollForward(long offset) throws IOException {
         ensureOpen();
         long maxOffset = fileSize - 1;
-        long curFilePos = this.offsetInBuffer + this.buf.hash;
+        long curFilePos = this.offsetInBuffer + this.buf.base;
         long scrolled;
         try {
             if (curFilePos + offset > maxOffset) {
@@ -140,7 +140,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
                 this.offsetInBuffer = this.buf.data.length - 1;
             } else {
                 this.buf = bufferPool.move(buf, curFilePos + offset);
-                this.offsetInBuffer = (int) (curFilePos + offset - this.buf.hash);
+                this.offsetInBuffer = (int) (curFilePos + offset - this.buf.base);
                 scrolled = offset;
             }
         } catch (InterruptedException e) {
@@ -151,7 +151,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
 
     @Override
     public long getOffset() {
-        return this.buf.hash + this.offsetInBuffer;
+        return this.buf.base + this.offsetInBuffer;
     }
 
     @Override
@@ -215,10 +215,10 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     }
 
     private boolean shiftPrevBuffer() throws IOException {
-        if (this.buf.hash == 0)
+        if (this.buf.base == 0)
             return false;
         try {
-            this.buf = bufferPool.move(this.buf, this.buf.hash - 1);
+            this.buf = bufferPool.move(this.buf, this.buf.base - 1);
         } catch (InterruptedException e) {
             throw new IOException("InterruptedException from bufferPool.move()");
         }
@@ -230,7 +230,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
         if (isAtEOF())
             return false;
         try {
-            this.buf = bufferPool.move(this.buf, this.buf.hash + this.buf.data.length);
+            this.buf = bufferPool.move(this.buf, this.buf.base + this.buf.data.length);
         } catch (InterruptedException e) {
             throw new IOException("InterruptedException from bufferPool.move()");
         }
@@ -239,7 +239,7 @@ public class BufferScrollableInputStream extends ScrollableInputStream {
     }
 
     private boolean isAtEOF() {
-        return this.buf.hash + this.offsetInBuffer == fileSize - 1;
+        return this.buf.base + this.offsetInBuffer == fileSize - 1;
     }
 
     @Override
