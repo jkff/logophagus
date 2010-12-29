@@ -4,6 +4,6 @@ enum SymbolType {
     RECORD_DELIMITER,
     FIELD_DELIMITER,
     QUOTE,
-    ESCAPE,
+    SPACE,
     OTHER
 }

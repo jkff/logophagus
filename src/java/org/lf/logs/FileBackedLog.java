@@ -5,6 +5,8 @@ import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
 import org.joda.time.format.DateTimeFormatter;
+import org.lf.encoding.ScrollableReader;
+import org.lf.encoding.UTF8Reader;
 import org.lf.io.RandomAccessFileIO;
 import org.lf.io.ScrollableInputStream;
 import org.lf.parser.Parser;
@@ -20,7 +22,7 @@ public class FileBackedLog implements Log {
     private final Parser parser;
 
     private Position cachedLast;
-    private long fileLengthAtCachedLast;
+    private long maxOffsetAtCachedLast;
 
     private DateTime cachedTime;
     private Position posWithCachedTime;
@@ -77,12 +79,21 @@ public class FileBackedLog implements Log {
 
     @Override
     public synchronized Position last() throws IOException {
-        long len = file.length();
-        if (cachedLast == null || len != fileLengthAtCachedLast) {
-            cachedLast = prev(new PhysicalPosition(len));
-            fileLengthAtCachedLast = len;
+        ScrollableInputStream sis = null;
+        ScrollableReader reader;
+        try {
+            if (cachedLast == null || file.length() != maxOffsetAtCachedLast) {
+                sis = file.getInputStreamFrom(file.length() - 1);
+                reader = new UTF8Reader(sis);
+                reader.scrollToEnd();
+                cachedLast = prev(new PhysicalPosition(reader.getCurrentOffset()));
+                maxOffsetAtCachedLast = reader.getCurrentOffset();
+            }
+            return  cachedLast;
+        } finally {
+            if (sis != null)
+                sis.close();
         }
-        return cachedLast;
     }
 
     @Override
@@ -90,7 +101,9 @@ public class FileBackedLog implements Log {
         ScrollableInputStream is = null;
         try {
             is = file.getInputStreamFrom(((PhysicalPosition) pos).offsetBytes);
-            return parser.readRecord(is);
+            ScrollableReader reader = new UTF8Reader(is);
+            Record res = parser.readRecord(reader);
+            return res;
         } finally {
             if (is != null)
                 is.close();
@@ -103,10 +116,12 @@ public class FileBackedLog implements Log {
         try {
             PhysicalPosition pp = (PhysicalPosition) pos;
             is = file.getInputStreamFrom(pp.offsetBytes);
-            long offset = parser.findNextRecord(is);
-            if (offset == 0)
+            ScrollableReader reader = new UTF8Reader(is);
+            long offset = parser.findNextRecord(reader);
+            if (offset == -1) {
                 return null;
-            return new PhysicalPosition(pp.offsetBytes + offset);
+            }
+            return new PhysicalPosition(offset);
         } finally {
             if (is != null)
                 is.close();
@@ -119,10 +134,11 @@ public class FileBackedLog implements Log {
         try {
             PhysicalPosition pp = (PhysicalPosition) pos;
             is = file.getInputStreamFrom(pp.offsetBytes);
-            long offset = parser.findPrevRecord(is);
-            if (offset == 0)
+            ScrollableReader reader = new UTF8Reader(is);
+            long offset = parser.findPrevRecord(reader);
+            if (offset == -1)
                 return null;
-            return new PhysicalPosition(pp.offsetBytes - offset);
+            return new PhysicalPosition(offset);
         } finally {
             if (is != null)
                 is.close();

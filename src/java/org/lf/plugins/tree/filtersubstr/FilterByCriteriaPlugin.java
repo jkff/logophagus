@@ -12,6 +12,7 @@ import org.lf.ui.components.tree.NodeData;
 import org.lf.ui.components.tree.TreeContext;
 import org.lf.util.Filter;
 import org.lf.util.HierarchicalAction;
+import org.lf.util.StringUtils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -92,25 +93,44 @@ public class FilterByCriteriaPlugin implements TreePlugin, Plugin {
         if (input == null)
             return null;
 
-        final Pattern p = Pattern.compile(input, substringNotRegexp ? Pattern.LITERAL : 0);
-
-        Filter<Record> filter = new Filter<Record>() {
-            public String toString() {
-                return "filter: " + input;
-            }
-
-            public boolean accepts(Record r) {
-                for (int i = 0; i < r.getCellCount(); ++i) {
-                    CharSequence cell = r.getCell(i);
-                    if (cell == null)
-                        continue;
-                    if (p.matcher(cell).find())
-                        return true;
+        Filter<Record> filter;
+        if (substringNotRegexp) {
+            final int[] prefixFunction = StringUtils.prefixFinction(input);
+            filter = new Filter<Record>() {
+                public String toString() {
+                    return "filter: " + input;
                 }
-                return false;
-            }
-        };
 
+                public boolean accepts(Record r) {
+                    for (int i = 0; i < r.getCellCount(); ++i) {
+                        CharSequence cell = r.getCell(i);
+                        if (cell == null)
+                            continue;
+                        if (StringUtils.indexOf(cell, input, prefixFunction) >= 0)
+                            return true;
+                    }
+                    return false;
+                }
+            };
+        } else {
+            final Pattern p = Pattern.compile(input, Pattern.UNICODE_CASE);
+            filter = new Filter<Record>() {
+                public String toString() {
+                    return "filter: " + input;
+                }
+
+                public boolean accepts(Record r) {
+                    for (int i = 0; i < r.getCellCount(); ++i) {
+                        CharSequence cell = r.getCell(i);
+                        if (cell == null)
+                            continue;
+                        if (p.matcher(cell).find())
+                            return true;
+                    }
+                    return false;
+                }
+            };
+        }
         Log fLog = new FilteredLog(log, filter);
         return new Entity(parent.attributes.createSuccessor(fLog), fLog);
     }

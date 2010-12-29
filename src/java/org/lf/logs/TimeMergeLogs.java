@@ -220,7 +220,7 @@ public class TimeMergeLogs implements Log {
         CurPrevIndex cur = curSortedCopy.first();
         curSortedCopy.remove(cur);
         prevSortedCopy.remove(cur);
-        //check if it's not the position of merged log end
+        //check if it's not the position of merged log scrollToEnd
         if (cur.cur == null) {
             return null;
         }

@@ -1,11 +1,12 @@
 package org.lf.parser.csv;
 
-import org.lf.io.ScrollableInputStream;
+import org.lf.encoding.ScrollableReader;
 import org.lf.logs.Format;
 import org.lf.logs.Record;
 import org.lf.parser.CharStream;
 import org.lf.parser.Parser;
-import org.lf.parser.Sink;
+import org.lf.util.CharVector;
+import org.lf.util.ReverseCharVector;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,42 +17,47 @@ class CSVParser implements Parser {
     public final static char DEFAULT_RECORD_DELIMITER = '\n';
     public final static char DEFAULT_FIELD_DELIMITER = ',';
     public final static char DEFAULT_QUOTE_CHARACTER = '"';
-    public final static char DEFAULT_ESCAPE_CHARACTER = '\\';
 
     private final char recordDelimiter;
     private final char fieldDelimiter;
     private final char quoteCharacter;
-    private final char escapeCharacter;
     private final Format csvFormat;
 
     public CSVParser() {
-        this(null, DEFAULT_RECORD_DELIMITER, DEFAULT_FIELD_DELIMITER, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
+        this(null, DEFAULT_RECORD_DELIMITER, DEFAULT_FIELD_DELIMITER, DEFAULT_QUOTE_CHARACTER);
     }
 
     public CSVParser(Format singleFormat) {
-        this(singleFormat, DEFAULT_RECORD_DELIMITER, DEFAULT_FIELD_DELIMITER, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
+        this(singleFormat, DEFAULT_RECORD_DELIMITER, DEFAULT_FIELD_DELIMITER, DEFAULT_QUOTE_CHARACTER);
     }
 
-    public CSVParser(Format singleFormat, char recordDelimiter, char fieldDelimiter, char quoteCharacter, char escapeCharacter) {
+    public CSVParser(Format singleFormat, char recordDelimiter, char fieldDelimiter, char quoteCharacter) {
         this.recordDelimiter = recordDelimiter;
         this.fieldDelimiter = fieldDelimiter;
         this.quoteCharacter = quoteCharacter;
-        this.escapeCharacter = escapeCharacter;
         this.csvFormat = singleFormat;
     }
 
-    public int findNextRecord(ScrollableInputStream is) throws IOException {
-        return findBorder(forward(is), new Forward(), new Nop());
+    @Override
+    public long findNextRecord(ScrollableReader reader) throws IOException {
+        return findBorder(forward(reader), new Forward(), new Sink(new CharVector())) ? reader.getCurrentOffset() : -1;
     }
 
-    public int findPrevRecord(ScrollableInputStream is) throws IOException {
-        if (is.scrollBack(1) == 0)
-            return 0;
-        return findBorder(backward(is), new Backward(), new Nop());
+    @Override
+    public long findPrevRecord(ScrollableReader reader) throws IOException {
+        if (reader.prev() == -1) return -1;
+        ReverseCharVector reverseCharVector = new ReverseCharVector();
+        if (!findBorder(backward(reader), new Backward(), new Sink(reverseCharVector))) {
+            return -1;
+        }
+        if (reader.getCurrentOffset() != 0) {
+            reader.next();
+        }
+        return reader.getCurrentOffset();
     }
 
 
-    private int findBorder(
+    private boolean findBorder(
             CharStream stream,
             TransitionFunction<State, SymbolType> tf,
             Sink sink) throws IOException {
@@ -59,18 +65,17 @@ class CSVParser implements Parser {
         int offset = 0;
         do {
             int i = stream.next();
-            offset++;
             if (i == -1) {
                 sink.recordBorder();
-                return offset;
+                return offset != 0;
             }
-
+            offset++;
             char c = (char) i;
             SymbolType s =
                     (c == recordDelimiter) ? SymbolType.RECORD_DELIMITER :
-                    (c == escapeCharacter) ? SymbolType.ESCAPE :
                     (c == fieldDelimiter) ? SymbolType.FIELD_DELIMITER :
                     (c == quoteCharacter) ? SymbolType.QUOTE :
+                    Character.isSpaceChar(c) ? SymbolType.SPACE:
                     SymbolType.OTHER;
 
             state = tf.next(state, s);
@@ -78,14 +83,14 @@ class CSVParser implements Parser {
             sink.onRawChar(c);
 
             switch (state) {
-                case FIELD:
-                    sink.onChar(c);
+                case NON_QUOTED_FIELD:
+                    sink.onChar(c, false);
                     break;
-                case IN_QUOTE:
-                    sink.onChar(c);
+                case QUOTED_FIELD:
+                    sink.onChar(c, true);
                     break;
                 case DOUBLE_QUOTE:
-                    sink.onChar(c);
+                    sink.onChar(c , true);
                     break;
                 case BETWEEN_FIELDS:
                     sink.fieldBreak();
@@ -102,43 +107,42 @@ class CSVParser implements Parser {
             }
         } while (state != State.RECORD_BORDER);
 
-        return offset;
+        return true;
     }
 
 
-    private CharStream forward(final ScrollableInputStream is) {
+    private CharStream forward(final ScrollableReader reader) {
         return new CharStream() {
             public int next() throws IOException {
-                return is.read();
+                return reader.next();
             }
         };
     }
 
-    private CharStream backward(final ScrollableInputStream is) {
+    private CharStream backward(final ScrollableReader reader) {
         return new CharStream() {
             public int next() throws IOException {
-                return is.readBack();
+                return reader.prev();
             }
         };
     }
 
-    public Record readRecord(ScrollableInputStream is) throws IOException {
-        final List<String> fields = newList();
+    @Override
+    public Record readRecord(ScrollableReader reader) throws IOException {
+        final List<CharSequence> fields = newList();
 
         final StringBuilder rawString = new StringBuilder();
 
-        findBorder(forward(is), new Forward(),
-                new Sink() {
+        findBorder(forward(reader), new Forward(),
+                new Sink(new CharVector()) {
                     public void fieldBreak() {
-                        fields.add(getContents().toString());
-                        resetContents();
-                    }
-
-                    public void error() {
+                        fields.add(isQuoted ? charVector.toString() : charVector.toString().trim());
+                        charVector.clear();
                     }
 
                     public void recordBorder() {
-                        fields.add(getContents().toString());
+                        fields.add(isQuoted ? charVector.toString() : charVector.toString().trim());
+                        charVector.clear();
                     }
 
                     public void onRawChar(char c) {
@@ -151,11 +155,11 @@ class CSVParser implements Parser {
 
 
     private class CSVRecord implements Record {
-        private final String rawString;
-        private final String[] cells;
+        private final CharSequence rawString;
+        private final CharSequence[] cells;
         private final boolean matchesFormat;
 
-        private CSVRecord(String rawString, List<String> strFields) {
+        private CSVRecord(CharSequence rawString, List<CharSequence> strFields) {
             this.rawString = rawString;
             matchesFormat = (strFields.size() == CSVParser.this.csvFormat.getFields().length);
 
@@ -166,8 +170,8 @@ class CSVParser implements Parser {
                     cells[i] = strFields.get(i);
             } else {
                 StringBuilder strB = new StringBuilder();
-                for (String string : strFields) {
-                    strB.append(string);
+                for (CharSequence cur : strFields) {
+                    strB.append(cur);
                     strB.append(' ');
                 }
                 cells[0] = strB.toString();
@@ -180,7 +184,7 @@ class CSVParser implements Parser {
         }
 
         @Override
-        public String getCell(int i) {
+        public CharSequence getCell(int i) {
             return cells[i];
         }
 
@@ -193,9 +197,6 @@ class CSVParser implements Parser {
         public CharSequence getRawString() {
             return rawString;
         }
-    }
-
-    private static class Nop extends Sink {
     }
 
     @Override

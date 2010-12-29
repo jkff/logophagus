@@ -22,7 +22,6 @@ public class CSVParserAdjuster extends ParserAdjuster {
     private final JTextField recordDelimiterField;
     private final JTextField fieldDelimiterField;
     private final JTextField quoteCharacterField;
-    private final JTextField escapeCharacterField;
     private final JButton setFormatButton;
     private final JButton clearFormatButton;
 
@@ -36,7 +35,6 @@ public class CSVParserAdjuster extends ParserAdjuster {
                 "Enter record delimiter",
                 "Enter field delimiter",
                 "Enter quote character",
-                "Enter escape character"
         };
 
         LabelWithField[] fieldViews = new LabelWithField[labels.length];
@@ -63,15 +61,9 @@ public class CSVParserAdjuster extends ParserAdjuster {
         quoteCharacterField = fieldViews[2].field;
         quoteCharacterField.setText(s);
 
-        s = characterToName.containsKey(CSVParser.DEFAULT_ESCAPE_CHARACTER) ?
-                characterToName.get(CSVParser.DEFAULT_ESCAPE_CHARACTER) :
-                Character.toString(CSVParser.DEFAULT_ESCAPE_CHARACTER);
-        escapeCharacterField = fieldViews[3].field;
-        escapeCharacterField.setText(s);
-
-        GUIUtils.makeSameWidth(fieldViews[0].label, fieldViews[1].label, fieldViews[2].label, fieldViews[3].label);
+        GUIUtils.makeSameWidth(fieldViews[0].label, fieldViews[1].label, fieldViews[2].label);
         GUIUtils.makeSameWidth(recordDelimiterField, fieldDelimiterField,
-                quoteCharacterField, escapeCharacterField);
+                quoteCharacterField);
 
         setFormatButton = new JButton("Set format");
         setFormatButton.addActionListener(new ActionListener() {
@@ -122,7 +114,6 @@ public class CSVParserAdjuster extends ParserAdjuster {
                 recordDelimiterField,
                 fieldDelimiterField,
                 quoteCharacterField,
-                escapeCharacterField
         };
         char[] fieldValues = new char[4];
 
@@ -134,7 +125,7 @@ public class CSVParserAdjuster extends ParserAdjuster {
                 fieldValues[i] = nameToCharacter.get(temp);
         }
 
-        return new CSVParser(format, fieldValues[0], fieldValues[1], fieldValues[2], fieldValues[3]);
+        return new CSVParser(format, fieldValues[0], fieldValues[1], fieldValues[2]);
     }
 
     protected void update() {
@@ -144,7 +135,6 @@ public class CSVParserAdjuster extends ParserAdjuster {
                 recordDelimiterField,
                 fieldDelimiterField,
                 quoteCharacterField,
-                escapeCharacterField
         };
 
         for (JTextField field : fields) {

@@ -1,11 +1,11 @@
 package org.lf.parser.regex;
 
-import org.lf.io.ScrollableInputStream;
+import org.lf.encoding.ScrollableReader;
 import org.lf.logs.*;
 import org.lf.parser.Parser;
+import org.lf.util.CharVector;
 import org.lf.util.Triple;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,13 +16,13 @@ public class RegexpParser implements Parser {
     private final int[] linesPerRecord;
     private int maxLinesPerRecord = 1;
 
-    private transient ScrollableInputStream cachedStream;
-
+    private transient ScrollableReader cachedReader;
+//
     private transient long cachedOffset;
 
-    // Integer - relative offset, Integer - index of pattern that matched (-1 means no pattern matched),
-    // Object is a Matcher if a pattern matched, or a String (raw input line) if none matched
-    private Triple<Integer, Integer, Object> cachedOffsetIndexMatch;
+    // Long - absolute offset, Integer - index of pattern that matched (-1 means no pattern matched),
+    // Object is a Matcher if a pattern matched, or a CharSequence (raw input line) if none matched
+    private Triple<Long, Integer, Object> cachedOffsetIndexMatch;
 
     public RegexpParser(String[] regexps, Format[] regexpFormats, int[] linesPerRecord) {
         this.patterns = new Pattern[regexps.length];
@@ -41,115 +41,112 @@ public class RegexpParser implements Parser {
     }
 
     @Override
-    public synchronized int findNextRecord(ScrollableInputStream is) throws IOException {
-        return findOIMforward(is).first;
+    public long findNextRecord(ScrollableReader reader) throws IOException {
+        return findOIMforward(reader).first;
     }
 
-    private synchronized Triple<Integer, Integer, Object> findOIMforward(ScrollableInputStream is) throws IOException {
-        if (!is.isSameSource(cachedStream) || is.getOffset() != cachedOffset) {
-            cachedStream = is;
-            cachedOffset = is.getOffset();
-            cachedOffsetIndexMatch = getRecordFromCharStream(is, true);
+    private synchronized Triple<Long, Integer, Object> findOIMforward(ScrollableReader reader) throws IOException {
+        if (!reader.isSameSource(cachedReader) || reader.getCurrentOffset() != cachedOffset) {
+            cachedReader = reader;
+            cachedOffset = reader.getCurrentOffset();
+            cachedOffsetIndexMatch = getRecordFromCharStream(reader, true);
         }
         return cachedOffsetIndexMatch;
     }
 
     @Override
-    public int findPrevRecord(ScrollableInputStream is) throws IOException {
+    public long findPrevRecord(ScrollableReader reader) throws IOException {
         // scroll back to \n symbol
-        if (is.scrollBack(1) == 0) return 0;
-        return getRecordFromCharStream(is, false).first + 1;
+        if (reader.prev() == -1) return -1;
+        return getRecordFromCharStream(reader, false).first;
     }
 
     @Override
-    public Record readRecord(ScrollableInputStream is) throws IOException {
-        Triple<Integer, Integer, Object> offsetIndexMatch = findOIMforward(is);
+    public Record readRecord(ScrollableReader reader) throws IOException {
+        Triple<Long, Integer, Object> offsetIndexMatch = findOIMforward(reader);
 
         if (offsetIndexMatch.second == -1) {
-            return new LineRecord((String) offsetIndexMatch.third);
+            return new LineRecord((CharSequence) offsetIndexMatch.third);
         }
 
         return new RegexRecord((Matcher) offsetIndexMatch.third, regexpFormats[offsetIndexMatch.second]);
     }
 
-    private Triple<Integer, Integer, Object> getRecordFromCharStream(ScrollableInputStream is, boolean isForward) throws IOException {
-        int nextLineOffset = 0;
-        String firstLineString = null;
-        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
-        String curLines;
+    private Triple<Long, Integer, Object> getRecordFromCharStream(ScrollableReader reader, boolean isForward) throws IOException {
+        long nextLineOffset = 0;
+        CharSequence firstLineString = null;
+        CharVector curLines = new CharVector(256);
 
         for (int numLines = 1; numLines <= maxLinesPerRecord; ++numLines) {
-            byte b[] = isForward ? is.readForwardUntil((byte) '\n') : is.readBackwardUntil((byte) '\n');
-
-            if (isForward)
-                byteArray.write(b);
-            else
-                byteArray.write(b, 0, b.length);
-
-            curLines = byteArray.toString("us-ascii");
-
-            int length = curLines.length();
+            CharSequence line = isForward ? reader.readForwardUntil('\n') : reader.readBackwardUntil('\n');
 
             int numRs = 0;
-            for(int i = 0; i < length; ++i) {
-                if(curLines.charAt(i) == '\r') {
+            for(int i = 0; i < line.length(); ++i) {
+                if(line.charAt(i) == '\r') {
                     numRs++;
                 }
             }
 
             if(numRs > 0) {
-                char[] c = new char[length - numRs];
-                for(int i = 0, j = 0; i < length; ++i) {
-                    char chr = curLines.charAt(i);
+                char[] cleanLine = new char[line.length() - numRs];
+                for(int i = 0, j = 0; i < line.length(); ++i) {
+                    char chr = line.charAt(i);
                     if(chr != '\r')
-                        c[j++] = chr;
+                        cleanLine[j++] = chr;
                 }
-                curLines = new String(c);
+                if (isForward)
+                    curLines.add(cleanLine);
+                else
+                    curLines.add(cleanLine, 0, cleanLine.length);
+            } else {
+                if (isForward)
+                    curLines.add(line);
+                else
+                    curLines.add(0, line);
             }
 
-            length = curLines.length() - numRs;
 
             if (isForward)
-                nextLineOffset = length;
-            else
-                nextLineOffset = (curLines.charAt(0) == '\n') ? length - 1 : length;
-            nextLineOffset += numRs;
+                nextLineOffset = reader.getCurrentOffset();
+            else if (curLines.charAt(0) == '\n')  {
+                reader.next();
+                nextLineOffset = reader.getCurrentOffset();
+                reader.prev();
+            }
 
             if (numLines == 1) {
-                firstLineString = curLines;
+                firstLineString = curLines.subSequence(0, curLines.length());
             }
 
             for (int i = 0; i < linesPerRecord.length; ++i) {
                 if (linesPerRecord[i] != numLines) continue;
 
-                int toNewline = length;
-                if(length > 0 && curLines.charAt(length - 1) == '\n')
-                    toNewline--;
+                int toNewline = curLines.length();
+                if(toNewline > 0 && curLines.charAt(toNewline - 1) == '\n')
+                    --toNewline;
 
-                Matcher m = patterns[i].matcher(curLines.substring(0, toNewline));
+                Matcher m = patterns[i].matcher(curLines.subSequence(0, toNewline));
 
                 if (m.matches()) {
-                    if (isForward)
-                        return new Triple<Integer, Integer, Object>(byteArray.size(), i, m);
-                    if (curLines.charAt(0) == '\n')
-                        return new Triple<Integer, Integer, Object>(byteArray.size() - 1, i, m);
-                    return new Triple<Integer, Integer, Object>(byteArray.size(), i, m);
+                    if (!isForward && curLines.charAt(0) == '\n') {
+                        reader.next();
+                        return new Triple<Long, Integer, Object>(reader.getCurrentOffset(), i, m);
+                    }
+                    return new Triple<Long, Integer, Object>(reader.getCurrentOffset(), i, m);
                 }
 
             }
-            // if there is no recordDelimiter at the joined lines end then the begin/end of file occurs
+            // if there is no recordDelimiter at the joined lines scrollToEnd then the scrollToBegin/scrollToEnd of file occurs
             // and we can't continue to read next lines 
             if (curLines.charAt(isForward ? curLines.length() - 1 : 0) != '\n') {
                 break;
             }
         }
-        return new Triple<Integer, Integer, Object>(nextLineOffset, -1, firstLineString);
+        return new Triple<Long, Integer, Object>(nextLineOffset, -1, firstLineString);
     }
 
     @Override
     public Format[] getFormats() {
         return regexpFormats;
     }
-
-
 }

@@ -2,12 +2,12 @@ package org.lf.parser.csv;
 
 enum State {
     ERROR,
-    FIELD,
-    IN_QUOTE,
+    NON_QUOTED_FIELD,
+    QUOTED_FIELD,
     QUOTE_END,
     QUOTE_BEGIN,
     DOUBLE_QUOTE,
     RECORD_BORDER,
     BETWEEN_FIELDS,
-    IN_QUOTE_ESCAPE,
+    SPACE_BETWEEN_FIELDS
 }

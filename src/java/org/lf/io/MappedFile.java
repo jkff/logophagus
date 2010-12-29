@@ -16,7 +16,7 @@ public class MappedFile implements RandomAccessFileIO {
     private File file;
     private final long fileSize;
 
-    // File is divided into parts of equal size = bufSize (last part size may
+    // File is divided into parts of equal size = bufSize (scrollToEnd part size may
     // differ from others, so buffers do not overlap
     private static final long BUF_SIZE = 1000000;
     private static final Function<Long, Long> TRUNCATE_BUF = new Function<Long, Long>() {

@@ -1,5 +1,6 @@
 package org.lf.parser;
 
+import org.lf.encoding.ScrollableReader;
 import org.lf.io.ScrollableInputStream;
 import org.lf.logs.Format;
 import org.lf.logs.Record;
@@ -7,21 +8,24 @@ import org.lf.logs.Record;
 import java.io.IOException;
 
 public interface Parser {
-    Record readRecord(ScrollableInputStream is) throws IOException;
+    Record readRecord(ScrollableReader reader) throws IOException;
 
     /**
-     * Find out the smallest positive offset from the current position in 'is'
-     * such that there is a separator just before the offset and a record after
-     * it. return that offset
+     *
+     * @param reader
+     * @return offset of next record in reader or -1 if there is no prev records
+     * @throws IOException
      */
-    int findNextRecord(ScrollableInputStream is) throws IOException;
+    long findNextRecord(ScrollableReader reader) throws IOException;
 
     /**
-     * Find out the smallest (by absolute value) negative offset from the
-     * current position in 'is' such that there is a separator just before the
-     * offset and a record after it. return that offset
+     *
+     *
+     * @param reader
+     * @return offset of prev record in reader or -1 if there is no prev records
+     * @throws IOException
      */
-    int findPrevRecord(ScrollableInputStream is) throws IOException;
+    long findPrevRecord(ScrollableReader reader) throws IOException;
 
     /**
      * @return formats of records that readRecord() can return

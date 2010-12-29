@@ -8,7 +8,7 @@ import java.io.UnsupportedEncodingException;
 public class LineRecord implements Record {
     private CharSequence value;
 
-    public LineRecord(String value) {
+    public LineRecord(CharSequence value) {
         this.value = value;
     }
 
