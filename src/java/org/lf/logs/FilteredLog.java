@@ -156,7 +156,7 @@ public class FilteredLog implements Log {
     }
 
 
-    //find scrollToBegin position that accepts filter and that equals to input pos or after it
+    //find first position that accepts filter and that equals to input pos or after it
     //so method invocation can take a lot of time
     @Override
     public Position convertToNative(Position pos) throws IOException {

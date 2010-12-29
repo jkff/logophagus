@@ -45,7 +45,7 @@ class ZRan {
             throws IOException {
         int ret;
         long totin, totout;  /* our own total counters to avoid 4GB limit */
-        long last;                 /* totout value of scrollToEnd access Point */
+        long last;                 /* totout value of end access Point */
         List<Point> index;       /* access points being generated */
         z_stream strm = new z_stream();
         Memory input = new Memory(CHUNK);
@@ -66,9 +66,9 @@ class ZRan {
 
             /* inflate the input, maintain a sliding window, and build an index -- this
   also validates the integrity of the compressed data using the check
-  information at the scrollToEnd of the gzip or zlib stream */
+  information at the end of the gzip or zlib stream */
             totin = totout = last = 0;
-            index = new ArrayList<Point>();               /* will be allocated by scrollToBegin addpoint() */
+            index = new ArrayList<Point>();               /* will be allocated by first addpoint() */
             strm.avail_out = 0;
             do {
                 if (!listener.reportProgress(totin))
@@ -83,7 +83,7 @@ class ZRan {
                 bb.put(buf, 0, strm.avail_in);
                 strm.next_in = input;
 
-                /* process all of that, or until scrollToEnd of stream */
+                /* process all of that, or until end of stream */
                 do {
                     /* reset sliding window if necessary */
                     if (strm.avail_out == 0) {
@@ -91,11 +91,11 @@ class ZRan {
                         strm.next_out = window;
                     }
 
-                    /* inflate until out of input, output, or at scrollToEnd of block --
+                    /* inflate until out of input, output, or at end of block --
              update the total input and output counters */
                     totin += strm.avail_in;
                     totout += strm.avail_out;
-                    ret = ZLib.INSTANCE.inflate(strm, ZLib.Z_BLOCK);      /* return at scrollToEnd of block */
+                    ret = ZLib.INSTANCE.inflate(strm, ZLib.Z_BLOCK);      /* return at end of block */
                     totin -= strm.avail_in;
                     totout -= strm.avail_out;
                     if (ret == ZLib.Z_NEED_DICT)
@@ -105,14 +105,14 @@ class ZRan {
                     if (ret == ZLib.Z_STREAM_END)
                         break;
 
-                    /* if at scrollToEnd of block, consider adding an index entry (note that if
-                      data_type indicates an scrollToEnd-of-block, then all of the
+                    /* if at end of block, consider adding an index entry (note that if
+                      data_type indicates an end-of-block, then all of the
                       uncompressed data from that block has been delivered, and none
                       of the compressed data after that block has been consumed,
                       except for up to seven bits) -- the totout == 0 provides an
                       entry Point after the zlib or gzip header, and assures that the
                       index always has at least one access Point; we avoid creating an
-                      access Point after the scrollToEnd block by checking bit 6 of data_type
+                      access Point after the end block by checking bit 6 of data_type
                     */
                     if ((0 != (strm.data_type & 128)) && (0 == (strm.data_type & 64)) &&
                             (totout == 0 || totout - last > span)) {
@@ -185,13 +185,13 @@ class ZRan {
                     strm.avail_out = WINSIZE;
                     strm.next_out = discard;
                     offset -= WINSIZE;
-                } else if (offset != 0) {             /* scrollToEnd skip */
+                } else if (offset != 0) {             /* end skip */
                     strm.avail_out = (int) offset;
                     strm.next_out = discard;
                     offset = 0;
                 }
 
-                /* uncompress until avail_out filled, or scrollToEnd of stream */
+                /* uncompress until avail_out filled, or end of stream */
                 do {
                     if (strm.avail_in == 0) {
                         strm.avail_in = f.read(bbuf);
@@ -211,7 +211,7 @@ class ZRan {
                         break;
                 } while (strm.avail_out != 0);
 
-                /* if reach scrollToEnd of stream, then don't keep trying to get more */
+                /* if reach end of stream, then don't keep trying to get more */
                 if (ret == ZLib.Z_STREAM_END)
                     break;
 

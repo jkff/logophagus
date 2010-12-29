@@ -38,14 +38,14 @@ public interface Log {
     public Pair<Log,Position> convertToParent(Position pos) throws IOException;
 
     /**
-     * @return - position of scrollToBegin record in this log
+     * @return - position of first record in this log
      *         - null if there are no records in this log
      */
     @Nullable
     public Position first() throws IOException;
 
     /**
-     * @return - position of scrollToEnd record in this log (so this.readRecord() method can be called on it)
+     * @return - position of last record in this log (so this.readRecord() method can be called on it)
      *         - null if there are no records in the log
      */
     @Nullable
@@ -57,7 +57,7 @@ public interface Log {
      *            - null -> then the function returns null;
      * @return - position that can be used in methods this.readRecord(), this.prev() , this.next() and this.convertToNative(),
      *         this position goes after input pos(so that pos.equals(prev(next(pos))))
-     *         - null, if position equals scrollToEnd()
+     *         - null, if position equals last()
      */
     @Nullable
     public Position next(Position pos) throws IOException;
@@ -68,7 +68,7 @@ public interface Log {
      *            - null -> then function return null;
      * @return - position that can be used in methods this.readRecord(), this.prev() , this.next() and this.convertToNative(),
      *         this position goes before input pos (so that pos.equals(next(prev(pos))))
-     *         - null, if position equals scrollToBegin()
+     *         - null, if position equals first()
      */
     @Nullable
     public Position prev(Position pos) throws IOException;
@@ -86,8 +86,8 @@ public interface Log {
     /**
      * @param pos from this log of record whose time method return
      * @return DateTime of record obtained from this log
-     *         if record has no time then scrollToBegin record with time before this one is used
-     *         if there is no such record then it uses the time of scrollToBegin record after it that has time
+     *         if record has no time then first record with time before this one is used
+     *         if there is no such record then it uses the time of first record after it that has time
      *         if no record in this log has time then return null;
      * @throws IOException
      */

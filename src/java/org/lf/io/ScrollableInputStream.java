@@ -44,7 +44,7 @@ public interface ScrollableInputStream {
 
     /**
      * @param b - byte on which reading must be stopped
-     * @return byte[] that contain bytes between current offset and offset of scrollToBegin byte = b after current offset.
+     * @return byte[] that contain bytes between current offset and offset of first byte = b after current offset.
      *         current offset byte and byte b are also included in array
      * @throws IOException
      */
@@ -52,7 +52,7 @@ public interface ScrollableInputStream {
 
     /**
      * @param b - byte on which reading must be stopped
-     * @return byte[] that contain bytes between current offset and offset of scrollToBegin byte = b before current offset.
+     * @return byte[] that contain bytes between current offset and offset of first byte = b before current offset.
      *         current offset byte is not included and byte b is included in array
      * @throws IOException
      */
