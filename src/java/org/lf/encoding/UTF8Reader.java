@@ -5,10 +5,10 @@ import org.lf.util.CharVector;
 import org.lf.util.ReverseCharVector;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 public class UTF8Reader implements ScrollableReader {
     private final ScrollableInputStream sis;
+    private final static char UNKNOWN_SYMBOL = '?';
 
     public UTF8Reader(ScrollableInputStream sis) {
         this.sis = sis;
@@ -42,7 +42,10 @@ public class UTF8Reader implements ScrollableReader {
             return  (char)(((b0 << 12) & 0xF000) | ((b1 << 6) & 0x0FC0) | (b2 & 0x003F));
         }
 
-        throw new UnsupportedEncodingException("Support for utf-8 with more than 3 bytes per character is not implemented");
+        sis.next();
+        sis.next();
+        sis.next();
+        return UNKNOWN_SYMBOL;
     }
 
     @Override
@@ -71,7 +74,8 @@ public class UTF8Reader implements ScrollableReader {
             return  (char)(((b2 << 12) & 0xF000) | ((b1 << 6) & 0x0FC0) | (b0 & 0x003F));
         }
 
-        throw new UnsupportedEncodingException("Support for utf-8 with more than 3 bytes per character is not implemented");
+        sis.next();
+        return UNKNOWN_SYMBOL;
     }
 
     @Override
